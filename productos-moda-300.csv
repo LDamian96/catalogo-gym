@@ -1,0 +1,270 @@
+nombre,precio,categoria,descripcion,precio_oferta,stock,marca,activo,destacado,variante_talla,variante_color,variante_material,variante_estilo,variante_imagen
+Polo Classic Fit,49.99,Polos,Polo de algodón premium con cuello bordado,39.99,100,Nike,si,si,"S,M,L","Negro,Blanco,Azul",,,color
+Polo Sport Performance,59.99,Polos,Polo dry-fit para entrenamiento,49.99,80,Adidas,si,no,"S,M,L","Rojo,Azul,Verde",,,color
+Polo Casual Stripe,45.00,Polos,Polo a rayas estilo casual,35.00,60,Puma,si,no,"M,L,XL","Blanco,Gris,Navy",,,color
+Polo Premium Cotton,65.00,Polos,Polo de algodón egipcio,55.00,50,Lacoste,si,si,"S,M,L",,"Algodón,Algodón Egipcio,Pima",,material
+Polo Tech Cool,55.00,Polos,Polo tecnología anti-transpirante,45.00,70,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Polo Slim Modern,52.00,Polos,Polo corte slim moderno,,90,Champion,si,no,"S,M,L","Blanco,Negro,Rojo",,,color
+Polo Business,68.00,Polos,Polo elegante para oficina,58.00,40,Tommy Hilfiger,si,si,"M,L,XL","Azul,Blanco,Rosa",,,color
+Polo Street Style,48.00,Polos,Polo urbano con logo grande,,85,Fila,si,no,"S,M,L","Negro,Rojo,Blanco",,,color
+Polo Golf Pro,75.00,Polos,Polo profesional para golf,65.00,30,Nike,si,si,"S,M,L,XL",,"Poliéster,Dry-Fit,Tech",,material
+Polo Heritage,58.00,Polos,Polo estilo heritage,48.00,55,Fred Perry,si,si,"M,L,XL","Negro,Blanco,Burgundy",,,color
+Zapatilla Runner Pro,129.99,Zapatillas,Zapatilla para correr con amortiguación,109.99,60,Nike,si,si,"38,40,42","Negro,Blanco,Rojo",,,color
+Zapatilla Urban Street,89.99,Zapatillas,Zapatilla urbana casual,79.99,80,Adidas,si,no,"39,41,43","Blanco,Negro,Gris",,,color
+Zapatilla Retro Classic,99.00,Zapatillas,Zapatilla estilo retro,85.00,50,New Balance,si,si,"38,40,42,44","Gris,Azul,Verde",,,color
+Zapatilla Skate Pro,85.00,Zapatillas,Zapatilla para skateboard,75.00,70,Vans,si,no,"39,41,43",,"Canvas,Suede,Cuero",,material
+Zapatilla Training Max,119.00,Zapatillas,Zapatilla entrenamiento gym,99.00,45,Reebok,si,no,"38,40,42","Negro,Azul,Naranja",,,color
+Zapatilla Basketball Air,159.00,Zapatillas,Zapatilla de basketball premium,139.00,35,Nike,si,si,"40,42,44","Negro,Rojo,Blanco",,,color
+Zapatilla Tennis Court,95.00,Zapatillas,Zapatilla para tenis,85.00,55,Adidas,si,no,"38,40,42","Blanco,Negro,Verde",,,color
+Zapatilla Platform,88.00,Zapatillas,Zapatilla plataforma mujer,78.00,65,Fila,si,no,"36,38,40","Blanco,Rosa,Negro",,,color
+Zapatilla Hiking Trail,135.00,Zapatillas,Zapatilla para senderismo,115.00,40,The North Face,si,si,"40,42,44",,"Gore-Tex,Impermeable,Standard",,material
+Zapatilla Lifestyle,79.00,Zapatillas,Zapatilla casual diaria,69.00,90,Puma,si,no,"39,41,43","Gris,Negro,Azul",,,color
+Sudadera Hoodie Classic,75.00,Sudaderas,Sudadera con capucha algodón,65.00,80,Nike,si,si,"S,M,L,XL","Negro,Gris,Azul",,,color
+Sudadera Crew Neck,65.00,Sudaderas,Sudadera cuello redondo,55.00,70,Adidas,si,no,"S,M,L","Gris,Negro,Verde",,,color
+Sudadera Zip Full,85.00,Sudaderas,Sudadera con cremallera completa,75.00,60,Puma,si,no,"M,L,XL","Negro,Rojo,Azul",,,color
+Sudadera Oversize,70.00,Sudaderas,Sudadera corte oversized,60.00,90,Champion,si,si,"S,M,L",,,"Oversize,Regular,Slim",estilo
+Sudadera Tech Fleece,95.00,Sudaderas,Sudadera tech fleece premium,85.00,50,Nike,si,si,"S,M,L,XL",,"Fleece,Tech Fleece,Cotton",,material
+Sudadera Vintage Logo,68.00,Sudaderas,Sudadera con logo vintage,58.00,75,Fila,si,no,"M,L,XL","Azul,Rojo,Blanco",,,color
+Sudadera Sport Essential,72.00,Sudaderas,Sudadera deportiva básica,62.00,85,Under Armour,si,no,"S,M,L","Negro,Gris,Navy",,,color
+Sudadera Sherpa,92.00,Sudaderas,Sudadera forro sherpa,82.00,50,Patagonia,si,si,"S,M,L,XL",,"Sherpa,Fleece,Polar",,material
+Sudadera Minimalist,65.00,Sudaderas,Sudadera estilo minimalista,,95,Uniqlo,si,no,"S,M,L","Gris,Beige,Negro",,,color
+Sudadera Street Art,82.00,Sudaderas,Sudadera con estampado artístico,72.00,45,Supreme,si,si,"M,L,XL","Negro,Blanco,Multicolor",,,color
+Short Deportivo Pro,35.00,Shorts,Short deportivo transpirable,29.00,100,Nike,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Short Running Light,38.00,Shorts,Short para running ultraligero,32.00,90,Adidas,si,si,"S,M,L",,"Mesh,Dry-Fit,Woven",,material
+Short Basketball,42.00,Shorts,Short estilo basketball,35.00,70,Nike,si,no,"M,L,XL","Negro,Blanco,Rojo",,,color
+Short Casual Chino,45.00,Shorts,Short casual tipo chino,38.00,80,Dockers,si,no,"30,32,34","Beige,Navy,Oliva",,,color
+Short Training Gym,32.00,Shorts,Short para gimnasio,28.00,110,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Short Swim Beach,40.00,Shorts,Short de baño para playa,35.00,75,Quiksilver,si,no,"S,M,L",,"Quick-Dry,Standard,Stretch",,material
+Short Cargo Urban,48.00,Shorts,Short cargo estilo urbano,42.00,60,Carhartt,si,no,"30,32,34,36","Caqui,Negro,Oliva",,,color
+Short Compression,35.00,Shorts,Short de compresión deportivo,30.00,85,Nike,si,no,"S,M,L",,,"Compresión,Regular,Loose",estilo
+Short Tennis,38.00,Shorts,Short para tenis,32.00,65,Adidas,si,no,"S,M,L,XL","Blanco,Negro,Azul",,,color
+Short Denim,48.00,Shorts,Short de mezclilla,42.00,65,Levi's,si,no,"28,30,32,34","Azul,Negro",,,color
+Camiseta Basic Tee,25.00,Camisetas,Camiseta básica algodón,19.00,150,Uniqlo,si,no,"S,M,L,XL","Negro,Blanco,Gris",,,color
+Camiseta Logo Print,32.00,Camisetas,Camiseta con logo estampado,26.00,120,Nike,si,si,"S,M,L","Negro,Blanco,Rojo",,,color
+Camiseta V-Neck,28.00,Camisetas,Camiseta cuello V,22.00,100,H&M,si,no,"S,M,L,XL",,,"V-Neck,Crew,Scoop",estilo
+Camiseta Graphic Art,35.00,Camisetas,Camiseta con gráfico artístico,29.00,80,Vans,si,no,"S,M,L","Negro,Blanco,Tie-Dye",,,color
+Camiseta Sport Tech,38.00,Camisetas,Camiseta deportiva tech,32.00,90,Under Armour,si,no,"S,M,L,XL",,"Poliéster,Dry-Fit,Algodón",,material
+Camiseta Oversize,30.00,Camisetas,Camiseta corte oversized,25.00,110,Zara,si,si,"S,M,L",,,"Oversize,Boxy,Regular",estilo
+Camiseta Long Sleeve,35.00,Camisetas,Camiseta manga larga,29.00,85,Carhartt,si,no,"S,M,L,XL","Negro,Blanco,Gris",,,color
+Camiseta Henley,32.00,Camisetas,Camiseta estilo henley,27.00,70,Levi's,si,no,"S,M,L",,,"Henley,Polo,Crew",estilo
+Camiseta Premium,32.00,Camisetas,Camiseta premium peso medio,27.00,130,Champion,si,si,"S,M,L,XL",,"Algodón Pima,Algodón,Jersey",,material
+Camiseta Tie-Dye,38.00,Camisetas,Camiseta efecto tie-dye,32.00,60,Urban Outfitters,si,no,"S,M,L","Multicolor,Azul,Rosa",,,color
+Pantalón Jogger Sport,55.00,Pantalones,Pantalón jogger deportivo,45.00,80,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Chino Classic,65.00,Pantalones,Pantalón chino clásico,55.00,70,Dockers,si,no,"30,32,34,36","Beige,Navy,Gris",,,color
+Pantalón Cargo,68.00,Pantalones,Pantalón cargo multibolsillos,58.00,60,Carhartt,si,no,"30,32,34",,,"Cargo,Slim,Regular",estilo
+Pantalón Track,52.00,Pantalones,Pantalón track deportivo,45.00,85,Adidas,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Pantalón Denim Slim,75.00,Pantalones,Jeans slim fit,65.00,55,Levi's,si,si,"30,32,34,36",,,"Slim,Skinny,Regular",estilo
+Pantalón Tech Fleece,85.00,Pantalones,Pantalón tech fleece,75.00,50,Nike,si,si,"S,M,L,XL",,"Tech Fleece,Fleece,French Terry",,material
+Pantalón Wide Leg,62.00,Pantalones,Pantalón corte ancho,52.00,65,Zara,si,no,"S,M,L","Negro,Beige,Marrón",,,color
+Pantalón Corduroy,70.00,Pantalones,Pantalón de pana,60.00,45,Uniqlo,si,no,"30,32,34",,"Pana,Algodón,Denim",,material
+Pantalón Stretch,58.00,Pantalones,Pantalón stretch confortable,48.00,75,H&M,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Carpenter,65.00,Pantalones,Pantalón carpintero,55.00,55,Dickies,si,no,"30,32,34",,,"Carpenter,Work,Relaxed",estilo
+Gorra Baseball Cap,25.00,Accesorios,Gorra estilo baseball,20.00,120,Nike,si,no,,"Negro,Blanco,Azul",,,color
+Gorra Snapback,28.00,Accesorios,Gorra snapback ajustable,23.00,100,New Era,si,si,,"Negro,Rojo,Gris",,,color
+Gorra Dad Hat,22.00,Accesorios,Gorra estilo dad hat,18.00,110,Adidas,si,no,,,"Algodón,Canvas,Denim",,material
+Gorra Trucker,26.00,Accesorios,Gorra trucker con malla,21.00,90,Vans,si,no,,"Negro,Azul,Rojo",,,color
+Gorra Bucket,30.00,Accesorios,Sombrero bucket,25.00,70,Champion,si,no,,,"Canvas,Nylon,Terry",,material
+Mochila Urban Pack,65.00,Mochilas,Mochila urbana resistente,55.00,60,Nike,si,si,,"Negro,Gris,Navy",,,color
+Mochila School,45.00,Mochilas,Mochila escolar básica,38.00,80,JanSport,si,no,,"Rojo,Azul,Negro",,,color
+Mochila Laptop Pro,75.00,Mochilas,Mochila con compartimento laptop,65.00,50,Herschel,si,si,,,"Nylon,Canvas,Poliéster",,material
+Mochila Mini,35.00,Mochilas,Mochila mini compacta,30.00,90,Fjällräven,si,no,,"Amarillo,Rosa,Verde",,,color
+Mochila Travel,85.00,Mochilas,Mochila de viaje expandible,75.00,40,The North Face,si,no,,,"Impermeable,Standard,Ligera",,material
+Cinturón Classic,35.00,Accesorios,Cinturón de cuero clásico,30.00,100,Levi's,si,no,"S,M,L",,"Cuero,Cuero Genuino,Sintético",,material
+Cinturón Canvas,28.00,Accesorios,Cinturón de lona,23.00,110,Dickies,si,no,,"Negro,Azul,Verde",,,color
+Calcetines Pack x3,18.00,Accesorios,Pack de 3 calcetines deportivos,15.00,150,Nike,si,no,"S,M,L","Negro,Blanco,Gris",,,color
+Calcetines Premium,25.00,Accesorios,Calcetines premium algodón,20.00,120,Stance,si,no,"S,M,L",,"Algodón,Bambú,Merino",,material
+Bufanda Knit,38.00,Accesorios,Bufanda tejida de lana,32.00,60,Zara,si,no,,,"Lana,Acrílico,Cashmere",,material
+Polo Essential Navy,48.00,Polos,Polo esencial color navy,40.00,85,Gap,si,no,"S,M,L,XL","Navy,Blanco,Gris",,,color
+Polo Weekend,42.00,Polos,Polo casual de fin de semana,35.00,95,Old Navy,si,no,"S,M,L","Azul,Verde,Coral",,,color
+Polo Performance Plus,62.00,Polos,Polo alto rendimiento,52.00,65,Under Armour,si,si,"S,M,L,XL",,"Performance,Dry-Fit,Tech",,material
+Polo Heritage,58.00,Polos,Polo estilo heritage,48.00,55,Fred Perry,si,si,"M,L,XL","Negro,Blanco,Burgundy",,,color
+Polo Summer Fresh,45.00,Polos,Polo fresco para verano,38.00,100,H&M,si,no,"S,M,L,XL",,"Lino,Algodón,Blend",,material
+Zapatilla Air Max,175.00,Zapatillas,Zapatilla Air Max clásica,155.00,40,Nike,si,si,"38,40,42,44","Negro,Blanco,Rojo",,,color
+Zapatilla Superstar,125.00,Zapatillas,Zapatilla Superstar icónica,110.00,55,Adidas,si,si,"38,40,42","Blanco,Negro,Dorado",,,color
+Zapatilla Old Skool,85.00,Zapatillas,Zapatilla Old Skool clásica,75.00,70,Vans,si,si,"38,40,42,44",,"Canvas,Suede,Leather",,material
+Zapatilla 574,120.00,Zapatillas,Zapatilla 574 retro,105.00,50,New Balance,si,no,"39,41,43","Gris,Azul,Verde",,,color
+Zapatilla Disruptor,110.00,Zapatillas,Zapatilla Disruptor chunky,95.00,60,Fila,si,no,"36,38,40","Blanco,Negro,Rosa",,,color
+Zapatilla React,145.00,Zapatillas,Zapatilla con tecnología React,130.00,45,Nike,si,no,"40,42,44",,"React,Air,Foam",,material
+Zapatilla Boost,160.00,Zapatillas,Zapatilla con tecnología Boost,140.00,35,Adidas,si,si,"38,40,42,44",,"Boost,Ultraboost,Bounce",,material
+Zapatilla Gel,135.00,Zapatillas,Zapatilla Gel amortiguación,120.00,50,Asics,si,no,"39,41,43","Negro,Azul,Blanco",,,color
+Zapatilla RS-X,130.00,Zapatillas,Zapatilla RS-X bold,115.00,55,Puma,si,no,"38,40,42","Blanco,Negro,Multicolor",,,color
+Zapatilla Club C,90.00,Zapatillas,Zapatilla Club C retro,80.00,65,Reebok,si,no,"38,40,42,44",,"Cuero,Sintético,Suede",,material
+Sudadera Essential,60.00,Sudaderas,Sudadera esencial básica,50.00,100,Nike,si,no,"S,M,L,XL","Negro,Gris,Blanco",,,color
+Sudadera College,72.00,Sudaderas,Sudadera estilo universitario,62.00,80,Champion,si,si,"M,L,XL",,,"Oversize,Regular,Boxy",estilo
+Sudadera Trefoil,78.00,Sudaderas,Sudadera con logo Trefoil,68.00,70,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Verde",,,color
+Sudadera Archive,75.00,Sudaderas,Sudadera colección archive,65.00,60,Puma,si,no,"S,M,L","Negro,Rojo,Azul",,,color
+Sudadera Premium Thick,88.00,Sudaderas,Sudadera gruesa premium,78.00,55,Carhartt,si,si,"M,L,XL",,"Fleece Grueso,French Terry,Waffle",,material
+Sudadera Half Zip,82.00,Sudaderas,Sudadera media cremallera,72.00,65,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Sudadera Graphic,70.00,Sudaderas,Sudadera con gráfico,60.00,75,Vans,si,no,"S,M,L","Negro,Blanco,Rojo",,,color
+Sudadera Crop,58.00,Sudaderas,Sudadera crop mujer,48.00,85,H&M,si,no,"XS,S,M",,,"Crop,Regular,Oversized",estilo
+Sudadera Tie-Dye,68.00,Sudaderas,Sudadera efecto tie-dye,58.00,50,Urban Outfitters,si,no,"S,M,L","Multicolor,Azul,Morado",,,color
+Sudadera Minimal,62.00,Sudaderas,Sudadera minimalista,52.00,90,Uniqlo,si,no,"S,M,L,XL","Negro,Gris,Beige",,,color
+Short Athletic,38.00,Shorts,Short atlético rendimiento,32.00,95,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Short Flex,35.00,Shorts,Short flex elástico,30.00,100,Under Armour,si,no,"S,M,L",,"Stretch,Woven,Knit",,material
+Short Essential,32.00,Shorts,Short esencial básico,27.00,110,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+Short Jersey,30.00,Shorts,Short jersey suave,25.00,120,Champion,si,no,"M,L,XL",,"Jersey,French Terry,Fleece",,material
+Short Mesh,36.00,Shorts,Short con malla transpirable,31.00,85,Nike,si,no,"S,M,L,XL","Negro,Rojo,Azul",,,color
+Short Board,45.00,Shorts,Short de tabla surf,38.00,70,Billabong,si,no,"30,32,34",,,"Board,Hybrid,Volley",estilo
+Short Denim Cut,48.00,Shorts,Short de mezclilla cortado,42.00,65,Levi's,si,no,"28,30,32,34",,"Raw Denim,Stretch,Classic",,material
+Short Linen,42.00,Shorts,Short de lino verano,36.00,60,H&M,si,no,"S,M,L",,"Lino,Algodón,Blend",,material
+Short Tech,40.00,Shorts,Short tecnología moisture,35.00,80,Puma,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Short Vintage,38.00,Shorts,Short estilo vintage,32.00,75,Dickies,si,no,"30,32,34",,,"Vintage,Modern,Classic",estilo
+Camiseta Dry-Fit,38.00,Camisetas,Camiseta tecnología dry-fit,33.00,110,Nike,si,no,"S,M,L,XL",,"Dry-Fit,Climalite,Tech",,material
+Camiseta Essential,28.00,Camisetas,Camiseta esencial diaria,23.00,140,Uniqlo,si,no,"S,M,L,XL","Negro,Blanco,Gris,Navy",,,color
+Camiseta Stripe,35.00,Camisetas,Camiseta a rayas,30.00,90,H&M,si,no,"S,M,L",,,"Stripes,Solid,Print",estilo
+Camiseta Muscle,30.00,Camisetas,Camiseta sin mangas,25.00,100,Gym Shark,si,no,"S,M,L,XL",,,"Tank,Muscle,Sleeveless",estilo
+Camiseta Crop Tee,28.00,Camisetas,Camiseta crop mujer,24.00,95,Zara,si,no,"XS,S,M","Negro,Blanco,Rosa",,,color
+Camiseta Band,35.00,Camisetas,Camiseta estilo banda,30.00,80,Urban Outfitters,si,no,"S,M,L",,"Algodón Vintage,Algodón,Jersey",,material
+Camiseta Thermal,38.00,Camisetas,Camiseta térmica,33.00,70,Dickies,si,no,"S,M,L,XL",,"Thermal,Waffle,Rib",,material
+Camiseta Ringer,32.00,Camisetas,Camiseta ringer retro,27.00,85,Champion,si,no,"S,M,L",,,"Ringer,Regular,Vintage",estilo
+Camiseta Raglan,35.00,Camisetas,Camiseta manga raglan,30.00,90,Vans,si,no,"S,M,L,XL","Blanco/Negro,Gris/Negro",,,color
+Camiseta Pocket,28.00,Camisetas,Camiseta con bolsillo,23.00,95,Dickies,si,no,"M,L,XL","Negro,Blanco,Navy",,,color
+Pantalón Essential,52.00,Pantalones,Pantalón esencial básico,45.00,85,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Slim Chino,62.00,Pantalones,Pantalón chino slim,52.00,70,Gap,si,no,"30,32,34,36",,,"Slim,Regular,Relaxed",estilo
+Pantalón Loose,58.00,Pantalones,Pantalón corte holgado,48.00,65,Carhartt,si,no,"30,32,34",,"Duck Canvas,Twill,Denim",,material
+Pantalón Athletic,55.00,Pantalones,Pantalón atlético,48.00,80,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Tapered,68.00,Pantalones,Pantalón corte tapered,58.00,55,Zara,si,no,"30,32,34,36",,,"Tapered,Slim,Straight",estilo
+Pantalón Utility,72.00,Pantalones,Pantalón utilitario,62.00,50,Dickies,si,no,"30,32,34",,"Twill,Ripstop,Canvas",,material
+Pantalón Sweat,48.00,Pantalones,Pantalón sudadera,42.00,90,Champion,si,no,"S,M,L,XL","Gris,Negro,Navy",,,color
+Pantalón Dress,85.00,Pantalones,Pantalón de vestir,75.00,45,H&M,si,no,"30,32,34,36",,"Lana,Poliéster,Blend",,material
+Pantalón Striped,58.00,Pantalones,Pantalón con raya lateral,48.00,60,Adidas,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Pantalón Bootcut,72.00,Pantalones,Jean bootcut,62.00,50,Wrangler,si,no,"30,32,34,36",,,"Bootcut,Straight,Flare",estilo
+Gorra Logo Essential,24.00,Accesorios,Gorra con logo bordado,20.00,130,Nike,si,no,,"Negro,Blanco,Rojo",,,color
+Gorra Vintage,28.00,Accesorios,Gorra estilo vintage,24.00,100,New Era,si,no,,,"Vintage,Washed,Classic",estilo
+Gorra Sport,26.00,Accesorios,Gorra deportiva,22.00,110,Adidas,si,no,,"Negro,Blanco,Azul",,,color
+Gorra Beanie,22.00,Accesorios,Gorro beanie de lana,18.00,90,Carhartt,si,no,,,"Lana,Acrílico,Cashmere",,material
+Gorra Flat,30.00,Accesorios,Gorra visera plana,25.00,80,New Era,si,no,,"Negro,Rojo,Azul",,,color
+Mochila Daypack,55.00,Mochilas,Mochila día a día,48.00,70,Nike,si,no,,"Negro,Gris,Azul",,,color
+Mochila Roll Top,72.00,Mochilas,Mochila roll top,65.00,50,Herschel,si,no,,,"Nylon,Cordura,Canvas",,material
+Mochila Sport,48.00,Mochilas,Mochila deportiva,42.00,80,Adidas,si,no,,"Negro,Rojo,Azul",,,color
+Mochila Sling,35.00,Mochilas,Mochila sling cruzada,30.00,90,Champion,si,no,,,"Nylon,Poliéster,Canvas",,material
+Mochila Drawstring,25.00,Mochilas,Mochila cordón gym,20.00,120,Nike,si,no,,"Negro,Rojo,Azul",,,color
+Polo Tech Moisture,58.00,Polos,Polo tecnología moisture wicking,48.00,75,Nike,si,no,"S,M,L,XL",,"Moisture Wicking,Dry-Fit,Tech",,material
+Polo Pique,52.00,Polos,Polo pique clásico,45.00,80,Lacoste,si,si,"S,M,L",,"Pique,Cotton,Premium",,material
+Polo Athletic,55.00,Polos,Polo atlético rendimiento,48.00,70,Under Armour,si,no,"S,M,L,XL","Negro,Rojo,Gris",,,color
+Polo Oxford,62.00,Polos,Polo tela oxford,55.00,60,Ralph Lauren,si,si,"M,L,XL","Azul,Blanco,Rosa",,,color
+Polo Zip,48.00,Polos,Polo con cremallera,42.00,85,Nike,si,no,"S,M,L",,,"Zip,Button,Quarter-Zip",estilo
+Polo Contrast,45.00,Polos,Polo con contraste,38.00,90,H&M,si,no,"S,M,L,XL","Negro/Blanco,Navy/Rojo",,,color
+Polo Long Sleeve,55.00,Polos,Polo manga larga,48.00,65,Fred Perry,si,no,"S,M,L","Negro,Blanco,Navy",,,color
+Polo Embroidered,52.00,Polos,Polo con bordado,45.00,75,Champion,si,no,"M,L,XL","Blanco,Negro,Verde",,,color
+Polo Fitted,48.00,Polos,Polo corte ajustado,42.00,80,Zara,si,no,"S,M,L",,,"Fitted,Slim,Regular",estilo
+Polo Resort,50.00,Polos,Polo estilo resort,43.00,70,Tommy Bahama,si,no,"M,L,XL",,"Lino,Rayon,Cotton",,material
+Zapatilla Jordan,195.00,Zapatillas,Zapatilla Jordan icónica,175.00,30,Nike,si,si,"40,42,44","Negro,Rojo,Blanco",,,color
+Zapatilla Stan Smith,115.00,Zapatillas,Zapatilla Stan Smith clásica,100.00,50,Adidas,si,si,"38,40,42,44",,"Leather,Primegreen,Vegan",,material
+Zapatilla Authentic,75.00,Zapatillas,Zapatilla Authentic simple,65.00,80,Vans,si,no,"38,40,42","Negro,Blanco,Rojo",,,color
+Zapatilla Fresh Foam,140.00,Zapatillas,Zapatilla Fresh Foam running,125.00,45,New Balance,si,no,"39,41,43",,"Fresh Foam,Fuel Cell,FuelCore",,material
+Zapatilla Suede,95.00,Zapatillas,Zapatilla Suede clásica,85.00,60,Puma,si,no,"38,40,42,44",,"Suede,Leather,Nubuck",,material
+Zapatilla Pegasus,135.00,Zapatillas,Zapatilla Pegasus running,120.00,50,Nike,si,no,"40,42,44","Negro,Blanco,Azul",,,color
+Zapatilla Gazelle,100.00,Zapatillas,Zapatilla Gazelle retro,90.00,55,Adidas,si,si,"38,40,42","Negro,Azul,Verde",,,color
+Zapatilla Era,80.00,Zapatillas,Zapatilla Era skate,70.00,70,Vans,si,no,"39,41,43",,"Canvas,Suede,Pro",,material
+Zapatilla Ventilator,110.00,Zapatillas,Zapatilla Ventilator retro,100.00,40,Reebok,si,no,"38,40,42,44","Blanco,Negro,Azul",,,color
+Zapatilla Future,125.00,Zapatillas,Zapatilla Future tech,115.00,45,Puma,si,no,"39,41,43",,"Nitro,Cell,Ignite",,material
+Sudadera Pullover,68.00,Sudaderas,Sudadera pullover clásica,58.00,85,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Sudadera Logo Large,75.00,Sudaderas,Sudadera logo grande,65.00,75,Champion,si,si,"M,L,XL",,,"Oversize,Regular,Slim",estilo
+Sudadera Washed,70.00,Sudaderas,Sudadera efecto lavado,60.00,65,H&M,si,no,"S,M,L",,"Washed,Vintage,Standard",,material
+Sudadera Cropped,55.00,Sudaderas,Sudadera corta mujer,48.00,80,Zara,si,no,"XS,S,M","Negro,Rosa,Blanco",,,color
+Sudadera Track Top,78.00,Sudaderas,Sudadera track top,68.00,70,Adidas,si,no,"S,M,L,XL","Negro,Azul,Verde",,,color
+Sudadera Reverse Weave,85.00,Sudaderas,Sudadera reverse weave,75.00,55,Champion,si,si,"M,L,XL",,"Reverse Weave,Standard,Heavy",,material
+Sudadera Quarter Zip,72.00,Sudaderas,Sudadera cuarto zip,62.00,60,Nike,si,no,"S,M,L,XL",,,"Quarter-Zip,Half-Zip,Full-Zip",estilo
+Sudadera Pocket,65.00,Sudaderas,Sudadera con bolsillo,55.00,75,Carhartt,si,no,"M,L,XL","Negro,Marrón,Gris",,,color
+Sudadera Split,70.00,Sudaderas,Sudadera diseño split,60.00,65,Urban Outfitters,si,no,"S,M,L","Negro/Gris,Azul/Blanco",,,color
+Sudadera Icon,72.00,Sudaderas,Sudadera icónica,62.00,80,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Short Performance,42.00,Shorts,Short alto rendimiento,36.00,90,Under Armour,si,si,"S,M,L,XL",,"Performance,HeatGear,ColdGear",,material
+Short Liner,38.00,Shorts,Short con liner interno,33.00,85,Nike,si,no,"S,M,L",,,"Con Liner,Sin Liner,Compression",estilo
+Short Sweat,35.00,Shorts,Short tipo sudadera,30.00,95,Champion,si,no,"M,L,XL","Gris,Negro,Navy",,,color
+Short French Terry,38.00,Shorts,Short french terry,33.00,80,Nike,si,no,"S,M,L,XL",,"French Terry,Fleece,Jersey",,material
+Short Golf,52.00,Shorts,Short para golf,45.00,60,Nike,si,no,"30,32,34,36","Beige,Navy,Gris",,,color
+Short Pleated,48.00,Shorts,Short plisado,42.00,55,Zara,si,no,"30,32,34",,,"Pleated,Flat Front,Relaxed",estilo
+Short Hybrid,45.00,Shorts,Short híbrido agua/tierra,38.00,70,Hurley,si,no,"30,32,34",,"Quick-Dry,Standard,Stretch",,material
+Short Chambray,42.00,Shorts,Short chambray,36.00,65,J.Crew,si,no,"30,32,34",,"Chambray,Lino,Cotton",,material
+Short Twill,40.00,Shorts,Short sarga algodón,35.00,75,Dockers,si,no,"30,32,34,36","Beige,Oliva,Navy",,,color
+Short Print,38.00,Shorts,Short estampado,32.00,60,H&M,si,no,"S,M,L",,,"Print,Solid,Pattern",estilo
+Camiseta Vintage,35.00,Camisetas,Camiseta efecto vintage,30.00,100,Champion,si,si,"S,M,L,XL",,"Vintage,Washed,New",,material
+Camiseta Athletic,38.00,Camisetas,Camiseta atlética,33.00,90,Under Armour,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Camiseta Heavyweight,32.00,Camisetas,Camiseta peso pesado,27.00,110,Carhartt,si,no,"M,L,XL",,"Heavyweight,Midweight,Lightweight",,material
+Camiseta Relaxed,30.00,Camisetas,Camiseta corte relajado,25.00,120,Uniqlo,si,no,"S,M,L,XL",,,"Relaxed,Fitted,Oversized",estilo
+Camiseta Mock Neck,35.00,Camisetas,Camiseta cuello alto,30.00,80,Zara,si,no,"S,M,L",,,"Mock Neck,Crew,Turtleneck",estilo
+Camiseta Scoop,28.00,Camisetas,Camiseta cuello scoop,24.00,95,H&M,si,no,"S,M,L","Negro,Blanco,Gris",,,color
+Camiseta Color Block,32.00,Camisetas,Camiseta color block,27.00,85,Adidas,si,no,"S,M,L,XL","Negro/Blanco,Azul/Rojo",,,color
+Camiseta Slub,30.00,Camisetas,Camiseta tela slub,25.00,100,Gap,si,no,"S,M,L,XL",,"Slub,Cotton,Linen Blend",,material
+Camiseta Performance,38.00,Camisetas,Camiseta rendimiento,33.00,90,Nike,si,no,"S,M,L,XL","Negro,Blanco,Azul",,,color
+Camiseta Fitted,32.00,Camisetas,Camiseta ajustada,27.00,110,Gym Shark,si,no,"S,M,L,XL",,,"Fitted,Athletic,Compression",estilo
+Pantalón Training,58.00,Pantalones,Pantalón entrenamiento,50.00,80,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Woven,55.00,Pantalones,Pantalón tejido,48.00,75,Adidas,si,no,"S,M,L,XL",,"Woven,Knit,Stretch",,material
+Pantalón Ponte,62.00,Pantalones,Pantalón ponte elegante,52.00,60,Zara,si,no,"30,32,34,36","Negro,Gris,Navy",,,color
+Pantalón Hybrid,58.00,Pantalones,Pantalón híbrido,50.00,70,Under Armour,si,no,"S,M,L,XL",,"Hybrid,Storm,ColdGear",,material
+Pantalón Paperboy,55.00,Pantalones,Pantalón estilo paperboy,48.00,55,H&M,si,no,"28,30,32",,,"Paperboy,High Rise,Regular",estilo
+Pantalón Mom Jean,68.00,Pantalones,Jean estilo mom,58.00,65,Levi's,si,no,"26,28,30,32",,,"Mom,Boyfriend,Baggy",estilo
+Pantalón Skinny,65.00,Pantalones,Jean skinny,55.00,70,Levi's,si,no,"28,30,32,34",,"Stretch,Rigid,Comfort",,material
+Pantalón Relaxed,68.00,Pantalones,Pantalón relajado,58.00,60,Carhartt,si,no,"30,32,34,36","Negro,Caqui,Marrón",,,color
+Pantalón Pleated,75.00,Pantalones,Pantalón plisado,65.00,45,Zara,si,no,"30,32,34",,,"Pleated,Flat Front,Cuffed",estilo
+Pantalón Motion,58.00,Pantalones,Pantalón motion,50.00,70,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Gorra Running,28.00,Accesorios,Gorra para correr,24.00,100,Nike,si,no,,,"Dry-Fit,AeroBill,Tech",,material
+Gorra Tennis,26.00,Accesorios,Gorra para tenis,22.00,90,Adidas,si,no,,"Blanco,Negro,Azul",,,color
+Gorra Golf,32.00,Accesorios,Gorra para golf,28.00,70,Nike,si,no,,,"Performance,Classic,Tour",,material
+Gorra Outdoor,30.00,Accesorios,Gorra outdoor,25.00,80,The North Face,si,no,,"Negro,Verde,Gris",,,color
+Gorra Logo Mini,24.00,Accesorios,Gorra logo pequeño,20.00,110,Champion,si,no,,"Negro,Blanco,Navy",,,color
+Mochila Gym,42.00,Mochilas,Mochila para gym,36.00,85,Under Armour,si,no,,"Negro,Gris,Rojo",,,color
+Mochila Weekender,75.00,Mochilas,Mochila fin de semana,65.00,50,Herschel,si,no,,,"Nylon,Cordura,Recycled",,material
+Mochila Tech,68.00,Mochilas,Mochila tecnológica,58.00,60,Nike,si,no,,"Negro,Gris,Olive",,,color
+Mochila Canvas,55.00,Mochilas,Mochila de lona,48.00,70,Fjällräven,si,no,,,"Canvas,G-1000,Vinylon",,material
+Mochila Compact,38.00,Mochilas,Mochila compacta,32.00,90,Adidas,si,no,,"Negro,Navy,Rojo",,,color
+Polo Ultra Soft,52.00,Polos,Polo ultra suave,45.00,85,Uniqlo,si,no,"S,M,L,XL",,"Supima,Pima,Egyptian",,material
+Polo Cool Max,58.00,Polos,Polo tecnología CoolMax,50.00,70,Nike,si,no,"S,M,L,XL","Negro,Azul,Blanco",,,color
+Polo Textured,55.00,Polos,Polo texturizado,48.00,75,Zara,si,no,"S,M,L",,"Textured,Pique,Knit",,material
+Polo Button Down,62.00,Polos,Polo cuello button down,54.00,60,Ralph Lauren,si,si,"M,L,XL","Blanco,Celeste,Rosa",,,color
+Polo Terry,48.00,Polos,Polo tela terry,42.00,80,H&M,si,no,"S,M,L,XL",,"Terry,Towel,French Terry",,material
+Polo Waffle,45.00,Polos,Polo textura waffle,38.00,90,Gap,si,no,"S,M,L",,"Waffle,Thermal,Rib",,material
+Polo Ribbed,50.00,Polos,Polo acanalado,43.00,75,Zara,si,no,"S,M,L","Negro,Blanco,Beige",,,color
+Polo Block,48.00,Polos,Polo diseño block,42.00,80,Adidas,si,no,"S,M,L,XL","Negro/Blanco,Azul/Blanco",,,color
+Polo Jacquard,58.00,Polos,Polo jacquard,50.00,65,Tommy Hilfiger,si,no,"M,L,XL",,"Jacquard,Pique,Jersey",,material
+Polo Tipped,52.00,Polos,Polo con ribetes,45.00,70,Fred Perry,si,si,"S,M,L","Negro,Blanco,Navy",,,color
+Zapatilla Lite Racer,85.00,Zapatillas,Zapatilla Lite Racer ligera,75.00,70,Adidas,si,no,"38,40,42,44","Negro,Blanco,Azul",,,color
+Zapatilla Roshe,95.00,Zapatillas,Zapatilla Roshe minimal,85.00,60,Nike,si,no,"39,41,43",,"Foam,Flyknit,Mesh",,material
+Zapatilla Sk8-Hi,95.00,Zapatillas,Zapatilla Sk8-Hi alta,85.00,65,Vans,si,si,"38,40,42,44","Negro,Blanco,Navy",,,color
+Zapatilla Classic Leather,100.00,Zapatillas,Zapatilla Classic Leather,90.00,55,Reebok,si,no,"38,40,42",,"Leather,Nubuck,Synthetic",,material
+Zapatilla Cali,90.00,Zapatillas,Zapatilla Cali plataforma,80.00,60,Puma,si,no,"36,38,40","Blanco,Negro,Rosa",,,color
+Zapatilla Cortez,95.00,Zapatillas,Zapatilla Cortez retro,85.00,50,Nike,si,si,"38,40,42,44",,"Leather,Nylon,Premium",,material
+Zapatilla Samba,105.00,Zapatillas,Zapatilla Samba clásica,95.00,55,Adidas,si,si,"38,40,42","Negro,Blanco,Verde",,,color
+Zapatilla Slip-On,70.00,Zapatillas,Zapatilla Slip-On fácil,62.00,75,Vans,si,no,"38,40,42,44","Negro,Checkerboard,Blanco",,,color
+Zapatilla Classic,80.00,Zapatillas,Zapatilla Classic versátil,72.00,65,Reebok,si,no,"39,41,43","Blanco,Negro,Navy",,,color
+Zapatilla Cell,115.00,Zapatillas,Zapatilla Cell tech,105.00,45,Puma,si,no,"40,42,44",,"Cell,RS,Nitro",,material
+Sudadera Badge,68.00,Sudaderas,Sudadera con badge,58.00,75,Adidas,si,no,"S,M,L,XL","Negro,Gris,Verde",,,color
+Sudadera Script,70.00,Sudaderas,Sudadera logo script,60.00,70,Champion,si,no,"M,L,XL",,,"Script,Block,Small Logo",estilo
+Sudadera Box Logo,78.00,Sudaderas,Sudadera box logo,68.00,60,Carhartt,si,si,"M,L,XL","Negro,Gris,Marrón",,,color
+Sudadera Essentials,65.00,Sudaderas,Sudadera esenciales,55.00,85,Fear of God,si,no,"S,M,L,XL",,"Heavyweight,Standard,Washed",,material
+Sudadera Embossed,75.00,Sudaderas,Sudadera logo en relieve,65.00,65,Nike,si,no,"S,M,L,XL",,,"Embossed,Print,Embroidered",estilo
+Sudadera Gradient,72.00,Sudaderas,Sudadera degradado,62.00,55,H&M,si,no,"S,M,L","Negro/Gris,Azul/Negro",,,color
+Sudadera Patch,68.00,Sudaderas,Sudadera con parche,58.00,70,Vans,si,no,"S,M,L,XL","Negro,Gris,Rojo",,,color
+Sudadera Distressed,75.00,Sudaderas,Sudadera efecto desgastado,65.00,50,Urban Outfitters,si,no,"S,M,L",,"Distressed,Vintage,New",,material
+Sudadera Reflective,82.00,Sudaderas,Sudadera con reflejante,72.00,45,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Short Core,35.00,Shorts,Short core básico,30.00,100,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Short Icon,38.00,Shorts,Short icónico,33.00,95,Adidas,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Short Dry,40.00,Shorts,Short tecnología dry,35.00,90,Under Armour,si,no,"S,M,L",,"Dry-Fit,HeatGear,Stretch",,material
+Short Woven,36.00,Shorts,Short tejido,31.00,100,Puma,si,no,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Short Colorblock,42.00,Shorts,Short colorblock,36.00,80,Champion,si,no,"M,L,XL","Negro/Rojo,Gris/Navy",,,color
+Short Retro,38.00,Shorts,Short estilo retro,32.00,85,Nike,si,no,"S,M,L",,,"Retro,Modern,Classic",estilo
+Short Elevated,45.00,Shorts,Short elevado,38.00,70,Lululemon,si,no,"S,M,L,XL",,"Luon,Nulu,Swift",,material
+Short Pace,40.00,Shorts,Short pace running,35.00,75,Nike,si,no,"S,M,L","Negro,Rojo,Azul",,,color
+Short Recovery,35.00,Shorts,Short recuperación,30.00,90,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Short Baseline,38.00,Shorts,Short baseline,33.00,85,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Camiseta Icon,35.00,Camisetas,Camiseta icónica,30.00,120,Nike,si,si,"S,M,L,XL","Negro,Blanco,Gris",,,color
+Camiseta Badge,32.00,Camisetas,Camiseta con badge,27.00,110,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Azul",,,color
+Camiseta Emblem,35.00,Camisetas,Camiseta emblema,30.00,100,Champion,si,no,"M,L,XL",,"Jersey,Cotton,Blend",,material
+Camiseta Core,28.00,Camisetas,Camiseta core básica,24.00,130,Uniqlo,si,no,"S,M,L,XL","Negro,Blanco,Gris",,,color
+Camiseta Tech Pack,42.00,Camisetas,Camiseta tech pack,36.00,80,Nike,si,no,"S,M,L,XL",,"Tech,Standard,Premium",,material
+Camiseta Statement,35.00,Camisetas,Camiseta statement,30.00,90,Zara,si,no,"S,M,L","Negro,Blanco,Rojo",,,color
+Camiseta Clean,30.00,Camisetas,Camiseta limpia,25.00,110,H&M,si,no,"S,M,L,XL",,,"Clean,Logo,Graphic",estilo
+Camiseta Text,32.00,Camisetas,Camiseta con texto,27.00,100,Vans,si,no,"S,M,L","Negro,Blanco,Rojo",,,color
+Camiseta Split,35.00,Camisetas,Camiseta split,30.00,85,Urban Outfitters,si,no,"S,M,L","Negro/Blanco,Gris/Negro",,,color
+Camiseta Pigment,38.00,Camisetas,Camiseta pigmento,33.00,75,Carhartt,si,no,"M,L,XL",,"Pigment Dyed,Garment Dyed,Standard",,material
+Pantalón Core,52.00,Pantalones,Pantalón core básico,45.00,90,Nike,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Pantalón Icon,58.00,Pantalones,Pantalón icónico,50.00,80,Adidas,si,no,"S,M,L,XL","Negro,Azul,Verde",,,color
+Pantalón Statement,62.00,Pantalones,Pantalón statement,52.00,70,Zara,si,no,"30,32,34,36","Negro,Beige,Gris",,,color
+Pantalón Tech Pack,75.00,Pantalones,Pantalón tech pack,65.00,55,Nike,si,si,"S,M,L,XL",,"Tech Fleece,Woven,Knit",,material
+Pantalón Street,58.00,Pantalones,Pantalón street,50.00,75,Carhartt,si,no,"30,32,34",,"Duck,Canvas,Twill",,material
+Pantalón Modern,65.00,Pantalones,Pantalón moderno,55.00,65,H&M,si,no,"30,32,34,36","Negro,Gris,Navy",,,color
+Pantalón Clean,55.00,Pantalones,Pantalón limpio,48.00,80,Uniqlo,si,no,"30,32,34",,,"Tapered,Straight,Slim",estilo
+Pantalón Elevated,72.00,Pantalones,Pantalón elevado,62.00,50,Lululemon,si,no,"S,M,L,XL",,"ABC,Commission,Utilitech",,material
+Pantalón Flow,55.00,Pantalones,Pantalón flow,48.00,75,Puma,si,no,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Pantalón Work,65.00,Pantalones,Pantalón de trabajo,55.00,60,Dickies,si,no,"30,32,34,36",,"Work,874,Flex",,material

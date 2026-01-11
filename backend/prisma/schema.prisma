@@ -1,0 +1,418 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  EDITOR
+}
+
+enum VariantDisplayType {
+  BUTTONS
+  DROPDOWN
+  IMAGES
+}
+
+enum StatType {
+  PAGE_VIEW
+  PRODUCT_VIEW
+  WHATSAPP_CLICK
+  CATEGORY_VIEW
+  SEARCH
+  ADD_TO_CART
+  CHECKOUT_START
+  PURCHASE
+}
+
+enum PixelType {
+  GOOGLE_ADS
+  FACEBOOK
+  TIKTOK
+  SNAPCHAT
+  PINTEREST
+  TWITTER
+  LINKEDIN
+  CUSTOM
+}
+
+// ============================================
+// SETTINGS (Configuracion del negocio)
+// ============================================
+
+model Settings {
+  id              String   @id @default("main")
+  businessName    String   @map("business_name")
+  logo            String?
+  logoPublicId    String?  @map("logo_public_id")
+  whatsapp        String
+  currency        String   @default("S/")
+  description     String?
+  address         String?
+  schedule        String?
+  cartEnabled     Boolean  @default(true) @map("cart_enabled")
+  welcomeMessage  String?  @map("welcome_message")
+
+  // SEO Global
+  seoTitle        String?  @map("seo_title")
+  seoDescription  String?  @map("seo_description")
+  seoKeywords     String?  @map("seo_keywords")
+  ogImage         String?  @map("og_image")
+  ogImagePublicId String?  @map("og_image_public_id")
+
+  // Tracking & Ads
+  googleAnalyticsId  String? @map("google_analytics_id")
+  googleTagManagerId String? @map("google_tag_manager_id")
+  facebookPixelId    String? @map("facebook_pixel_id")
+  tiktokPixelId      String? @map("tiktok_pixel_id")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+// ============================================
+// USER (Usuarios admin)
+// ============================================
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String
+  name         String
+  role         UserRole @default(EDITOR)
+  refreshToken String?  @map("refresh_token")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ============================================
+// BRAND (Marcas)
+// ============================================
+
+model Brand {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  logo          String?
+  logoPublicId  String?  @map("logo_public_id")
+  description   String?
+  order         Int      @default(0)
+  isActive      Boolean  @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  products Product[]
+
+  @@index([isActive, order])
+  @@map("brands")
+}
+
+// ============================================
+// CATEGORY (Categorias - Jerárquicas como WooCommerce)
+// ============================================
+
+model Category {
+  id             String    @id @default(cuid())
+  parentId       String?   @map("parent_id")
+  name           String
+  slug           String    @unique
+  description    String?
+  image          String?
+  imagePublicId  String?   @map("image_public_id")
+  level          Int       @default(0) // 0 = raíz, 1 = hijo, 2 = nieto, etc.
+  order          Int       @default(0)
+  isActive       Boolean   @default(true) @map("is_active")
+
+  // SEO por categoria
+  seoTitle       String?   @map("seo_title")
+  seoDescription String?   @map("seo_description")
+  seoKeywords    String?   @map("seo_keywords")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations - Jerarquía
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Category[] @relation("CategoryHierarchy")
+
+  // Relations - Productos
+  products Product[]
+
+  @@index([parentId])
+  @@index([isActive, order])
+  @@index([level, isActive])
+  @@map("categories")
+}
+
+// ============================================
+// PRODUCT (Productos)
+// ============================================
+
+model Product {
+  id              String   @id @default(cuid())
+  categoryId      String   @map("category_id")
+  brandId         String?  @map("brand_id")
+  name            String
+  slug            String   @unique
+  description     String?
+  price           Decimal  @db.Decimal(10, 2)
+  salePrice       Decimal? @map("sale_price") @db.Decimal(10, 2)
+  discountPercent Int?     @map("discount_percent") // Porcentaje de descuento (0-100)
+  showPrice       Boolean  @default(true) @map("show_price")
+  stock           Int?
+  showStock       Boolean  @default(false) @map("show_stock")
+  stockMessage    String?  @map("stock_message")
+  isActive        Boolean  @default(true) @map("is_active")
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  order           Int      @default(0)
+
+  // SEO por producto
+  seoTitle       String? @map("seo_title")
+  seoDescription String? @map("seo_description")
+  seoKeywords    String? @map("seo_keywords")
+
+  // Imágenes vinculadas a tipo de variante (ej: Color, Sabor, Material)
+  imageVariantTypeId String? @map("image_variant_type_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  category           Category                @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brand              Brand?                  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  imageVariantType   VariantType?            @relation("ProductImageVariantType", fields: [imageVariantTypeId], references: [id], onDelete: SetNull)
+  images             ProductImage[]
+  variantValueImages VariantValueImage[]     // Imágenes por valor de variante (Color=Negro, Sabor=Chocolate)
+  variantValues      ProductVariantValue[]   // Valores de variante del producto principal
+  variants           ProductVariant[]        // Sub-productos
+  stats              ProductStat[]
+
+  @@index([categoryId, isActive, order])
+  @@index([brandId, isActive])
+  @@index([isActive, isFeatured])
+  @@index([slug])
+  @@index([imageVariantTypeId])
+  @@map("products")
+}
+
+// ============================================
+// PRODUCT_IMAGE (Imagenes del producto)
+// ============================================
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String   @map("product_id")
+  url       String
+  publicId  String   @map("public_id")
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, order])
+  @@map("product_images")
+}
+
+// ============================================
+// VARIANT_TYPE (Tipos de variante GLOBALES)
+// Ejemplo: "Talla", "Color", "Material", "Tamaño"
+// Se crean desde el sidebar y se usan en todos los productos
+// ============================================
+
+model VariantType {
+  id          String   @id @default(cuid())
+  name        String   @unique // Talla, Color, Material, Tamaño
+  description String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  values               VariantTypeValue[]            // Valores predefinidos (S, M, L, XL)
+  productValues        ProductVariantValue[]
+  productVariantValues ProductVariantVariantValue[]
+  valueImages          VariantValueImage[]           // Imágenes vinculadas a valores
+  productsWithImages   Product[]                     @relation("ProductImageVariantType")
+
+  @@index([isActive, order])
+  @@map("variant_types")
+}
+
+// ============================================
+// VARIANT_VALUE_IMAGE (Imágenes por valor de variante)
+// Ejemplo: Color "Negro" tiene 3 imágenes, "Blanco" tiene 2
+// Funciona para cualquier tipo: Color, Sabor, Material, Diseño, etc.
+// ============================================
+
+model VariantValueImage {
+  id            String   @id @default(cuid())
+  productId     String   @map("product_id")
+  variantTypeId String   @map("variant_type_id")
+  value         String   // El valor: Negro, Chocolate, Roble, Floral, etc.
+  url           String
+  publicId      String   @map("public_id")
+  order         Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantType VariantType @relation(fields: [variantTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, variantTypeId, value, url]) // No duplicar misma imagen para mismo valor
+  @@index([productId, variantTypeId, value, order])
+  @@map("variant_value_images")
+}
+
+// ============================================
+// VARIANT_TYPE_VALUE (Valores predefinidos de cada tipo)
+// Ejemplo: Tipo "Talla" tiene valores: S, M, L, XL, XXL
+// ============================================
+
+model VariantTypeValue {
+  id            String   @id @default(cuid())
+  variantTypeId String   @map("variant_type_id")
+  value         String   // S, M, L, Negro, Blanco, etc.
+  order         Int      @default(0)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  variantType VariantType @relation(fields: [variantTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([variantTypeId, value]) // No repetir valores en el mismo tipo
+  @@index([variantTypeId, isActive, order])
+  @@map("variant_type_values")
+}
+
+// ============================================
+// PRODUCT_VARIANT_VALUE (Valores de variante del PRODUCTO PRINCIPAL)
+// Ejemplo: Producto "Zapatilla Nike" tiene Talla=42, Color=Negro
+// ============================================
+
+model ProductVariantValue {
+  id            String   @id @default(cuid())
+  productId     String   @map("product_id")
+  variantTypeId String   @map("variant_type_id")
+  value         String   // El valor: 42, Negro, Grande, etc.
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantType VariantType @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, variantTypeId, value]) // Permite múltiples valores del mismo tipo, pero no duplicados
+  @@index([productId])
+  @@index([variantTypeId])
+  @@map("product_variant_values")
+}
+
+// ============================================
+// PRODUCT_VARIANT (Sub-productos / Variantes)
+// Igual al producto pero SIN SEO
+// Campos null heredan del producto padre
+// ============================================
+
+model ProductVariant {
+  id              String   @id @default(cuid())
+  productId       String   @map("product_id")
+  name            String?  // null = hereda del padre
+  description     String?  // null = hereda del padre
+  price           Decimal? @db.Decimal(10, 2) // null = hereda del padre
+  salePrice       Decimal? @map("sale_price") @db.Decimal(10, 2)
+  discountPercent Int?     @map("discount_percent") // Porcentaje de descuento (0-100)
+  stock           Int?     // null = hereda del padre
+  sku             String?  // SKU único para esta variante
+  image           String?  // null = hereda del padre
+  imagePublicId   String?  @map("image_public_id")
+  isActive        Boolean  @default(true) @map("is_active")
+  order           Int      @default(0)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  product       Product                      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantValues ProductVariantVariantValue[]
+
+  @@index([productId, isActive, order])
+  @@map("product_variants")
+}
+
+// ============================================
+// PRODUCT_VARIANT_VARIANT_VALUE (Valores de variante del SUB-PRODUCTO)
+// Ejemplo: Variante tiene Tallas=X,S,M, Color=Rojo (múltiples valores por tipo)
+// ============================================
+
+model ProductVariantVariantValue {
+  id               String   @id @default(cuid())
+  productVariantId String   @map("product_variant_id")
+  variantTypeId    String   @map("variant_type_id")
+  value            String   // El valor: X, S, M, Rojo, etc.
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  variantType    VariantType    @relation(fields: [variantTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([productVariantId, variantTypeId, value]) // Permite múltiples valores del mismo tipo, pero no duplicados
+  @@index([productVariantId])
+  @@index([variantTypeId])
+  @@map("product_variant_variant_values")
+}
+
+// ============================================
+// PRODUCT_STAT (Estadisticas)
+// ============================================
+
+model ProductStat {
+  id        String   @id @default(cuid())
+  productId String?  @map("product_id")
+  type      StatType
+  date      DateTime @db.Date
+  count     Int      @default(1)
+  metadata  Json?
+
+  // Relations
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, type, date])
+  @@index([type, date])
+  @@index([productId, type])
+  @@map("product_stats")
+}
+
+// ============================================
+// TRACKING_PIXEL (Pixeles de Ads adicionales)
+// ============================================
+
+model TrackingPixel {
+  id        String    @id @default(cuid())
+  name      String
+  type      PixelType
+  pixelId   String    @map("pixel_id")
+  isActive  Boolean   @default(true) @map("is_active")
+  config    Json?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("tracking_pixels")
+}

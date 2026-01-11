@@ -1,0 +1,81 @@
+nombre,precio,categoria,descripcion,precio_oferta,stock,marca,activo,destacado,variante_talla,variante_color,variante_material,variante_estilo,variante_imagen
+Chaqueta Windrunner,129.99,Chaquetas,Chaqueta cortavientos clásica,109.99,45,Nike,si,si,"S,M,L,XL","Negro,Blanco,Azul",,,color
+Bomber MA-1 Alpha,159.99,Chaquetas,Bomber militar reversible,139.99,35,Alpha Industries,si,si,"S,M,L,XL","Negro,Verde Oliva,Navy",,,color
+Track Jacket Firebird,89.99,Chaquetas,Chaqueta track Originals,79.99,55,Adidas,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Denim Jacket Trucker,99.99,Chaquetas,Chaqueta denim clásica,89.99,40,Levi's,si,si,"S,M,L,XL","Azul Claro,Azul Oscuro,Negro",,,color
+Coach Jacket,79.99,Chaquetas,Chaqueta coach nylon,69.99,60,Carhartt WIP,si,no,"S,M,L,XL","Negro,Navy,Verde",,,color
+Puffer Jacket,149.99,Chaquetas,Chaqueta acolchada ligera,129.99,30,The North Face,si,si,"S,M,L,XL","Negro,Navy,Rojo",,,color
+Harrington Jacket,119.99,Chaquetas,Chaqueta Harrington clásica,99.99,40,Ben Sherman,si,no,"S,M,L,XL","Navy,Negro,Burgundy",,,color
+Fleece Jacket Denali,139.99,Chaquetas,Chaqueta polar Denali,119.99,35,The North Face,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Varsity Jacket,109.99,Chaquetas,Chaqueta universitaria,89.99,45,Champion,si,no,"S,M,L,XL","Negro/Blanco,Navy/Blanco,Rojo/Blanco",,,color
+Rain Jacket Torrentshell,129.99,Chaquetas,Chaqueta impermeable,109.99,40,Patagonia,si,no,"S,M,L,XL","Negro,Azul,Verde",,,color
+Jeans 501 Original,89.99,Jeans,Jeans rectos originales,79.99,70,Levi's,si,si,"28,30,32,34,36","Azul Medio,Azul Oscuro,Negro",,,color
+Jeans 511 Slim,85.00,Jeans,Jeans slim fit,75.00,65,Levi's,si,si,"28,30,32,34,36","Azul,Negro,Gris",,,color
+Jeans Skinny Hi-Rise,79.99,Jeans,Jeans skinny tiro alto,69.99,55,Guess,si,no,"24,26,28,30,32","Azul,Negro,Blanco",,,color
+Jeans Straight Fit,75.00,Jeans,Jeans corte recto,65.00,60,Wrangler,si,no,"28,30,32,34,36","Azul,Negro",,,color
+Jeans Relaxed Fit,82.00,Jeans,Jeans corte relajado,72.00,50,Diesel,si,no,"28,30,32,34,36","Azul Medio,Negro",,,color
+Jeans Mom Fit,69.99,Jeans,Jeans mom vintage,59.99,45,Pull&Bear,si,no,"24,26,28,30,32","Azul Claro,Azul Medio",,,color
+Jeans Cargo,95.00,Jeans,Jeans cargo con bolsillos,85.00,40,G-Star RAW,si,no,"28,30,32,34,36","Negro,Caqui,Azul",,,color
+Jeans Bootcut,78.00,Jeans,Jeans bootcut clásico,68.00,35,True Religion,si,no,"28,30,32,34,36","Azul,Negro",,,color
+Jeans Ripped,72.00,Jeans,Jeans con rotos,62.00,55,Zara,si,no,"28,30,32,34,36","Azul Claro,Azul Medio,Negro",,,color
+Jeans Wide Leg,85.00,Jeans,Jeans pierna ancha,75.00,40,Mango,si,no,"24,26,28,30,32","Azul,Blanco,Negro",,,color
+Camisa Oxford,59.99,Camisas,Camisa Oxford clásica,49.99,80,Ralph Lauren,si,si,"S,M,L,XL","Blanco,Azul Claro,Rosa",,,color
+Camisa Lino,69.99,Camisas,Camisa de lino verano,59.99,60,Massimo Dutti,si,no,"S,M,L,XL","Blanco,Beige,Azul Claro",,,color
+Camisa Denim,55.00,Camisas,Camisa vaquera western,45.00,55,Levi's,si,no,"S,M,L,XL","Azul Claro,Azul Medio",,,color
+Camisa Franela,49.99,Camisas,Camisa franela cuadros,39.99,70,Dickies,si,no,"S,M,L,XL","Rojo/Negro,Azul/Negro,Verde/Negro",,,color
+Camisa Hawaiana,45.00,Camisas,Camisa estampado tropical,35.00,65,H&M,si,no,"S,M,L,XL","Azul,Verde,Rojo",,,color
+Camisa Popelín,65.00,Camisas,Camisa popelín slim,55.00,50,Hugo Boss,si,si,"S,M,L,XL","Blanco,Azul,Negro",,,color
+Camisa Cuadros Vichy,52.00,Camisas,Camisa cuadros vichy,42.00,55,Gant,si,no,"S,M,L,XL","Azul/Blanco,Rojo/Blanco,Verde/Blanco",,,color
+Camisa Manga Corta,42.00,Camisas,Camisa manga corta casual,32.00,75,Uniqlo,si,no,"S,M,L,XL","Blanco,Negro,Azul",,,color
+Camisa Overshirt,79.99,Camisas,Sobrecamisa algodón grueso,69.99,40,Carhartt WIP,si,no,"S,M,L,XL","Verde,Negro,Marrón",,,color
+Camisa Rayas,58.00,Camisas,Camisa rayas clásica,48.00,60,Tommy Hilfiger,si,no,"S,M,L,XL","Azul/Blanco,Rosa/Blanco,Navy/Blanco",,,color
+Vestido Midi Floral,79.99,Vestidos,Vestido midi estampado flores,69.99,40,Zara,si,si,"XS,S,M,L","Negro,Azul,Rosa",,,color
+Vestido Camisero,69.99,Vestidos,Vestido camisero algodón,59.99,45,Mango,si,no,"XS,S,M,L","Blanco,Beige,Azul",,,color
+Vestido Slip Satén,89.99,Vestidos,Vestido lencero satén,79.99,35,& Other Stories,si,si,"XS,S,M,L","Negro,Champagne,Burdeos",,,color
+Vestido Punto,59.99,Vestidos,Vestido de punto ajustado,49.99,50,H&M,si,no,"XS,S,M,L","Negro,Gris,Camel",,,color
+Vestido Blazer,99.99,Vestidos,Vestido estilo blazer,89.99,30,Massimo Dutti,si,no,"XS,S,M,L","Negro,Navy,Beige",,,color
+Vestido Maxi Boho,85.00,Vestidos,Vestido largo bohemio,75.00,40,Free People,si,no,"XS,S,M,L","Blanco,Terracota,Verde",,,color
+Vestido Mini,55.00,Vestidos,Vestido mini básico,45.00,55,Bershka,si,no,"XS,S,M,L","Negro,Blanco,Rojo",,,color
+Vestido Wrap,75.00,Vestidos,Vestido cruzado,65.00,45,Diane von Furstenberg,si,si,"XS,S,M,L","Negro,Estampado,Azul",,,color
+Vestido Denim,65.00,Vestidos,Vestido vaquero,55.00,50,Levi's,si,no,"XS,S,M,L","Azul Claro,Azul Medio",,,color
+Vestido Cóctel,119.99,Vestidos,Vestido fiesta elegante,99.99,25,ASOS,si,no,"XS,S,M,L","Negro,Rojo,Verde Esmeralda",,,color
+Falda Plisada Midi,55.00,Faldas,Falda plisada midi,45.00,50,Zara,si,si,"XS,S,M,L","Negro,Beige,Verde",,,color
+Falda Denim Mini,45.00,Faldas,Minifalda vaquera,35.00,60,Levi's,si,no,"XS,S,M,L","Azul,Negro,Blanco",,,color
+Falda Lápiz,59.99,Faldas,Falda tubo elegante,49.99,40,Mango,si,no,"XS,S,M,L","Negro,Navy,Burdeos",,,color
+Falda Wrap,49.99,Faldas,Falda cruzada,39.99,45,H&M,si,no,"XS,S,M,L","Negro,Estampado,Marrón",,,color
+Falda Tennis,42.00,Faldas,Falda tenis plisada,32.00,55,American Apparel,si,no,"XS,S,M,L","Blanco,Negro,Navy",,,color
+Falda Cuero,79.99,Faldas,Falda piel sintética,69.99,35,& Other Stories,si,no,"XS,S,M,L","Negro,Marrón,Burdeos",,,color
+Falda Maxi,65.00,Faldas,Falda larga fluida,55.00,40,Free People,si,no,"XS,S,M,L","Negro,Blanco,Terracota",,,color
+Falda Cargo,52.00,Faldas,Falda cargo bolsillos,42.00,50,Bershka,si,no,"XS,S,M,L","Negro,Caqui,Beige",,,color
+Falda A-Line,48.00,Faldas,Falda línea A,38.00,55,Uniqlo,si,no,"XS,S,M,L","Negro,Navy,Gris",,,color
+Falda Punto,44.00,Faldas,Falda de punto acanalada,34.00,45,Pull&Bear,si,no,"XS,S,M,L","Negro,Gris,Camel",,,color
+Blusa Seda,89.99,Blusas,Blusa seda elegante,79.99,40,Massimo Dutti,si,si,"XS,S,M,L","Blanco,Negro,Champagne",,,color
+Blusa Lazo,55.00,Blusas,Blusa con lazo cuello,45.00,55,Zara,si,no,"XS,S,M,L","Blanco,Negro,Rosa",,,color
+Blusa Volantes,49.99,Blusas,Blusa con volantes,39.99,50,H&M,si,no,"XS,S,M,L","Blanco,Negro,Coral",,,color
+Blusa Crop,35.00,Blusas,Blusa cropped,25.00,65,Bershka,si,no,"XS,S,M,L","Blanco,Negro,Rojo",,,color
+Blusa Estampada,45.00,Blusas,Blusa estampado floral,35.00,50,Mango,si,no,"XS,S,M,L","Azul,Rosa,Verde",,,color
+Blusa Lino,59.99,Blusas,Blusa lino verano,49.99,45,& Other Stories,si,no,"XS,S,M,L","Blanco,Beige,Azul Claro",,,color
+Blusa Off-Shoulder,42.00,Blusas,Blusa hombros descubiertos,32.00,55,Pull&Bear,si,no,"XS,S,M,L","Blanco,Negro,Rojo",,,color
+Blusa Satén,52.00,Blusas,Blusa satén brillante,42.00,45,ASOS,si,no,"XS,S,M,L","Negro,Champagne,Verde",,,color
+Blusa Bordada,65.00,Blusas,Blusa bordado étnico,55.00,35,Free People,si,no,"XS,S,M,L","Blanco,Crema,Azul",,,color
+Blusa Encaje,58.00,Blusas,Blusa encaje romántica,48.00,40,Zara,si,no,"XS,S,M,L","Blanco,Negro,Nude",,,color
+Sneakers Retro Runner,119.99,Sneakers,Sneakers running retro,99.99,50,Saucony,si,si,"36,37,38,39,40,41,42,43,44","Gris,Navy,Verde",,,color
+Sneakers Platform,95.00,Sneakers,Sneakers plataforma,85.00,45,Superga,si,no,"36,37,38,39,40,41","Blanco,Negro,Rosa",,,color
+Sneakers Chunky,129.99,Sneakers,Sneakers chunky dad shoes,109.99,40,Fila,si,no,"36,37,38,39,40,41,42,43,44","Blanco,Negro,Beige",,,color
+Sneakers Canvas,55.00,Sneakers,Sneakers lona básicas,45.00,80,Converse,si,si,"36,37,38,39,40,41,42,43,44","Blanco,Negro,Rojo",,,color
+Sneakers Slip-On,65.00,Sneakers,Sneakers sin cordones,55.00,60,Vans,si,no,"36,37,38,39,40,41,42,43","Negro,Blanco,Checkerboard",,,color
+Sneakers High Top,89.99,Sneakers,Sneakers caña alta,79.99,55,Converse,si,no,"36,37,38,39,40,41,42,43,44","Negro,Blanco,Rojo",,,color
+Sneakers Tennis,79.99,Sneakers,Sneakers tenis clásicas,69.99,50,K-Swiss,si,no,"36,37,38,39,40,41,42,43,44","Blanco,Negro,Navy",,,color
+Sneakers Skate,75.00,Sneakers,Sneakers skate pro,65.00,55,DC Shoes,si,no,"38,39,40,41,42,43,44","Negro,Blanco,Gris",,,color
+Sneakers Minimal,99.99,Sneakers,Sneakers minimalistas piel,89.99,40,Common Projects,si,si,"36,37,38,39,40,41,42,43,44","Blanco,Negro,Gris",,,color
+Sneakers Sustainable,85.00,Sneakers,Sneakers materiales reciclados,75.00,45,Veja,si,si,"36,37,38,39,40,41,42,43,44","Blanco,Negro,Verde",,,color
+Bolso Tote,79.99,Bolsos,Bolso tote grande,69.99,40,Mango,si,si,,"Negro,Camel,Beige",,,color
+Bolso Crossbody,55.00,Bolsos,Bolso bandolera pequeño,45.00,55,H&M,si,no,,"Negro,Marrón,Rosa",,,color
+Bolso Shopper,89.99,Bolsos,Bolso shopper piel,79.99,35,Massimo Dutti,si,no,,"Negro,Camel,Cognac",,,color
+Bolso Bucket,65.00,Bolsos,Bolso saco,55.00,45,Zara,si,no,,"Negro,Beige,Verde",,,color
+Bolso Clutch,49.99,Bolsos,Bolso de mano fiesta,39.99,50,ASOS,si,no,,"Negro,Dorado,Plateado",,,color
+Bolso Saddle,75.00,Bolsos,Bolso saddle clásico,65.00,40,& Other Stories,si,no,,"Negro,Marrón,Tan",,,color
+Bolso Hobo,69.99,Bolsos,Bolso hobo media luna,59.99,45,Coach,si,no,,"Negro,Marrón,Burgundy",,,color
+Bolso Belt Bag,45.00,Bolsos,Riñonera moderna,35.00,60,Fila,si,no,,"Negro,Blanco,Rosa",,,color
+Bolso Mini,52.00,Bolsos,Mini bolso tendencia,42.00,50,Bershka,si,no,,"Negro,Rosa,Verde",,,color
+Bolso Canvas,59.99,Bolsos,Bolso tela logo,49.99,55,Guess,si,no,,"Beige,Negro,Rosa",,,color

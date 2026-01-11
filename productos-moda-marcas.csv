@@ -1,0 +1,76 @@
+nombre,precio,categoria,descripcion,precio_oferta,stock,marca,activo,destacado,variante_talla,variante_color,variante_material,variante_estilo,variante_imagen
+Polo Classic Fit Nike,49.99,Polos,Polo de algodón premium con logo bordado,39.99,100,Nike,si,si,"S,M,L,XL","Negro,Blanco,Azul",,,color
+Polo Sport Performance Adidas,55.00,Polos,Polo deportivo Climalite,45.00,80,Adidas,si,si,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+Polo Pique Lacoste,89.99,Polos,Polo clásico de piqué con cocodrilo,79.99,60,Lacoste,si,si,"S,M,L,XL","Verde,Azul,Blanco",,,color
+Polo Tech Under Armour,59.99,Polos,Polo técnico UA Tech,49.99,70,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Polo Twin Tipped Fred Perry,95.00,Polos,Polo icónico con ribetes,85.00,50,Fred Perry,si,si,"S,M,L","Navy,Blanco,Burgundy",,,color
+Polo Custom Slim Ralph Lauren,99.99,Polos,Polo slim fit con logo pony,89.99,45,Ralph Lauren,si,si,"S,M,L,XL","Blanco,Azul,Rosa",,,color
+Polo Essential Tommy Hilfiger,79.99,Polos,Polo algodón premium Tommy,69.99,55,Tommy Hilfiger,si,no,"S,M,L,XL","Blanco,Navy,Rojo",,,color
+Polo Heritage Puma,45.00,Polos,Polo casual con logo Cat,35.00,90,Puma,si,no,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+Polo Archive Fila,42.00,Polos,Polo retro con logo F-Box,32.00,75,Fila,si,no,"S,M,L","Blanco,Navy,Rojo",,,color
+Polo Croc Logo Lacoste,95.00,Polos,Polo premium petit piqué,85.00,40,Lacoste,si,si,"S,M,L,XL","Negro,Verde,Blanco",,,color
+Air Max 90 Nike,149.99,Zapatillas,Zapatillas icónicas Air Max,129.99,50,Nike,si,si,"38,39,40,41,42,43,44","Blanco,Negro,Rojo",,,color
+Ultraboost 22 Adidas,189.99,Zapatillas,Zapatillas running Boost,169.99,40,Adidas,si,si,"38,39,40,41,42,43,44","Negro,Blanco,Azul",,,color
+Old Skool Vans,75.00,Zapatillas,Zapatillas clásicas skate,65.00,80,Vans,si,si,"38,39,40,41,42,43","Negro,Blanco,Checkerboard",,,color
+574 Core New Balance,99.99,Zapatillas,Zapatillas lifestyle clásicas,89.99,60,New Balance,si,no,"38,39,40,41,42,43,44","Gris,Navy,Rojo",,,color
+Suede Classic Puma,89.99,Zapatillas,Zapatillas de gamuza icónicas,79.99,55,Puma,si,no,"38,39,40,41,42,43","Negro,Azul,Rojo",,,color
+Club C 85 Reebok,85.00,Zapatillas,Zapatillas tenis retro,75.00,65,Reebok,si,no,"38,39,40,41,42,43,44","Blanco,Verde,Navy",,,color
+Stan Smith Adidas,99.99,Zapatillas,Zapatillas tenis clásicas,89.99,70,Adidas,si,si,"38,39,40,41,42,43,44","Blanco,Verde,Navy",,,color
+Air Force 1 Nike,119.99,Zapatillas,Zapatillas basketball icónicas,109.99,55,Nike,si,si,"38,39,40,41,42,43,44","Blanco,Negro,Rojo",,,color
+Gazelle Adidas,95.00,Zapatillas,Zapatillas retro de gamuza,85.00,60,Adidas,si,no,"38,39,40,41,42,43","Negro,Azul,Rojo",,,color
+Sk8-Hi Vans,85.00,Zapatillas,Zapatillas altas skate,75.00,75,Vans,si,no,"38,39,40,41,42,43","Negro,Blanco,Rojo",,,color
+Hoodie Swoosh Nike,75.00,Sudaderas,Sudadera con capucha logo Swoosh,65.00,80,Nike,si,si,"S,M,L,XL","Negro,Gris,Blanco",,,color
+Trefoil Hoodie Adidas,79.99,Sudaderas,Sudadera con capucha Originals,69.99,70,Adidas,si,si,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Reverse Weave Champion,89.99,Sudaderas,Sudadera heavyweight premium,79.99,60,Champion,si,si,"S,M,L,XL","Gris,Negro,Burgundy",,,color
+Essential Hoodie Puma,59.99,Sudaderas,Sudadera con capucha ESS,49.99,90,Puma,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Fleece Hoodie Under Armour,69.99,Sudaderas,Sudadera Armour Fleece,59.99,65,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Logo Hoodie Tommy Hilfiger,99.99,Sudaderas,Sudadera con logo bordado,89.99,50,Tommy Hilfiger,si,si,"S,M,L,XL","Navy,Gris,Blanco",,,color
+Crew Neck Fila,55.00,Sudaderas,Sudadera cuello redondo vintage,45.00,75,Fila,si,no,"S,M,L,XL","Blanco,Navy,Rojo",,,color
+Archive Hoodie Reebok,65.00,Sudaderas,Sudadera con capucha Archive,55.00,70,Reebok,si,no,"S,M,L,XL","Negro,Gris,Blanco",,,color
+Tech Fleece Nike,119.99,Sudaderas,Sudadera Tech Fleece premium,109.99,45,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Adicolor Hoodie Adidas,85.00,Sudaderas,Sudadera Adicolor clásica,75.00,55,Adidas,si,no,"S,M,L,XL","Negro,Azul,Rojo",,,color
+Dri-FIT Short Nike,35.00,Shorts,Short deportivo Dri-FIT,29.00,120,Nike,si,si,"S,M,L,XL","Negro,Gris,Azul",,,color
+Tiro Short Adidas,32.00,Shorts,Short entrenamiento Tiro,25.00,100,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+UA Tech Short Under Armour,39.99,Shorts,Short técnico UA,32.99,80,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Essential Short Puma,29.99,Shorts,Short deportivo ESS,24.99,95,Puma,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Authentic Short Vans,45.00,Shorts,Short casual stretch,39.00,70,Vans,si,no,"28,30,32,34,36","Negro,Caqui,Navy",,,color
+Mesh Short Champion,35.00,Shorts,Short mesh deportivo,29.00,85,Champion,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Club Short Nike,39.99,Shorts,Short French terry Nike,34.99,75,Nike,si,no,"S,M,L,XL","Negro,Gris,Blanco",,,color
+3-Stripes Short Adidas,38.00,Shorts,Short clásico 3 rayas,32.00,90,Adidas,si,si,"S,M,L,XL","Negro,Navy,Rojo",,,color
+Training Short Reebok,32.00,Shorts,Short entrenamiento,26.00,80,Reebok,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Archive Short Fila,36.00,Shorts,Short retro Archive,30.00,65,Fila,si,no,"S,M,L,XL","Navy,Blanco,Rojo",,,color
+Sportswear Tee Nike,29.99,Camisetas,Camiseta básica algodón,24.99,150,Nike,si,si,"S,M,L,XL","Negro,Blanco,Gris",,,color
+Trefoil Tee Adidas,29.99,Camisetas,Camiseta logo Trefoil,24.99,140,Adidas,si,si,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Classic Tee Champion,25.00,Camisetas,Camiseta clásica logo C,19.99,130,Champion,si,no,"S,M,L,XL","Blanco,Gris,Negro",,,color
+Essential Tee Puma,24.99,Camisetas,Camiseta básica ESS,19.99,160,Puma,si,no,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+UA Tech Tee Under Armour,32.00,Camisetas,Camiseta técnica UA Tech,27.00,110,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Classic Box Tee Vans,29.99,Camisetas,Camiseta logo Box,24.99,100,Vans,si,no,"S,M,L,XL","Negro,Blanco,Rojo",,,color
+574 Tee New Balance,28.00,Camisetas,Camiseta logo NB,23.00,90,New Balance,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Logo Tee Tommy Hilfiger,45.00,Camisetas,Camiseta logo bordado,39.00,75,Tommy Hilfiger,si,no,"S,M,L,XL","Blanco,Navy,Rojo",,,color
+Croc Tee Lacoste,55.00,Camisetas,Camiseta logo cocodrilo,49.00,60,Lacoste,si,no,"S,M,L,XL","Blanco,Negro,Azul",,,color
+Archive Tee Fila,32.00,Camisetas,Camiseta vintage F-Box,27.00,85,Fila,si,no,"S,M,L,XL","Blanco,Navy,Rojo",,,color
+Tech Fleece Jogger Nike,99.99,Pantalones,Jogger Tech Fleece premium,89.99,60,Nike,si,si,"S,M,L,XL","Negro,Gris,Navy",,,color
+Tiro Pant Adidas,65.00,Pantalones,Pantalón entrenamiento Tiro,55.00,80,Adidas,si,no,"S,M,L,XL","Negro,Blanco,Navy",,,color
+Powerblend Jogger Champion,55.00,Pantalones,Jogger Powerblend,45.00,70,Champion,si,no,"S,M,L,XL","Gris,Negro,Navy",,,color
+UA Rival Jogger Under Armour,59.99,Pantalones,Jogger Rival fleece,49.99,65,Under Armour,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+ESS Sweatpant Puma,49.99,Pantalones,Pantalón ESS logo,39.99,85,Puma,si,no,"S,M,L,XL","Negro,Gris,Azul",,,color
+Authentic Chino Vans,69.99,Pantalones,Chino stretch Authentic,59.99,55,Vans,si,no,"28,30,32,34,36","Negro,Caqui,Navy",,,color
+Athletics Pant New Balance,59.99,Pantalones,Pantalón Athletics,49.99,60,New Balance,si,no,"S,M,L,XL","Negro,Gris,Navy",,,color
+Logo Jogger Tommy Hilfiger,89.99,Pantalones,Jogger con logo,79.99,45,Tommy Hilfiger,si,no,"S,M,L,XL","Navy,Gris,Negro",,,color
+Adicolor Pant Adidas,75.00,Pantalones,Pantalón Adicolor 3 rayas,65.00,70,Adidas,si,si,"S,M,L,XL","Negro,Navy,Verde",,,color
+Archive Jogger Fila,55.00,Pantalones,Jogger Archive vintage,45.00,65,Fila,si,no,"S,M,L,XL","Navy,Blanco,Rojo",,,color
+H86 Cap Nike,25.00,Gorras,Gorra ajustable Heritage,,100,Nike,si,no,,"Negro,Blanco,Navy",,color,color
+Trefoil Cap Adidas,28.00,Gorras,Gorra Trefoil clásica,,90,Adidas,si,no,,"Negro,Blanco,Navy",,color,color
+Classic Cap Puma,22.00,Gorras,Gorra ESS clásica,,85,Puma,si,no,,"Negro,Blanco,Rojo",,color,color
+Gabardine Cap Lacoste,55.00,Gorras,Gorra gabardina premium,,50,Lacoste,si,no,,"Navy,Blanco,Negro",,color,color
+Big Flag Cap Tommy,45.00,Gorras,Gorra Big Flag logo,,60,Tommy Hilfiger,si,no,,"Navy,Blanco,Rojo",,color,color
+Brasilia Backpack Nike,55.00,Mochilas,Mochila Brasilia training,,45,Nike,si,si,,"Negro,Gris,Navy",,color,color
+Classic Backpack Adidas,49.99,Mochilas,Mochila Classic Badge,,50,Adidas,si,no,,"Negro,Navy,Azul",,color,color
+Deck Backpack Puma,45.00,Mochilas,Mochila Deck casual,,55,Puma,si,no,,"Negro,Gris,Rojo",,color,color
+Old Skool Backpack Vans,55.00,Mochilas,Mochila Old Skool III,,60,Vans,si,no,,"Negro,Checkerboard,Camo",,color,color
+Legacy Backpack New Balance,49.99,Mochilas,Mochila Legacy 550,,40,New Balance,si,no,,"Negro,Gris,Navy",,color,color
+Web Belt Nike,25.00,Accesorios,Cinturón web ajustable,,80,Nike,si,no,"S,M,L","Negro,Blanco,Navy",,talla,
+Classic Belt Adidas,29.99,Accesorios,Cinturón clásico Adidas,,70,Adidas,si,no,"S,M,L","Negro,Navy",,talla,
+Crew Socks 3-Pack Nike,15.00,Accesorios,Pack 3 calcetines Crew,,200,Nike,si,no,"S,M,L","Blanco,Negro,Gris",,talla,
+Trefoil Socks 3-Pack Adidas,14.00,Accesorios,Pack 3 calcetines Trefoil,,180,Adidas,si,no,"S,M,L","Blanco,Negro",,talla,
+Quarter Socks Champion,12.00,Accesorios,Pack 6 calcetines Quarter,,150,Champion,si,no,"S,M,L","Blanco,Negro,Gris",,talla,

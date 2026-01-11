@@ -1,0 +1,11 @@
+nombre,precio,categoria,descripcion,precio_oferta,stock,activo,destacado,variante_talla,variante_color,variante_imagen
+Camiseta Básica,29.99,Ropa,Camiseta de algodón 100% premium,24.99,100,si,si,"S,M,L,XL","Negro,Blanco,Azul",color
+Polo Sport,45.00,Ropa,Polo deportivo dry-fit,39.99,50,si,no,"S,M,L","Rojo,Azul,Verde",color
+Zapatillas Runner,89.99,Calzado,Zapatillas para correr con amortiguación,79.99,30,si,si,"38,39,40,41,42","Negro,Blanco",color
+Gorra Classic,19.99,Accesorios,Gorra ajustable de algodón,,80,si,no,,"Negro,Azul,Rojo",color
+Pantalón Jeans,59.99,Ropa,Jeans slim fit de mezclilla,49.99,40,si,no,"28,30,32,34","Azul,Negro",
+Sudadera Hoodie,55.00,Ropa,Sudadera con capucha y bolsillo,,25,si,si,"S,M,L,XL","Gris,Negro,Blanco",color
+Mochila Urban,75.00,Accesorios,Mochila resistente al agua con compartimento laptop,65.00,20,si,no,,"Negro,Azul Marino",
+Reloj Digital,35.99,Accesorios,Reloj deportivo resistente al agua,,45,si,no,,"Negro,Blanco,Rojo",
+Short Deportivo,25.00,Ropa,Short ligero para entrenamiento,19.99,60,si,no,"S,M,L,XL","Negro,Gris,Azul",color
+Cinturón Cuero,29.99,Accesorios,Cinturón de cuero genuino,,35,si,no,"S,M,L","Negro,Café",

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  db:
+    image: postgres:16-alpine
+    container_name: cat_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-catalogo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-catalogo123}
+      POSTGRES_DB: ${DB_NAME:-catalogo_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - cat_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-catalogo} -d ${DB_NAME:-catalogo_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # Redis (Cache + Queues)
+  # ==========================================
+  cache:
+    image: redis:7-alpine
+    container_name: cat_cache
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123}
+    ports:
+      - "6380:6379"
+    volumes:
+      - cat_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  cat_postgres_data:
+  cat_redis_data:
+
+networks:
+  default:
+    name: cat_network
