@@ -6,6 +6,15 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Safe area for mobile devices (iPhone notch, etc.) */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
 }
 
 

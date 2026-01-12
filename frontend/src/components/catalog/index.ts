@@ -10,6 +10,7 @@ export { WhatsAppButton } from './WhatsAppButton';
 export { BrandSection } from './BrandSection';
 export { Footer } from './Footer';
 export { Navbar } from './Navbar';
+export { MobileBottomNav } from './MobileBottomNav';
 export { CatalogWrapper } from './CatalogWrapper';
 export { CartDrawer } from './CartDrawer';
 export { CartButton } from './CartButton';

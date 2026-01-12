@@ -46,7 +46,7 @@ export function SearchBar({
     if (onSearch) {
       onSearch(query);
     } else {
-      router.push(`/buscar?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
     }
 
     setIsSearching(false);
@@ -57,7 +57,7 @@ export function SearchBar({
     setQuery(term);
     // Track search event
     trackSearch(term);
-    router.push(`/buscar?q=${encodeURIComponent(term)}`);
+    router.push(`/productos?q=${encodeURIComponent(term)}`);
     setIsFocused(false);
   };
 

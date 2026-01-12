@@ -16,7 +16,7 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard, WhatsAppButton, Footer, SearchBar } from '@/components/catalog';
+import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav } from '@/components/catalog';
 import type {
   CatalogSettings,
   CatalogCategory,
@@ -123,10 +123,10 @@ export function CategoryProducts({
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
         {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-16">
           {/* Breadcrumb */}
           <motion.nav
-            className="flex items-center gap-2 text-sm mb-6"
+            className="flex items-center gap-2 text-sm mb-4"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -135,12 +135,16 @@ export function CategoryProducts({
               Inicio
             </Link>
             <ChevronRight className="w-4 h-4 text-white/40" />
+            <Link href="/categorias" className="text-white/60 hover:text-white transition-colors">
+              Categorías
+            </Link>
+            <ChevronRight className="w-4 h-4 text-white/40" />
             <span className="text-white font-medium">{category.name}</span>
           </motion.nav>
 
           {/* Category Title */}
           <motion.h1
-            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            className="text-3xl md:text-5xl font-bold text-white mb-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -151,7 +155,7 @@ export function CategoryProducts({
           {/* Description */}
           {category.description && (
             <motion.p
-              className="text-white/60 max-w-2xl text-lg"
+              className="text-white/60 max-w-2xl text-base md:text-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -162,7 +166,7 @@ export function CategoryProducts({
 
           {/* Product Count */}
           <motion.div
-            className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full"
+            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
@@ -176,7 +180,7 @@ export function CategoryProducts({
 
       {/* Search & Filters Bar */}
       <div className="sticky top-0 z-30 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {/* Search */}
             <div className="flex-1">
@@ -259,7 +263,7 @@ export function CategoryProducts({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex gap-8">
           {/* Sidebar Categories (Desktop) */}
           <motion.aside
@@ -342,10 +346,10 @@ export function CategoryProducts({
               <>
                 <motion.div
                   className={cn(
-                    'grid gap-6',
+                    'grid gap-3 md:gap-4',
                     viewMode === 'grid'
-                      ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
-                      : 'grid-cols-1 sm:grid-cols-2'
+                      ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                      : 'grid-cols-2 md:grid-cols-2 lg:grid-cols-3'
                   )}
                   variants={staggerContainer}
                   initial="initial"
@@ -558,6 +562,12 @@ export function CategoryProducts({
           businessName={settings.businessName || 'el catálogo'}
         />
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Spacer para bottom nav en móvil */}
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }

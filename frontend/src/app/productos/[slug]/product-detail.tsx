@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,7 +20,7 @@ import {
   Home,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard, WhatsAppButton, Footer, AddToCartButton } from '@/components/catalog';
+import { ProductCard, WhatsAppButton, Footer, AddToCartButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogProduct, CatalogSettings, CatalogProductDetail } from '@/lib/api/catalog';
 import { trackEvent } from '@/lib/api/catalog';
 import { useTracking } from '@/hooks/useTracking';
@@ -62,9 +62,45 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
   const images = getDisplayImages();
   const variants = product.variants || [];
 
-  // Reset selected image when variant value changes
+  // Track if initial selection has been done
+  const initializedRef = useRef(false);
+
+  // Auto-select first variant value and variant ONLY on initial mount
   useEffect(() => {
-    setSelectedImage(0);
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    // Auto-select first variant value (e.g., first Color)
+    if (hasVariantImages && variantImageValues.length > 0) {
+      const firstVariantValue = variantImageValues[0];
+      setSelectedVariantValue(firstVariantValue);
+
+      // Also select first variant that matches this value
+      if (product.imageVariantType) {
+        const matchingVariant = variants.find(v => {
+          const matchingValue = v.variantValues?.find(
+            vv => vv.variantType.id === product.imageVariantType?.id
+          );
+          return matchingValue?.value === firstVariantValue;
+        });
+        if (matchingVariant) {
+          setSelectedVariant(matchingVariant.id);
+        }
+      }
+    } else if (variants.length > 0) {
+      // No image variants, just select first variant
+      setSelectedVariant(variants[0].id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Reset selected image when variant value changes (user interaction only)
+  const prevVariantValueRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevVariantValueRef.current !== null && prevVariantValueRef.current !== selectedVariantValue) {
+      setSelectedImage(0);
+    }
+    prevVariantValueRef.current = selectedVariantValue;
   }, [selectedVariantValue]);
   const price = Number(product.price);
   const salePrice = product.salePrice ? Number(product.salePrice) : null;
@@ -77,11 +113,19 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
     ? currentVariant.stock
     : product.stock;
 
-  // Auto-select variant value when a sub-product (variant) is selected
-  // This connects sub-products with variant value images (e.g., selecting variant with Color=Negro shows Negro images)
+  // Sync variant value images when user selects a sub-variant with different color (after initialization)
+  const prevVariantRef = useRef<string | null>(null);
   useEffect(() => {
-    if (currentVariant && hasVariantImages && product.imageVariantType) {
-      // Find the variant value that matches the imageVariantType
+    // Skip if not initialized yet or no variant selected
+    if (!initializedRef.current || !currentVariant || !hasVariantImages || !product.imageVariantType) return;
+    // Skip if this is the first time setting the variant (initial selection)
+    if (prevVariantRef.current === null) {
+      prevVariantRef.current = selectedVariant;
+      return;
+    }
+    // Only sync if variant changed (user interaction)
+    if (prevVariantRef.current !== selectedVariant) {
+      prevVariantRef.current = selectedVariant;
       const matchingValue = currentVariant.variantValues?.find(
         vv => vv.variantType.id === product.imageVariantType?.id
       );
@@ -89,7 +133,7 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
         setSelectedVariantValue(matchingValue.value);
       }
     }
-  }, [currentVariant, hasVariantImages, product.imageVariantType, selectedVariantValue]);
+  }, [selectedVariant, currentVariant, hasVariantImages, product.imageVariantType, selectedVariantValue]);
 
   // Track page view (internal API + pixels)
   useEffect(() => {
@@ -636,6 +680,12 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
           businessName={settings.businessName || 'el catálogo'}
         />
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Spacer para bottom nav en móvil */}
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }

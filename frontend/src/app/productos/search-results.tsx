@@ -17,7 +17,7 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard, WhatsAppButton, Footer, SearchBar, Navbar } from '@/components/catalog';
+import { ProductCard, WhatsAppButton, Footer, Navbar, MobileBottomNav } from '@/components/catalog';
 import { searchCatalog } from '@/lib/api/catalog';
 import type {
   CatalogSettings,
@@ -86,7 +86,7 @@ export function SearchResults({
         if (activeFilter) params.set('filter', activeFilter);
       }
 
-      router.push(`/buscar?${params.toString()}`);
+      router.push(`/productos?${params.toString()}`);
 
       const data = await searchCatalog({
         q: searchQuery,
@@ -117,7 +117,7 @@ export function SearchResults({
     }
     params.set('page', '1');
 
-    router.push(`/buscar?${params.toString()}`);
+    router.push(`/productos?${params.toString()}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -146,83 +146,49 @@ export function SearchResults({
       {/* Spacer for fixed navbar */}
       <div className="h-16 md:h-20" />
 
-      {/* Header */}
-      <div className="bg-gradient-to-br from-slate-900 via-violet-900/30 to-slate-900">
-        <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+      {/* Header - Compact */}
+      <div className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           {/* Breadcrumb */}
-          <motion.nav
-            className="flex items-center gap-2 text-sm mb-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Link href="/" className="text-white/60 hover:text-white transition-colors flex items-center gap-1">
+          <nav className="flex items-center gap-2 text-sm mb-3">
+            <Link href="/" className="text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1">
               <Home className="w-4 h-4" />
               Inicio
             </Link>
-            <ChevronRight className="w-4 h-4 text-white/40" />
-            <span className="text-white font-medium">Productos</span>
-          </motion.nav>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <span className="text-slate-900 dark:text-white font-medium">Productos</span>
+          </nav>
 
-          {/* Title */}
-          <motion.h1
-            className="text-3xl md:text-5xl font-bold text-white mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {query ? (
-              <>
-                Resultados para{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                  "{query}"
-                </span>
-              </>
-            ) : (
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                Todos los Productos
-              </span>
-            )}
-          </motion.h1>
+          {/* Title & Search Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              {query ? (
+                <>Resultados para "<span className="text-violet-600">{query}</span>"</>
+              ) : (
+                'Todos los Productos'
+              )}
+            </h1>
 
-          {/* Search Bar */}
-          <motion.div
-            className="max-w-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <SearchBar
-              variant="hero"
-              placeholder="¿Qué estás buscando?"
-              onSearch={(q) => {
-                setQuery(q);
-                handleSearch(q, 1);
-              }}
-            />
-          </motion.div>
-
-          {/* Quick Suggestions */}
-          {!query && (
-            <motion.div
-              className="mt-6 flex flex-wrap gap-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <span className="text-white/50 text-sm">Sugerencias:</span>
-              {suggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => {
-                    setQuery(suggestion);
-                    handleSearch(suggestion, 1);
+            {/* Inline Search */}
+            <div className="flex-1 max-w-md">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  defaultValue={query}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const value = (e.target as HTMLInputElement).value;
+                      setQuery(value);
+                      handleSearch(value, 1);
+                    }
                   }}
-                  className="px-4 py-1.5 bg-white/10 hover:bg-violet-500/50 text-white/80 hover:text-white rounded-full text-sm transition-colors"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </motion.div>
-          )}
+                  className="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 border-0 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -322,7 +288,7 @@ export function SearchResults({
         {!isSearching && results && results.products.length > 0 && (
           <>
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6"
               variants={staggerContainer}
               initial="initial"
               animate="animate"
@@ -577,6 +543,12 @@ export function SearchResults({
           businessName={settings.businessName || 'el catálogo'}
         />
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Spacer para bottom nav en móvil */}
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }

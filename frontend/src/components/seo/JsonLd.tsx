@@ -59,7 +59,7 @@ export function WebSiteJsonLd({ settings }: { settings: CatalogSettings }) {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/buscar?q={search_term_string}`,
+        urlTemplate: `${SITE_URL}/productos?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

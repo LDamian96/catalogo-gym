@@ -95,7 +95,9 @@
       "Bash(git add:*)",
       "Bash(gh auth status:*)",
       "Bash(git reset:*)",
-      "Bash(if exist .git rmdir /s /q .git)"
+      "Bash(if exist .git rmdir /s /q .git)",
+      "Bash(gh repo create:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

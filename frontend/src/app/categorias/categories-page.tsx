@@ -1,11 +1,12 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Home, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Navbar, Footer, WhatsAppButton } from '@/components/catalog';
+import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
 import { staggerContainer, staggerItem } from '@/lib/animations';
 
@@ -15,6 +16,25 @@ interface CategoriesPageProps {
 }
 
 export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Get categories with images for the carousel - memoized
+  const categoriesWithImages = useMemo(
+    () => categories.filter(cat => cat.image),
+    [categories]
+  );
+
+  // Auto-rotate carousel every 3 seconds
+  useEffect(() => {
+    if (categoriesWithImages.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % categoriesWithImages.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [categoriesWithImages.length]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
       {/* Navbar */}
@@ -23,12 +43,38 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       {/* Spacer for fixed navbar */}
       <div className="h-16 md:h-20" />
 
-      {/* Header */}
-      <div className="bg-gradient-to-br from-slate-900 via-violet-900/50 to-slate-900">
-        <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+      {/* Hero with Category Images Carousel */}
+      <div className="relative bg-gradient-to-br from-slate-900 via-violet-900/50 to-slate-900 overflow-hidden">
+        {/* Background Images Carousel - Auto rotate */}
+        <AnimatePresence mode="wait">
+          {categoriesWithImages.length > 0 && categoriesWithImages[currentSlide]?.image && (
+            <motion.div
+              key={currentSlide}
+              className="absolute inset-0"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 0.4, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Image
+                src={categoriesWithImages[currentSlide].image}
+                alt={categoriesWithImages[currentSlide].name || 'Categoría'}
+                fill
+                className="object-cover"
+                priority
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/40" />
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-16">
           {/* Breadcrumb */}
           <motion.nav
-            className="flex items-center gap-2 text-sm mb-6"
+            className="flex items-center gap-2 text-sm mb-4"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -41,46 +87,59 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
           </motion.nav>
 
           {/* Title */}
-          <motion.div
-            className="flex items-center gap-3"
+          <motion.h1
+            className="text-3xl md:text-5xl font-bold text-white mb-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            <div className="p-3 bg-violet-500/20 rounded-xl">
-              <Layers className="w-8 h-8 text-violet-400" />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">
-                Categorías
-              </h1>
-              <p className="text-white/60 mt-1">
-                {categories.length} {categories.length === 1 ? 'categoría disponible' : 'categorías disponibles'}
-              </p>
-            </div>
+            Categorías
+          </motion.h1>
+
+          {/* Description */}
+          <motion.p
+            className="text-white/60 max-w-2xl text-base md:text-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Explora nuestra variedad de categorías y encuentra lo que buscas
+          </motion.p>
+
+          {/* Category Count Badge */}
+          <motion.div
+            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <span className="text-white/80 text-sm">
+              {categories.length} {categories.length === 1 ? 'categoría disponible' : 'categorías disponibles'}
+            </span>
           </motion.div>
         </div>
       </div>
 
       {/* Categories Grid */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-6">
+        <div className="max-w-7xl mx-auto px-4">
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
           >
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <motion.div key={category.id} variants={staggerItem}>
                 <Link
                   href={`/categorias/${category.slug}`}
                   className="group block"
                 >
                   <div className={cn(
-                    'relative h-64 rounded-2xl overflow-hidden',
+                    'relative aspect-[4/3] rounded-xl overflow-hidden',
                     'bg-gradient-to-br from-violet-500 to-fuchsia-600',
                     'transition-transform duration-300 group-hover:scale-[1.02]',
-                    'shadow-lg group-hover:shadow-xl'
+                    'shadow-md group-hover:shadow-lg'
                   )}>
                     {category.image ? (
                       <>
@@ -90,30 +149,22 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                       </>
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-fuchsia-600" />
                     )}
 
                     {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-6">
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                    <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
+                      <h2 className="text-sm md:text-lg font-bold text-white mb-0.5 md:mb-1 line-clamp-1">
                         {category.name}
                       </h2>
-                      {category.description && (
-                        <p className="text-white/70 text-sm line-clamp-2 mb-3">
-                          {category.description}
-                        </p>
-                      )}
                       <div className="flex items-center justify-between">
-                        <span className="text-white/60 text-sm">
+                        <span className="text-white/70 text-xs md:text-sm">
                           {category._count?.products || 0} productos
                         </span>
-                        <span className="flex items-center gap-1 text-white font-medium text-sm group-hover:gap-2 transition-all">
-                          Ver productos
-                          <ChevronRight className="w-4 h-4" />
-                        </span>
+                        <ChevronRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </div>
@@ -144,7 +195,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       </section>
 
       {/* Footer */}
-      <Footer settings={settings} categories={categories} />
+      <Footer settings={settings} />
 
       {/* WhatsApp */}
       {settings.whatsapp && (
@@ -153,6 +204,12 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
           businessName={settings.businessName || 'nosotros'}
         />
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Spacer para bottom nav en móvil */}
+      <div className="h-20 lg:hidden" />
     </div>
   );
 }

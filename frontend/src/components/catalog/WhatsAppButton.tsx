@@ -28,9 +28,9 @@ export function WhatsAppButton({
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Posicionado a la izquierda en móvil para no chocar con carrito */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-24 lg:bottom-6 left-4 lg:left-auto lg:right-6 z-40"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: 'spring', stiffness: 200 }}
@@ -38,7 +38,7 @@ export function WhatsAppButton({
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'relative w-16 h-16 rounded-full',
+            'relative w-14 h-14 lg:w-16 lg:h-16 rounded-full',
             'bg-gradient-to-br from-green-500 to-green-600',
             'shadow-lg shadow-green-500/30',
             'flex items-center justify-center',
@@ -71,7 +71,7 @@ export function WhatsAppButton({
                 exit={{ scale: 0, rotate: 90 }}
                 transition={{ duration: 0.2 }}
               >
-                <X className="w-7 h-7 text-white" />
+                <X className="w-6 h-6 lg:w-7 lg:h-7 text-white" />
               </motion.div>
             ) : (
               <motion.div
@@ -81,23 +81,23 @@ export function WhatsAppButton({
                 exit={{ scale: 0, rotate: -90 }}
                 transition={{ duration: 0.2 }}
               >
-                <MessageCircle className="w-7 h-7 text-white" />
+                <MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-white" />
               </motion.div>
             )}
           </AnimatePresence>
         </motion.button>
 
-        {/* Tooltip */}
+        {/* Tooltip - Solo en desktop */}
         {!isOpen && (
           <motion.div
-            className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
-            initial={{ opacity: 0, x: 10 }}
+            className="hidden lg:block absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1.5 }}
           >
             <div className="px-3 py-2 bg-slate-900 text-white text-sm rounded-lg shadow-lg">
               ¿Necesitas ayuda?
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-slate-900 rotate-45" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-slate-900 rotate-45" />
             </div>
           </motion.div>
         )}
@@ -107,7 +107,7 @@ export function WhatsAppButton({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-28 right-6 z-50 w-80 max-w-[calc(100vw-3rem)]"
+            className="fixed bottom-40 lg:bottom-28 left-4 lg:left-auto lg:right-6 z-40 w-80 max-w-[calc(100vw-2rem)]"
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -209,7 +209,7 @@ export function WhatsAppButton({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
