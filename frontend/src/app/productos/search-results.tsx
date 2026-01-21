@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -68,10 +68,37 @@ export function SearchResults({
   const [activeFilter, setActiveFilter] = useState(initialFilter || '');
   const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
+  const [inputValue, setInputValue] = useState(initialQuery);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1');
 
-  const handleSearch = async (searchQuery: string, page = 1, resetFilters = false) => {
+  // Debounced live search - searches as user types
+  const handleLiveSearch = useCallback((value: string) => {
+    setInputValue(value);
+
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set new timer - wait 400ms before searching
+    debounceTimerRef.current = setTimeout(() => {
+      setQuery(value);
+      handleSearchInternal(value, 1);
+    }, 400);
+  }, []);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleSearchInternal = async (searchQuery: string, page = 1, resetFilters = false) => {
     setIsSearching(true);
 
     try {
@@ -86,7 +113,8 @@ export function SearchResults({
         if (activeFilter) params.set('filter', activeFilter);
       }
 
-      router.push(`/productos?${params.toString()}`);
+      // Update URL without full page reload
+      window.history.replaceState(null, '', `/productos?${params.toString()}`);
 
       const data = await searchCatalog({
         q: searchQuery,
@@ -104,6 +132,12 @@ export function SearchResults({
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleSearch = async (searchQuery: string, page = 1, resetFilters = false) => {
+    setInputValue(searchQuery);
+    setQuery(searchQuery);
+    await handleSearchInternal(searchQuery, page, resetFilters);
   };
 
   const handleFilterChange = (newFilter: string) => {
@@ -139,93 +173,124 @@ export function SearchResults({
   const suggestions = ['Nuevo', 'Oferta', 'Popular', 'Destacado'];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-neutral-50 dark:bg-[#0a0a0f]">
       {/* Navbar */}
       <Navbar settings={settings} categories={categories} />
 
       {/* Spacer for fixed navbar */}
-      <div className="h-16 md:h-20" />
+      <div className="h-16 lg:h-20" />
 
-      {/* Header - Compact */}
-      <div className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      {/* Simple Header with subtle gradient */}
+      <div className="relative bg-gradient-to-br from-violet-50/80 via-white to-pink-50/50 dark:from-violet-950/30 dark:via-[#0a0a0f] dark:to-pink-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
+        {/* Subtle decorative elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(139,92,246,0.08),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(236,72,153,0.06),transparent)] pointer-events-none" />
+
+        <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-4 lg:py-6">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm mb-3">
-            <Link href="/" className="text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1">
+          <nav className="flex items-center gap-2 text-sm mb-4">
+            <Link href="/" className="text-neutral-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors flex items-center gap-1">
               <Home className="w-4 h-4" />
               Inicio
             </Link>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-900 dark:text-white font-medium">Productos</span>
+            <ChevronRight className="w-4 h-4 text-neutral-400" />
+            <span className="text-neutral-900 dark:text-white font-medium">Productos</span>
           </nav>
 
           {/* Title & Search Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-              {query ? (
-                <>Resultados para "<span className="text-violet-600">{query}</span>"</>
-              ) : (
-                'Todos los Productos'
-              )}
-            </h1>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+            <div className="flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
+                {query ? (
+                  <>Resultados para "<span className="text-violet-600 dark:text-violet-400">{query}</span>"</>
+                ) : (
+                  'Todos los Productos'
+                )}
+              </h1>
+            </div>
 
-            {/* Inline Search */}
-            <div className="flex-1 max-w-md">
+            {/* Search Box */}
+            <div className="w-full lg:w-80">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                {isSearching ? (
+                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500 animate-spin" />
+                ) : (
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                )}
                 <input
                   type="text"
                   placeholder="Buscar productos..."
-                  defaultValue={query}
+                  value={inputValue}
+                  onChange={(e) => handleLiveSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      const value = (e.target as HTMLInputElement).value;
-                      setQuery(value);
-                      handleSearch(value, 1);
+                      if (debounceTimerRef.current) {
+                        clearTimeout(debounceTimerRef.current);
+                      }
+                      handleSearch(inputValue, 1);
                     }
                   }}
-                  className="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 border-0 rounded-lg focus:ring-2 focus:ring-violet-500 outline-none"
+                  className="w-full pl-10 pr-10 py-2.5 text-sm bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
                 />
+                {inputValue && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInputValue('');
+                      setQuery('');
+                      handleSearchInternal('', 1);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-neutral-200 dark:hover:bg-white/10 rounded-full transition-colors"
+                  >
+                    <X className="w-3 h-3 text-neutral-400" />
+                  </button>
+                )}
               </div>
             </div>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => handleFilterChange(tab.value)}
+                className={cn(
+                  'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border',
+                  activeFilter === tab.value
+                    ? 'bg-gradient-to-r from-violet-500 to-pink-500 text-white border-transparent shadow-lg shadow-violet-500/25'
+                    : 'bg-white/80 dark:bg-white/5 text-neutral-600 dark:text-neutral-300 border-neutral-200/80 dark:border-white/10 hover:border-violet-300 dark:hover:border-violet-500/30 hover:shadow-md'
+                )}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between gap-4">
-            {/* Tabs */}
-            <div className="flex items-center gap-1 overflow-x-auto py-4">
-              {filterTabs.map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => handleFilterChange(tab.value)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
-                    activeFilter === tab.value
-                      ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  )}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+      {/* Mobile Filter Bar - Only on mobile */}
+      <div className="lg:hidden border-b border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-[#0a0a0f] sticky top-14 z-30">
+        <div className="px-4 py-2.5">
+          <div className="flex items-center justify-between gap-3">
+            {/* Results count */}
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              {results && (
+                <><span className="font-medium text-neutral-700 dark:text-neutral-200">{results.meta.total}</span> productos</>
+              )}
+            </p>
 
-            {/* Sort & Filters */}
-            <div className="flex items-center gap-3">
-              {/* Sort */}
-              <div className="relative hidden sm:block">
+            <div className="flex items-center gap-2">
+              {/* Sort dropdown mobile */}
+              <div className="relative">
                 <select
                   value={sort}
                   onChange={(e) => {
                     setSort(e.target.value);
                     handleSearch(query, 1);
                   }}
-                  className="appearance-none px-4 py-2 pr-10 rounded-lg bg-slate-100 dark:bg-slate-800 border-0 text-sm"
+                  className="appearance-none pl-3 pr-8 py-1.5 rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-xs font-medium text-neutral-700 dark:text-neutral-300"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -233,19 +298,19 @@ export function SearchResults({
                     </option>
                   ))}
                 </select>
-                <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <ArrowUpDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-neutral-400 pointer-events-none" />
               </div>
 
               {/* Filter Button */}
               <button
                 onClick={() => setShowFilters(true)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg',
-                  'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm',
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg',
+                  'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-medium',
                   hasActiveFilters && 'ring-2 ring-violet-500'
                 )}
               >
-                <SlidersHorizontal className="w-4 h-4" />
+                <SlidersHorizontal className="w-3.5 h-3.5" />
                 Filtros
               </button>
             </div>
@@ -253,148 +318,292 @@ export function SearchResults({
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Results Count */}
-        {results && (
-          <motion.div
-            className="flex items-center justify-between mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <p className="text-slate-600 dark:text-slate-400">
-              {results.meta.total} {results.meta.total === 1 ? 'resultado' : 'resultados'}
-              {query && ` para "${query}"`}
-            </p>
+      {/* Main Content with Sidebar */}
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+        <div className="flex gap-8">
+          {/* Desktop Sidebar - Filters */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <div className="sticky top-24 space-y-6">
+              {/* Sidebar Header */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-violet-500" />
+                  Filtros
+                </h2>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs text-violet-600 dark:text-violet-400 hover:underline"
+                  >
+                    Limpiar todo
+                  </button>
+                )}
+              </div>
+
+              {/* Sort - Desktop */}
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+                  Ordenar por
+                </h3>
+                <div className="space-y-1">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSort(option.value);
+                        handleSearch(query, 1);
+                      }}
+                      className={cn(
+                        'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                        sort === option.value
+                          ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                      )}
+                    >
+                      {option.label}
+                      {sort === option.value && (
+                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Categories - Desktop */}
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+                  Categorías
+                </h3>
+                <div className="space-y-1 max-h-64 overflow-y-auto">
+                  <button
+                    onClick={() => {
+                      setSelectedCategory('');
+                      handleSearch(query, 1);
+                    }}
+                    className={cn(
+                      'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                      !selectedCategory
+                        ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                    )}
+                  >
+                    Todas
+                    {!selectedCategory && (
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />
+                    )}
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setSelectedCategory(category.id);
+                        handleSearch(query, 1);
+                      }}
+                      className={cn(
+                        'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                        selectedCategory === category.id
+                          ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                      )}
+                    >
+                      {category.name}
+                      {category._count?.products !== undefined && (
+                        <span className="ml-auto text-xs text-neutral-400">
+                          {category._count.products}
+                        </span>
+                      )}
+                      {selectedCategory === category.id && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range - Desktop */}
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+                  Rango de Precio
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <label className="text-xs text-neutral-500 mb-1 block">Mínimo</label>
+                      <input
+                        type="number"
+                        placeholder="S/ 0"
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-xs text-neutral-500 mb-1 block">Máximo</label>
+                      <input
+                        type="number"
+                        placeholder="S/ 999"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleSearch(query, 1)}
+                    className="w-full py-2 text-sm font-medium text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-500/10 rounded-lg hover:bg-violet-200 dark:hover:bg-violet-500/20 transition-colors"
+                  >
+                    Aplicar precio
+                  </button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Products Section */}
+          <main className="flex-1 min-w-0">
+            {/* Active filters indicator - Only show on desktop when filters active */}
             {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
-              >
-                Limpiar filtros
-              </button>
-            )}
-          </motion.div>
-        )}
-
-        {/* Loading State */}
-        {isSearching && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
-          </div>
-        )}
-
-        {/* Results Grid */}
-        {!isSearching && results && results.products.length > 0 && (
-          <>
-            <motion.div
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6"
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              {results.products.map((product, index) => (
-                <motion.div key={product.id} variants={staggerItem}>
-                  <ProductCard product={product} index={index} />
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Pagination */}
-            {results.meta.totalPages > 1 && (
               <motion.div
-                className="flex items-center justify-center gap-2 mt-12"
-                initial={{ opacity: 0, y: 20 }}
+                className="hidden lg:flex items-center gap-2 mb-4 p-3 bg-violet-50 dark:bg-violet-500/10 rounded-xl border border-violet-200 dark:border-violet-500/20"
+                initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
+                <SlidersHorizontal className="w-4 h-4 text-violet-500" />
+                <span className="text-sm text-violet-700 dark:text-violet-300">
+                  Filtros activos
+                </span>
                 <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage <= 1}
-                  className={cn(
-                    'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                    currentPage <= 1
-                      ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  )}
+                  onClick={clearFilters}
+                  className="ml-auto text-xs font-medium text-violet-600 dark:text-violet-400 hover:underline flex items-center gap-1"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  Anterior
-                </button>
-
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: results.meta.totalPages }, (_, i) => i + 1)
-                    .filter(p => p === 1 || p === results.meta.totalPages || Math.abs(p - currentPage) <= 1)
-                    .map((p, idx, arr) => (
-                      <span key={p}>
-                        {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-2 text-slate-400">...</span>
-                        )}
-                        <button
-                          onClick={() => handlePageChange(p)}
-                          className={cn(
-                            'w-10 h-10 rounded-lg font-medium transition-colors',
-                            p === currentPage
-                              ? 'bg-violet-600 text-white'
-                              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                          )}
-                        >
-                          {p}
-                        </button>
-                      </span>
-                    ))}
-                </div>
-
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage >= results.meta.totalPages}
-                  className={cn(
-                    'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                    currentPage >= results.meta.totalPages
-                      ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  )}
-                >
-                  Siguiente
-                  <ChevronRight className="w-4 h-4" />
+                  <X className="w-3 h-3" />
+                  Limpiar todo
                 </button>
               </motion.div>
             )}
-          </>
-        )}
 
-        {/* No Results */}
-        {!isSearching && results && results.products.length === 0 && (
-          <motion.div
-            className="text-center py-20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-              <Search className="w-10 h-10 text-slate-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-              No encontramos resultados
-            </h3>
-            <p className="text-slate-500 dark:text-slate-400 mb-6">
-              Intenta con otras palabras clave o filtros
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {suggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => {
-                    setQuery(suggestion);
-                    handleSearch(suggestion, 1);
-                  }}
-                  className="px-4 py-2 bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-lg text-sm hover:bg-violet-200 transition-colors"
+            {/* Loading State */}
+            {isSearching && (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto mb-3" />
+                  <p className="text-sm text-neutral-500">Buscando productos...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Results Grid */}
+            {!isSearching && results && results.products.length > 0 && (
+              <>
+                <motion.div
+                  className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"
+                  variants={staggerContainer}
+                  initial="initial"
+                  animate="animate"
                 >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
+                  {results.products.map((product, index) => (
+                    <motion.div key={product.id} variants={staggerItem}>
+                      <ProductCard product={product} index={index} />
+                    </motion.div>
+                  ))}
+                </motion.div>
 
+                {/* Pagination */}
+                {results.meta.totalPages > 1 && (
+                  <motion.div
+                    className="flex items-center justify-center gap-2 mt-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage <= 1}
+                      className={cn(
+                        'flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        currentPage <= 1
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5'
+                      )}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Anterior
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: results.meta.totalPages }, (_, i) => i + 1)
+                        .filter(p => p === 1 || p === results.meta.totalPages || Math.abs(p - currentPage) <= 1)
+                        .map((p, idx, arr) => (
+                          <span key={p}>
+                            {idx > 0 && arr[idx - 1] !== p - 1 && (
+                              <span className="px-2 text-neutral-400">...</span>
+                            )}
+                            <button
+                              onClick={() => handlePageChange(p)}
+                              className={cn(
+                                'w-10 h-10 rounded-lg text-sm font-medium transition-colors',
+                                p === currentPage
+                                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/25'
+                                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                              )}
+                            >
+                              {p}
+                            </button>
+                          </span>
+                        ))}
+                    </div>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= results.meta.totalPages}
+                      className={cn(
+                        'flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        currentPage >= results.meta.totalPages
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5'
+                      )}
+                    >
+                      Siguiente
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+              </>
+            )}
+
+            {/* No Results */}
+            {!isSearching && results && results.products.length === 0 && (
+              <motion.div
+                className="text-center py-20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+                  <Search className="w-8 h-8 text-violet-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                  No encontramos resultados
+                </h3>
+                <p className="text-neutral-500 dark:text-neutral-400 mb-6 text-sm">
+                  Intenta con otras palabras clave o filtros
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => {
+                        setQuery(suggestion);
+                        handleSearch(suggestion, 1);
+                      }}
+                      className="px-4 py-2 bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-lg text-sm hover:bg-violet-200 dark:hover:bg-violet-500/30 transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </main>
+        </div>
       </div>
 
       {/* Mobile Filters Drawer */}
@@ -547,8 +756,6 @@ export function SearchResults({
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-      {/* Spacer para bottom nav en móvil */}
-      <div className="h-20 lg:hidden" />
     </div>
   );
 }

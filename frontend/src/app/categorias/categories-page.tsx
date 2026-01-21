@@ -4,11 +4,23 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, Home, Layers } from 'lucide-react';
+import { ChevronRight, Home, Layers, ArrowRight, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
-import { staggerContainer, staggerItem } from '@/lib/animations';
+import { staggerContainer, staggerItem, v0Ease } from '@/lib/animations';
+
+// Gradient colors for category cards (matching inicio)
+const cardGradients = [
+  'from-rose-400 to-pink-500',
+  'from-sky-400 to-blue-500',
+  'from-lime-400 to-green-500',
+  'from-amber-400 to-orange-500',
+  'from-violet-400 to-purple-500',
+  'from-emerald-400 to-teal-500',
+  'from-fuchsia-400 to-pink-500',
+  'from-cyan-400 to-blue-500',
+];
 
 interface CategoriesPageProps {
   categories: CatalogCategory[];
@@ -121,52 +133,46 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       </div>
 
       {/* Categories Grid */}
-      <section className="py-6">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-8 lg:py-12 bg-white dark:bg-[#0a0a0f]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
           >
-            {categories.map((category) => (
-              <motion.div key={category.id} variants={staggerItem}>
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05, ease: v0Ease }}
+                viewport={{ once: true }}
+              >
                 <Link
                   href={`/categorias/${category.slug}`}
-                  className="group block"
+                  className="block relative h-32 lg:h-40 rounded-xl overflow-hidden group"
                 >
-                  <div className={cn(
-                    'relative aspect-[4/3] rounded-xl overflow-hidden',
-                    'bg-gradient-to-br from-violet-500 to-fuchsia-600',
-                    'transition-transform duration-300 group-hover:scale-[1.02]',
-                    'shadow-md group-hover:shadow-lg'
-                  )}>
-                    {category.image ? (
-                      <>
-                        <Image
-                          src={category.image}
-                          alt={category.name}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                      </>
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-fuchsia-600" />
-                    )}
+                  {/* Gradient background */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${cardGradients[index % cardGradients.length]}`} />
 
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
-                      <h2 className="text-sm md:text-lg font-bold text-white mb-0.5 md:mb-1 line-clamp-1">
-                        {category.name}
-                      </h2>
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/70 text-xs md:text-sm">
-                          {category._count?.products || 0} productos
-                        </span>
-                        <ChevronRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
+                  {/* Image overlay */}
+                  {category.image && (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      style={{ backgroundImage: `url(${category.image})` }}
+                    />
+                  )}
+
+                  {/* Content */}
+                  <div className="relative h-full p-4 flex flex-col justify-end">
+                    <h3 className="text-base lg:text-lg font-bold text-white drop-shadow-md line-clamp-1">
+                      {category.name}
+                    </h3>
+                    <span className="text-white/80 text-xs mt-1 flex items-center gap-1">
+                      {category._count?.products || 0} productos
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </span>
                   </div>
                 </Link>
               </motion.div>
@@ -180,13 +186,13 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                <Layers className="w-10 h-10 text-slate-400" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+                <Layers className="w-8 h-8 text-violet-500" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 No hay categorías
               </h3>
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm">
                 Aún no se han creado categorías
               </p>
             </motion.div>
@@ -195,7 +201,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       </section>
 
       {/* Footer */}
-      <Footer settings={settings} />
+      <Footer settings={settings} categories={categories} />
 
       {/* WhatsApp */}
       {settings.whatsapp && (
@@ -208,8 +214,6 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-      {/* Spacer para bottom nav en móvil */}
-      <div className="h-20 lg:hidden" />
     </div>
   );
 }

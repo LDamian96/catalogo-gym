@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  ChevronLeft,
   ShoppingBag,
   Heart,
   Share2,
@@ -15,23 +14,26 @@ import {
   Check,
   Minus,
   Plus,
-  MessageCircle,
   ChevronRight,
-  Home,
+  ChevronLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard, WhatsAppButton, Footer, AddToCartButton, MobileBottomNav } from '@/components/catalog';
-import type { CatalogProduct, CatalogSettings, CatalogProductDetail } from '@/lib/api/catalog';
+import { ProductCard, WhatsAppButton, Footer, AddToCartButton, MobileBottomNav, Navbar } from '@/components/catalog';
+import type { CatalogProduct, CatalogSettings, CatalogProductDetail, CatalogCategory } from '@/lib/api/catalog';
 import { trackEvent } from '@/lib/api/catalog';
 import { useTracking } from '@/hooks/useTracking';
+
+// V0 ease curve
+const v0Ease = [0.22, 1, 0.36, 1] as const;
 
 interface ProductDetailProps {
   product: CatalogProductDetail;
   relatedProducts: CatalogProduct[];
   settings: CatalogSettings;
+  categories?: CatalogCategory[];
 }
 
-export function ProductDetail({ product, relatedProducts, settings }: ProductDetailProps) {
+export function ProductDetail({ product, relatedProducts, settings, categories = [] }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [selectedVariantValue, setSelectedVariantValue] = useState<string | null>(null);
@@ -173,53 +175,57 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
-      {/* Breadcrumb */}
-      <div className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
+      {/* Navbar */}
+      <Navbar settings={settings} categories={categories} />
+
+      {/* Breadcrumb - V0 Style */}
+      <div className="border-b border-black/[0.06] dark:border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <motion.nav
             className="flex items-center gap-2 text-sm"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, ease: v0Ease }}
           >
-            <Link href="/" className="text-slate-500 hover:text-violet-600 transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
+            <Link href="/" className="text-neutral-400 hover:text-violet-500 transition-colors">
               Inicio
             </Link>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <ChevronRight className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />
             <Link
               href={`/categorias/${product.category.slug}`}
-              className="text-slate-500 hover:text-violet-600 transition-colors"
+              className="text-neutral-400 hover:text-violet-500 transition-colors"
             >
               {product.category.name}
             </Link>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-900 dark:text-white font-medium truncate max-w-[200px]">
+            <ChevronRight className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />
+            <span className="text-neutral-700 dark:text-white font-medium truncate max-w-[200px]">
               {product.name}
             </span>
           </motion.nav>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 md:py-12">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
-          {/* Image Gallery */}
+      {/* Main Content - V0 Style Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+
+          {/* Left Column - Images + Color Selector */}
           <motion.div
             className="space-y-4"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: v0Ease }}
           >
-            {/* Main Image */}
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-900">
+            {/* Main Image - V0 Style */}
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-100 dark:bg-[#12121a] border border-black/[0.06] dark:border-white/[0.06]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedImage}
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: v0Ease }}
                   className="absolute inset-0"
                 >
                   {images[selectedImage]?.url ? (
@@ -233,181 +239,130 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ShoppingBag className="w-24 h-24 text-slate-300" />
+                      <ShoppingBag className="w-16 h-16 text-neutral-300 dark:text-neutral-700" />
                     </div>
                   )}
                 </motion.div>
               </AnimatePresence>
 
-              {/* Sale Badge */}
+              {/* Sale Badge - V0 Style */}
               {salePrice && (
                 <motion.div
-                  className="absolute top-4 left-4"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.3, type: 'spring' }}
+                  className="absolute top-3 left-3"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4, ease: v0Ease }}
                 >
-                  <div className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full text-white font-bold shadow-lg">
-                    -{discount}% OFF
-                  </div>
+                  <span className="px-3 py-1.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg text-white text-xs font-semibold shadow-lg shadow-pink-500/25">
+                    -{discount}%
+                  </span>
                 </motion.div>
               )}
 
-              {/* Action Buttons */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
+              {/* Action Buttons - V0 Style */}
+              <div className="absolute top-3 right-3 flex flex-col gap-2">
                 <motion.button
                   onClick={() => setIsLiked(!isLiked)}
                   className={cn(
-                    'w-12 h-12 rounded-full flex items-center justify-center transition-all',
+                    'w-10 h-10 rounded-xl flex items-center justify-center transition-all backdrop-blur-sm border',
                     isLiked
-                      ? 'bg-rose-500 text-white'
-                      : 'bg-white/90 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 hover:bg-rose-500 hover:text-white'
+                      ? 'bg-pink-500 text-white border-pink-500'
+                      : 'bg-white/90 dark:bg-[#12121a]/90 text-neutral-500 dark:text-neutral-400 border-black/[0.06] dark:border-white/[0.1] hover:border-pink-500/50 hover:text-pink-500'
                   )}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Heart className={cn('w-5 h-5', isLiked && 'fill-current')} />
+                  <Heart className={cn('w-4 h-4', isLiked && 'fill-current')} />
                 </motion.button>
                 <motion.button
                   onClick={handleShare}
-                  className="w-12 h-12 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-violet-500 hover:text-white transition-all"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="w-10 h-10 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-violet-500/50 hover:text-violet-500 transition-all"
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-4 h-4" />
                 </motion.button>
               </div>
 
-              {/* Image Navigation */}
+              {/* Image Navigation Arrows */}
               {images.length > 1 && (
                 <>
                   <button
                     onClick={() => setSelectedImage(prev => (prev > 0 ? prev - 1 : images.length - 1))}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-violet-500 hover:text-white transition-all"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-violet-500/50 transition-all"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setSelectedImage(prev => (prev < images.length - 1 ? prev + 1 : 0))}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-violet-500 hover:text-white transition-all"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-violet-500/50 transition-all"
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-4 h-4" />
                   </button>
                 </>
               )}
+
+              {/* Image Indicators (dots) */}
+              {images.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={cn(
+                        'w-2 h-2 rounded-full transition-all',
+                        selectedImage === index
+                          ? 'bg-violet-500 w-6'
+                          : 'bg-white/50 hover:bg-white/80'
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Thumbnails */}
+            {/* Thumbnails - V0 Style */}
             {images.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
                 {images.map((image, index) => (
-                  <motion.button
+                  <button
                     key={image.id}
                     onClick={() => setSelectedImage(index)}
                     className={cn(
-                      'relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 ring-2 transition-all',
+                      'relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all',
                       selectedImage === index
-                        ? 'ring-violet-500'
-                        : 'ring-transparent hover:ring-violet-300'
+                        ? 'border-violet-500'
+                        : 'border-transparent hover:border-violet-500/30'
                     )}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     <Image
                       src={image.url}
                       alt={`${product.name} ${index + 1}`}
                       fill
                       className="object-cover"
-                      sizes="80px"
+                      sizes="64px"
                     />
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             )}
-          </motion.div>
 
-          {/* Product Info */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {/* Category & Brand */}
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-violet-600 dark:text-violet-400 uppercase tracking-wider">
-                {product.category.name}
-              </span>
-              {product.brand && (
-                <>
-                  <span className="w-1 h-1 rounded-full bg-slate-300" />
-                  <span className="text-sm text-slate-500">{product.brand.name}</span>
-                </>
-              )}
-            </div>
-
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-              {product.name}
-            </h1>
-
-            {/* Price */}
-            {product.showPrice && (
-              <div className="flex items-baseline gap-4">
-                {salePrice ? (
-                  <>
-                    <span className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                      S/ {displayPrice.toFixed(2)}
-                    </span>
-                    <span className="text-xl text-slate-400 line-through">
-                      S/ {price.toFixed(2)}
-                    </span>
-                    <span className="px-3 py-1 bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-full text-sm font-semibold">
-                      Ahorras S/ {(price - (salePrice || 0)).toFixed(2)}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-4xl font-bold text-slate-900 dark:text-white">
-                    S/ {displayPrice.toFixed(2)}
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Stock */}
-            {product.showStock && displayStock !== null && (
-              <div className="flex items-center gap-2">
-                {displayStock > 0 ? (
-                  <>
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                      {displayStock} disponibles
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                    <span className="text-rose-600 dark:text-rose-400 font-medium">
-                      {product.stockMessage || 'Agotado'}
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Description */}
-            {product.description && (
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                {product.description}
-              </p>
-            )}
-
-            {/* Variant Value Selector (e.g., Color selector with image change) */}
+            {/* Color Selector - BELOW IMAGE - V0 Style */}
             {hasVariantImages && variantImageValues.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
-                  {product.imageVariantType?.name || 'Variante'}
-                </h3>
+              <motion.div
+                className="p-4 rounded-2xl bg-neutral-50 dark:bg-[#12121a] border border-black/[0.06] dark:border-white/[0.06]"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4, ease: v0Ease }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    {product.imageVariantType?.name || 'Color'}
+                  </h3>
+                  {selectedVariantValue && (
+                    <span className="text-sm text-violet-600 dark:text-violet-400 font-medium">
+                      {selectedVariantValue}
+                    </span>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {variantImageValues.map((value) => {
                     const isSelected = selectedVariantValue === value;
@@ -415,31 +370,29 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                     const firstImage = valueImages[0]?.url;
 
                     return (
-                      <motion.button
+                      <button
                         key={value}
                         onClick={() => setSelectedVariantValue(isSelected ? null : value)}
                         className={cn(
                           'relative rounded-xl border-2 transition-all overflow-hidden',
                           isSelected
                             ? 'border-violet-500 ring-2 ring-violet-500/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-violet-300'
+                            : 'border-neutral-200 dark:border-neutral-700 hover:border-violet-400'
                         )}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                       >
                         {firstImage ? (
-                          <div className="w-14 h-14 relative">
+                          <div className="w-12 h-12 relative">
                             <Image
                               src={firstImage}
                               alt={value}
                               fill
                               className="object-cover"
-                              sizes="56px"
+                              sizes="48px"
                             />
                             {isSelected && (
                               <div className="absolute inset-0 bg-violet-500/20 flex items-center justify-center">
-                                <div className="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center">
-                                  <Check className="w-3 h-3 text-white" />
+                                <div className="w-4 h-4 rounded-full bg-violet-500 flex items-center justify-center">
+                                  <Check className="w-2.5 h-2.5 text-white" />
                                 </div>
                               </div>
                             )}
@@ -449,27 +402,100 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                             'px-4 py-2 text-sm font-medium',
                             isSelected
                               ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300'
-                              : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                              : 'text-neutral-600 dark:text-neutral-400'
                           )}>
                             {value}
                           </div>
                         )}
-                      </motion.button>
+                      </button>
                     );
                   })}
                 </div>
-                {selectedVariantValue && (
-                  <p className="text-sm text-violet-600 dark:text-violet-400">
-                    {product.imageVariantType?.name}: <strong>{selectedVariantValue}</strong>
-                  </p>
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Right Column - Product Info - V0 Style */}
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
+          >
+            {/* Category & Brand - V0 Style */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-violet-600 dark:text-violet-400 uppercase tracking-wider">
+                {product.category.name}
+              </span>
+              {product.brand && (
+                <>
+                  <span className="text-neutral-300 dark:text-neutral-600">•</span>
+                  <span className="text-xs text-neutral-500">{product.brand.name}</span>
+                </>
+              )}
+            </div>
+
+            {/* Title - V0 Style */}
+            <h1 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-white tracking-tight">
+              {product.name}
+            </h1>
+
+            {/* Price - V0 Style */}
+            {product.showPrice && (
+              <div className="flex items-baseline gap-3">
+                {salePrice ? (
+                  <>
+                    <span className="text-3xl font-semibold text-neutral-900 dark:text-white">
+                      S/ {displayPrice.toFixed(2)}
+                    </span>
+                    <span className="text-lg text-neutral-400 line-through">
+                      S/ {price.toFixed(2)}
+                    </span>
+                    <span className="px-2 py-0.5 bg-pink-500/10 text-pink-600 dark:text-pink-400 rounded-md text-xs font-medium">
+                      -{discount}%
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-3xl font-semibold text-neutral-900 dark:text-white">
+                    S/ {displayPrice.toFixed(2)}
+                  </span>
                 )}
               </div>
             )}
 
-            {/* Variants (Sub-products) - WooCommerce Style */}
+            {/* Stock - V0 Style */}
+            {product.showStock && displayStock !== null && (
+              <div className="flex items-center gap-2">
+                {displayStock > 0 ? (
+                  <>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                    <span className="text-sm text-emerald-600 dark:text-emerald-400">
+                      {displayStock} disponibles
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-neutral-400" />
+                    <span className="text-sm text-neutral-500">
+                      {product.stockMessage || 'Agotado'}
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Description - V0 Style */}
+            {product.description && (
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">
+                {product.description}
+              </p>
+            )}
+
+            {/* Variants (Sub-products) - V0 Style */}
             {variants.length > 0 && (() => {
-              // Filter variants based on selected variant value (e.g., selected Color)
-              // If a color is selected, only show variants with that color
               const filteredVariants = hasVariantImages && selectedVariantValue && product.imageVariantType
                 ? variants.filter(v => {
                     const matchingValue = v.variantValues?.find(
@@ -479,27 +505,25 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                   })
                 : variants;
 
-              // Get the other variant types (not the image type) to show as labels
               const otherVariantTypes = hasVariantImages && product.imageVariantType
-                ? [...new Set(variants.flatMap(v =>
+                ? Array.from(new Set(variants.flatMap(v =>
                     v.variantValues?.filter(vv => vv.variantType.id !== product.imageVariantType?.id)
                       .map(vv => vv.variantType.name) || []
-                  ))]
+                  )))
                 : [];
 
               return filteredVariants.length > 0 ? (
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                     {otherVariantTypes.length > 0
-                      ? `Selecciona ${otherVariantTypes.join(' / ')}`
-                      : 'Opciones disponibles'}
+                      ? `${otherVariantTypes.join(' / ')}`
+                      : 'Opciones'}
                   </h3>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {filteredVariants.map((variant) => {
                       const variantPrice = variant.price ? Number(variant.price) : displayPrice;
                       const isSelected = selectedVariant === variant.id;
 
-                      // Get the non-image variant values (e.g., Talla if Color is the image type)
                       const displayValues = hasVariantImages && product.imageVariantType
                         ? variant.variantValues?.filter(vv => vv.variantType.id !== product.imageVariantType?.id)
                         : variant.variantValues;
@@ -507,42 +531,33 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                       const label = displayValues?.map(v => v.value).join(' / ') || variant.name || 'Opción';
 
                       return (
-                        <motion.button
+                        <button
                           key={variant.id}
                           onClick={() => setSelectedVariant(isSelected ? null : variant.id)}
                           className={cn(
-                            'relative px-4 py-3 rounded-xl border-2 transition-all min-w-[60px]',
+                            'relative px-4 py-2.5 rounded-xl border transition-all min-w-[50px]',
                             isSelected
-                              ? 'border-violet-500 bg-violet-50 dark:bg-violet-500/20 ring-2 ring-violet-500/20'
-                              : 'border-slate-200 dark:border-slate-700 hover:border-violet-300 bg-white dark:bg-slate-800'
+                              ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-300'
+                              : 'border-neutral-200 dark:border-neutral-700 hover:border-violet-400 text-neutral-700 dark:text-neutral-300'
                           )}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
                         >
-                          <p className={cn(
-                            'text-sm font-semibold',
-                            isSelected
-                              ? 'text-violet-700 dark:text-violet-300'
-                              : 'text-slate-900 dark:text-white'
-                          )}>
-                            {label}
-                          </p>
+                          <span className="text-sm font-medium">{label}</span>
                           {variant.price && (
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                              S/ {variantPrice.toFixed(2)}
-                            </p>
+                            <span className="text-xs text-neutral-500 ml-1.5">
+                              S/{variantPrice.toFixed(0)}
+                            </span>
                           )}
                           {variant.stock !== null && variant.stock !== undefined && variant.stock <= 3 && variant.stock > 0 && (
-                            <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                              ¡Últimos {variant.stock}!
-                            </p>
+                            <span className="ml-1.5 text-xs text-amber-500">
+                              ({variant.stock})
+                            </span>
                           )}
                           {isSelected && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center">
-                              <Check className="w-3 h-3 text-white" />
+                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-violet-500 flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
                             </div>
                           )}
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -550,42 +565,42 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
               ) : null;
             })()}
 
-            {/* Quantity */}
+            {/* Quantity - V0 Style */}
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Cantidad
               </h3>
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <div className="flex items-center border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
                   <button
                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-12 h-12 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-16 text-center font-semibold text-slate-900 dark:text-white">
+                  <span className="w-12 text-center font-medium text-neutral-900 dark:text-white">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(q => q + 1)}
-                    className="w-12 h-12 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
                 {product.showPrice && (
-                  <div className="text-slate-500">
-                    Total: <span className="font-semibold text-slate-900 dark:text-white">
+                  <span className="text-sm text-neutral-500">
+                    Total: <span className="font-semibold text-neutral-900 dark:text-white">
                       S/ {(displayPrice * quantity).toFixed(2)}
                     </span>
-                  </div>
+                  </span>
                 )}
               </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              {/* Botón Añadir al carrito - Solo si cartEnabled */}
+            {/* CTA Buttons - V0 Style */}
+            <div className="flex flex-col gap-3 pt-4">
+              {/* Botón Añadir al carrito */}
               {settings.cartEnabled && (
                 <AddToCartButton
                   item={{
@@ -607,61 +622,49 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
                 />
               )}
 
-              {/* Botón WhatsApp - Siempre visible */}
-              <motion.button
+              {/* Botón WhatsApp - V0 Style */}
+              <button
                 onClick={handleWhatsAppOrder}
-                className={cn(
-                  'flex-1 flex items-center justify-center gap-3',
-                  'px-8 py-4 rounded-xl font-semibold text-white',
-                  'bg-gradient-to-r from-green-500 to-green-600',
-                  'shadow-lg shadow-green-500/25',
-                  'hover:shadow-xl hover:shadow-green-500/30 transition-shadow'
-                )}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors duration-200"
               >
-                <MessageCircle className="w-5 h-5" />
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
                 Pedir por WhatsApp
-              </motion.button>
+              </button>
             </div>
 
-            {/* Features */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+            {/* Features - V0 Style */}
+            <div className="grid grid-cols-3 gap-3 pt-6 mt-2 border-t border-neutral-200 dark:border-neutral-800">
               {[
-                { icon: Truck, label: 'Envío rápido' },
+                { icon: Truck, label: 'Envío' },
                 { icon: Shield, label: 'Garantía' },
                 { icon: RotateCcw, label: 'Devolución' },
-              ].map((feature, index) => (
-                <motion.div
-                  key={feature.label}
-                  className="text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                >
-                  <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
-                    <feature.icon className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+              ].map((feature) => (
+                <div key={feature.label} className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                    <feature.icon className="w-4 h-4 text-neutral-500 dark:text-neutral-400" />
                   </div>
-                  <span className="text-xs text-slate-600 dark:text-slate-400">{feature.label}</span>
-                </motion.div>
+                  <span className="text-xs text-neutral-500">{feature.label}</span>
+                </div>
               ))}
             </div>
           </motion.div>
         </div>
 
-        {/* Related Products */}
+        {/* Related Products - V0 Style */}
         {relatedProducts.length > 0 && (
           <motion.section
-            className="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800"
-            initial={{ opacity: 0, y: 40 }}
+            className="mt-16 pt-10 border-t border-neutral-200 dark:border-neutral-800"
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5, ease: v0Ease }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-8">
+            <h2 className="text-xl md:text-2xl font-semibold text-neutral-900 dark:text-white mb-6">
               También te puede interesar
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {relatedProducts.slice(0, 4).map((relatedProduct, index) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} index={index} />
               ))}
@@ -684,8 +687,6 @@ export function ProductDetail({ product, relatedProducts, settings }: ProductDet
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-      {/* Spacer para bottom nav en móvil */}
-      <div className="h-20 lg:hidden" />
     </div>
   );
 }

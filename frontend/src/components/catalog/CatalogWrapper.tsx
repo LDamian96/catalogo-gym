@@ -5,6 +5,7 @@ import { TrackingProvider } from '@/components/tracking';
 import { CartProvider } from '@/hooks/useCart';
 import { CartDrawer } from './CartDrawer';
 import { CartButton } from './CartButton';
+import { PageTransitionProvider } from './PageTransition';
 import type { CatalogSettings } from '@/lib/api/catalog';
 
 interface CatalogWrapperProps {
@@ -14,10 +15,7 @@ interface CatalogWrapperProps {
 
 /**
  * Wrapper para el catálogo público que provee el contexto de tracking y carrito.
- * Inyecta los scripts de Google Analytics, Facebook Pixel y TikTok Pixel
- * basándose en los IDs configurados en settings.
- * CartProvider siempre se incluye para que el Navbar pueda usar useCart.
- * Si cartEnabled está activo, muestra el drawer y botón flotante del carrito.
+ * Incluye PageTransitionProvider para transiciones suaves entre páginas.
  */
 export function CatalogWrapper({ children, settings }: CatalogWrapperProps) {
   const cartEnabled = settings?.cartEnabled ?? false;
@@ -27,20 +25,22 @@ export function CatalogWrapper({ children, settings }: CatalogWrapperProps) {
   return (
     <TrackingProvider settings={settings}>
       <CartProvider>
-        {children}
-        {cartEnabled && (
-          <>
-            <CartDrawer
-              whatsapp={whatsapp}
-              businessName={businessName}
-              currency="S/"
-            />
-            {/* Botón flotante del carrito */}
-            <div className="fixed bottom-24 right-6 z-40">
-              <CartButton />
-            </div>
-          </>
-        )}
+        <PageTransitionProvider>
+          {children}
+          {cartEnabled && (
+            <>
+              <CartDrawer
+                whatsapp={whatsapp}
+                businessName={businessName}
+                currency="S/"
+              />
+              {/* Botón flotante del carrito - Solo en desktop */}
+              <div className="fixed bottom-24 right-6 z-40 hidden lg:block">
+                <CartButton />
+              </div>
+            </>
+          )}
+        </PageTransitionProvider>
       </CartProvider>
     </TrackingProvider>
   );

@@ -220,8 +220,8 @@ export default function ConfiguracionPage() {
     >
       <motion.div variants={fadeInUp} className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Configuración</h1>
-          <p className="text-muted-foreground">Personaliza tu catálogo digital</p>
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Configuración</h1>
+          <p className="text-neutral-500 dark:text-neutral-400">Personaliza tu catálogo digital</p>
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={isSaving}>
           {isSaving ? (
@@ -414,7 +414,7 @@ export default function ConfiguracionPage() {
                       control={form.control}
                       name="cartEnabled"
                       render={({ field }) => (
-                        <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Carrito de compras</FormLabel>
                             <FormDescription>
@@ -629,7 +629,7 @@ export default function ConfiguracionPage() {
                   </CardHeader>
                   <CardContent>
                     {trackingPixels.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">
                         No hay píxeles adicionales configurados
                       </p>
                     ) : (
@@ -637,11 +637,11 @@ export default function ConfiguracionPage() {
                         {trackingPixels.map((pixel) => (
                           <div
                             key={pixel.id}
-                            className="flex items-center justify-between p-3 rounded-lg border"
+                            className="flex items-center justify-between p-3 rounded-xl border border-neutral-200 dark:border-white/[0.08]"
                           >
                             <div>
-                              <p className="font-medium">{pixel.name}</p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="font-medium text-neutral-900 dark:text-white">{pixel.name}</p>
+                              <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                 {pixel.type} - {pixel.pixelId}
                               </p>
                             </div>

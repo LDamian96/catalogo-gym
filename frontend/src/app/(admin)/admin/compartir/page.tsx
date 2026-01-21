@@ -114,10 +114,10 @@ export default function CompartirPage() {
     >
       {/* Header */}
       <motion.div variants={staggerItem}>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
           Compartir Catálogo
         </h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-neutral-500 dark:text-neutral-400 mt-1">
           Genera un código QR y comparte tu catálogo
         </p>
       </motion.div>
@@ -153,7 +153,7 @@ export default function CompartirPage() {
 
               {/* Color Selector */}
               <div className="space-y-2">
-                <p className="text-sm text-slate-500 flex items-center gap-2">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 flex items-center gap-2">
                   <Palette className="w-4 h-4" />
                   Color del QR
                 </p>
@@ -164,7 +164,7 @@ export default function CompartirPage() {
                       onClick={() => setSelectedColor(color)}
                       className={`w-8 h-8 rounded-full border-2 transition-all ${
                         selectedColor.name === color.name
-                          ? 'border-slate-900 dark:border-white scale-110'
+                          ? 'border-neutral-900 dark:border-white scale-110'
                           : 'border-transparent hover:scale-105'
                       }`}
                       style={{ backgroundColor: color.fg }}
@@ -204,7 +204,7 @@ export default function CompartirPage() {
             <CardContent className="space-y-4">
               {/* URL Display */}
               <div className="flex items-center gap-2">
-                <div className="flex-1 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-sm overflow-x-auto">
+                <div className="flex-1 p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg font-mono text-sm overflow-x-auto">
                   {catalogUrl || 'Cargando...'}
                 </div>
                 <motion.button
@@ -214,7 +214,7 @@ export default function CompartirPage() {
                   className={`p-3 rounded-lg transition-colors ${
                     copied
                       ? 'bg-green-500 text-white'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                      : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'
                   }`}
                 >
                   {copied ? (
@@ -231,7 +231,7 @@ export default function CompartirPage() {
                   onClick={handleShare}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-semibold rounded-xl transition-colors"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 dark:bg-white dark:text-neutral-900 text-white font-semibold rounded-xl transition-colors"
                 >
                   <Share2 className="w-5 h-5" />
                   Compartir
@@ -242,7 +242,7 @@ export default function CompartirPage() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-neutral-200 dark:border-neutral-700  text-neutral-700 dark:text-neutral-300  font-semibold rounded-xl hover:bg-neutral-50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800 transition-colors"
                 >
                   <ExternalLink className="w-5 h-5" />
                   Abrir

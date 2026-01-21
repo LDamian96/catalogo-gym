@@ -566,8 +566,6 @@ export function CategoryProducts({
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-      {/* Spacer para bottom nav en móvil */}
-      <div className="h-20 lg:hidden" />
     </div>
   );
 }

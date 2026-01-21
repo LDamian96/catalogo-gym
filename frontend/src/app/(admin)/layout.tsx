@@ -17,12 +17,13 @@ import {
   LogOut,
   Menu,
   ChevronRight,
-  ChevronLeft,
-  Sparkles,
   User,
   PanelLeftClose,
   PanelLeft,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -46,7 +47,7 @@ import {
 
 import { useAuthStore } from '@/lib/stores/auth.store';
 import { useLogout } from '@/components/providers/auth-provider';
-import { fadeIn, staggerContainer, staggerItem } from '@/lib/utils/animations';
+import { v0Ease, v0Transition } from '@/lib/animations';
 
 // Contexto para el estado del sidebar
 const SidebarContext = createContext<{
@@ -70,22 +71,20 @@ const navigation = [
   { name: 'Importar/Exportar', href: '/admin/importar', icon: FileUp },
 ];
 
-// Variantes de animación para el sidebar
+// V0 Style Animation Variants
 const sidebarVariants = {
   expanded: {
     width: 256,
     transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 30,
+      duration: 0.5,
+      ease: v0Ease,
     },
   },
   collapsed: {
     width: 80,
     transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 30,
+      duration: 0.5,
+      ease: v0Ease,
     },
   },
 };
@@ -95,15 +94,17 @@ const contentVariants = {
     opacity: 1,
     x: 0,
     transition: {
-      delay: 0.1,
-      duration: 0.2,
+      delay: 0.15,
+      duration: 0.3,
+      ease: v0Ease,
     },
   },
   collapsed: {
     opacity: 0,
     x: -10,
     transition: {
-      duration: 0.1,
+      duration: 0.15,
+      ease: v0Ease,
     },
   },
 };
@@ -113,29 +114,29 @@ const iconVariants = {
   collapsed: { scale: 1.1 },
 };
 
+const staggerItem = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0 },
+};
+
 // Sidebar para móvil (siempre expandido)
 function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onItemClick?: () => void }) {
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
-      className="flex flex-col h-full"
-    >
+    <div className="flex flex-col h-full bg-white dark:bg-[#0a0a0a]">
       {/* Logo */}
-      <motion.div variants={staggerItem} className="p-6">
+      <div className="p-6">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/25">
+            <span className="text-white font-bold text-lg">C</span>
           </div>
           <div>
-            <h1 className="font-bold text-lg text-slate-900 dark:text-white">Catálogo</h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Panel Admin</p>
+            <h1 className="font-semibold text-lg text-neutral-900 dark:text-white">Catálogo</h1>
+            <p className="text-xs text-neutral-500 dark:text-white/50">Panel Admin</p>
           </div>
         </Link>
-      </motion.div>
+      </div>
 
-      <Separator className="mx-4" />
+      <Separator className="mx-4 bg-neutral-200 dark:bg-white/[0.08]" />
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -146,8 +147,9 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
           return (
             <motion.div
               key={item.name}
-              variants={staggerItem}
-              custom={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.4, ease: v0Ease }}
             >
               <Link
                 href={item.href}
@@ -156,22 +158,22 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
                   group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-300 relative overflow-hidden
                   ${isActive
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'text-violet-700 dark:text-white'
+                    : 'text-neutral-600 dark:text-white/60 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/[0.04]'
                   }
                 `}
               >
                 {isActive && (
                   <motion.div
                     layoutId="mobileActiveNav"
-                    className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="absolute inset-0 bg-violet-50 dark:bg-white/[0.08] rounded-xl border-l-2 border-violet-500"
+                    transition={{ duration: 0.4, ease: v0Ease }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 relative z-10 ${isActive ? 'text-white' : ''}`} />
+                <item.icon className={`w-5 h-5 relative z-10 ${isActive ? 'text-violet-500 dark:text-violet-400' : ''}`} />
                 <span className="relative z-10">{item.name}</span>
                 {isActive && (
-                  <ChevronRight className="w-4 h-4 ml-auto relative z-10" />
+                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-violet-500 dark:text-violet-400" />
                 )}
               </Link>
             </motion.div>
@@ -180,14 +182,14 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
       </nav>
 
       {/* Footer */}
-      <motion.div variants={staggerItem} className="p-4">
-        <div className="p-4 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900">
-          <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+      <div className="p-4">
+        <div className="p-3 rounded-xl bg-neutral-100 dark:bg-white/[0.04] border border-neutral-200 dark:border-white/[0.08]">
+          <p className="text-xs text-neutral-500 dark:text-white/40 text-center">
             Catálogo Digital v1.0
           </p>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -201,7 +203,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
         variants={sidebarVariants}
         initial="expanded"
         animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="fixed inset-y-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col overflow-hidden"
+        className="fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#0a0a0a] border-r border-neutral-200 dark:border-white/[0.08] hidden lg:flex flex-col overflow-hidden"
       >
         {/* Logo */}
         <div className={`p-4 ${isCollapsed ? 'px-4' : 'px-6'}`}>
@@ -209,11 +211,11 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             <motion.div
               variants={iconVariants}
               animate={isCollapsed ? 'collapsed' : 'expanded'}
-              className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0"
-              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="w-10 h-10 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Sparkles className="w-5 h-5 text-white" />
+              <span className="text-white font-bold text-lg">C</span>
             </motion.div>
             <AnimatePresence>
               {!isCollapsed && (
@@ -223,15 +225,15 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   animate="expanded"
                   exit="collapsed"
                 >
-                  <h1 className="font-bold text-lg text-slate-900 dark:text-white whitespace-nowrap">Catálogo</h1>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">Panel Admin</p>
+                  <h1 className="font-semibold text-lg text-neutral-900 dark:text-white whitespace-nowrap">Catálogo</h1>
+                  <p className="text-xs text-neutral-500 dark:text-white/50 whitespace-nowrap">Panel Admin</p>
                 </motion.div>
               )}
             </AnimatePresence>
           </Link>
         </div>
 
-        <Separator className={isCollapsed ? 'mx-2' : 'mx-4'} />
+        <Separator className={`${isCollapsed ? 'mx-2' : 'mx-4'} bg-neutral-200 dark:bg-white/[0.08]`} />
 
         {/* Navigation */}
         <nav className={`flex-1 py-4 space-y-1 overflow-y-auto ${isCollapsed ? 'px-2' : 'px-3'}`}>
@@ -247,23 +249,32 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   transition-all duration-300 relative overflow-hidden
                   ${isCollapsed ? 'justify-center p-3' : 'px-4 py-3'}
                   ${isActive
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'text-violet-700 dark:text-white'
+                    : 'text-neutral-600 dark:text-white/60 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/[0.04]'
                   }
                 `}
               >
                 {isActive && (
                   <motion.div
                     layoutId="desktopActiveNav"
-                    className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className={`absolute inset-0 bg-violet-50 dark:bg-white/[0.08] rounded-xl ${!isCollapsed ? 'border-l-2 border-violet-500' : ''}`}
+                    transition={{ duration: 0.4, ease: v0Ease }}
+                  />
+                )}
+                {/* Subtle glow for active state */}
+                {isActive && (
+                  <motion.div
+                    className="absolute inset-0 bg-violet-500/5 rounded-xl blur-xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                   />
                 )}
                 <motion.div
                   variants={iconVariants}
                   animate={isCollapsed ? 'collapsed' : 'expanded'}
                 >
-                  <item.icon className={`w-5 h-5 relative z-10 flex-shrink-0 ${isActive ? 'text-white' : ''}`} />
+                  <item.icon className={`w-5 h-5 relative z-10 flex-shrink-0 transition-colors duration-300 ${isActive ? 'text-violet-500 dark:text-violet-400' : ''}`} />
                 </motion.div>
                 <AnimatePresence>
                   {!isCollapsed && (
@@ -279,7 +290,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   )}
                 </AnimatePresence>
                 {isActive && !isCollapsed && (
-                  <ChevronRight className="w-4 h-4 ml-auto relative z-10" />
+                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-violet-500 dark:text-violet-400" />
                 )}
               </Link>
             );
@@ -289,14 +300,14 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                 key={item.name}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.05, duration: 0.4, ease: v0Ease }}
               >
                 {isCollapsed ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       {NavLink}
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="font-medium">
+                    <TooltipContent side="right" className="font-medium bg-white dark:bg-[#0a0a0a] border-neutral-200 dark:border-white/[0.08] text-neutral-900 dark:text-white">
                       {item.name}
                     </TooltipContent>
                   </Tooltip>
@@ -315,7 +326,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             className={`
               w-full flex items-center gap-3 rounded-xl text-sm font-medium
               transition-all duration-300 py-3
-              text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800
+              text-neutral-500 dark:text-white/50 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/[0.04]
               ${isCollapsed ? 'justify-center px-3' : 'px-4'}
             `}
             whileHover={{ scale: 1.02 }}
@@ -323,7 +334,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
           >
             <motion.div
               animate={{ rotate: isCollapsed ? 180 : 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              transition={{ duration: 0.4, ease: v0Ease }}
             >
               <PanelLeftClose className="w-5 h-5" />
             </motion.div>
@@ -353,8 +364,8 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
               exit="collapsed"
               className="p-4"
             >
-              <div className="p-3 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900">
-                <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+              <div className="p-3 rounded-xl bg-neutral-100 dark:bg-white/[0.04] border border-neutral-200 dark:border-white/[0.08]">
+                <p className="text-xs text-neutral-500 dark:text-white/40 text-center">
                   Catálogo Digital v1.0
                 </p>
               </div>
@@ -372,6 +383,7 @@ function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext);
+  const { isDark, toggleTheme } = useTheme();
 
   const getInitials = (name: string | null | undefined, email: string) => {
     if (name) {
@@ -381,16 +393,16 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
+    <header className="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-black/[0.08] dark:border-white/[0.08]">
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
         {/* Mobile menu button */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden">
+            <Button variant="ghost" size="icon" className="lg:hidden text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white">
               <Menu className="w-5 h-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 p-0">
+          <SheetContent side="left" className="w-72 p-0 bg-white dark:bg-[#0a0a0a] border-neutral-200 dark:border-white/[0.08]">
             <MobileSidebarContent
               pathname={pathname}
               onItemClick={() => setMobileMenuOpen(false)}
@@ -406,12 +418,13 @@ function Header() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: v0Ease }}
               >
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsCollapsed(false)}
-                  className="mr-2"
+                  className="mr-2 text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white"
                 >
                   <PanelLeft className="w-5 h-5" />
                 </Button>
@@ -420,56 +433,88 @@ function Header() {
           </AnimatePresence>
         </div>
 
-        {/* User menu */}
-        <div className="flex items-center gap-4 ml-auto">
+        {/* Theme toggle & User menu - V0 Style */}
+        <div className="flex items-center gap-2 ml-auto">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {isDark ? (
+                <motion.div
+                  key="sun"
+                  initial={{ scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0, rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Sun className="w-5 h-5" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  initial={{ scale: 0, rotate: 90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0, rotate: -90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Moon className="w-5 h-5" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Button>
+
           {isLoading ? (
             <div className="flex items-center gap-3">
-              <Skeleton className="w-32 h-4" />
-              <Skeleton className="w-10 h-10 rounded-full" />
+              <Skeleton className="w-32 h-4 bg-neutral-200 dark:bg-white/10" />
+              <Skeleton className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-white/10" />
             </div>
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-3 px-3 py-2 h-auto">
+                <Button variant="ghost" className="flex items-center gap-3 px-3 py-2 h-auto hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    <p className="text-sm font-medium text-neutral-900 dark:text-white">
                       {user?.name || 'Usuario'}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-neutral-500 dark:text-white/50">
                       {user?.role === 'ADMIN' ? 'Administrador' : 'Editor'}
                     </p>
                   </div>
-                  <Avatar className="w-10 h-10 border-2 border-indigo-200 dark:border-indigo-800">
-                    <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold">
+                  <Avatar className="w-10 h-10 border-2 border-violet-500/30">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-pink-500 text-white font-semibold">
                       {user ? getInitials(user.name, user.email) : 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-[#0a0a0a] border-black/[0.08] dark:border-white/[0.08]">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
-                    <span>{user?.name || 'Usuario'}</span>
-                    <span className="text-xs text-slate-500 font-normal">{user?.email}</span>
+                    <span className="text-neutral-900 dark:text-white">{user?.name || 'Usuario'}</span>
+                    <span className="text-xs text-neutral-500 dark:text-white/50 font-normal">{user?.email}</span>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-black/[0.08] dark:bg-white/[0.08]" />
                 <DropdownMenuItem asChild>
-                  <Link href="/admin/configuracion" className="cursor-pointer">
+                  <Link href="/admin/configuracion" className="cursor-pointer text-neutral-700 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white focus:bg-black/[0.04] dark:focus:bg-white/[0.04]">
                     <User className="w-4 h-4 mr-2" />
                     Perfil
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/admin/configuracion" className="cursor-pointer">
+                  <Link href="/admin/configuracion" className="cursor-pointer text-neutral-700 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white focus:bg-black/[0.04] dark:focus:bg-white/[0.04]">
                     <Settings className="w-4 h-4 mr-2" />
                     Configuración
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-black/[0.08] dark:bg-white/[0.08]" />
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-red-600 dark:text-red-400 cursor-pointer"
+                  className="text-red-500 dark:text-red-400 cursor-pointer focus:bg-red-500/10"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Cerrar Sesión
@@ -511,19 +556,26 @@ export default function AdminLayout({
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Mostrar loading mientras verifica autenticación
+  // Mostrar loading mientras verifica autenticación - V0 Style
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: v0Ease }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <Sparkles className="w-8 h-8 text-white animate-pulse" />
+          <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center">
+            <motion.span
+              className="text-white font-bold text-2xl"
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              C
+            </motion.span>
           </div>
-          <p className="text-slate-500 dark:text-slate-400">Cargando...</p>
+          <p className="text-neutral-500 dark:text-white/50">Cargando...</p>
         </motion.div>
       </div>
     );
@@ -536,7 +588,7 @@ export default function AdminLayout({
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen bg-neutral-50 dark:bg-[#0a0a0a]">
         {/* Desktop Sidebar - Collapsible */}
         <DesktopSidebar pathname={pathname} />
 
@@ -548,9 +600,8 @@ export default function AdminLayout({
             marginLeft: isDesktop ? (isCollapsed ? 80 : 256) : 0,
           }}
           transition={{
-            type: 'spring',
-            stiffness: 300,
-            damping: 30,
+            duration: 0.5,
+            ease: v0Ease,
           }}
         >
           <Header />
@@ -559,10 +610,10 @@ export default function AdminLayout({
             <AnimatePresence mode="wait">
               <motion.div
                 key={pathname}
-                variants={fadeIn}
-                initial="initial"
-                animate="animate"
-                exit="exit"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: v0Ease }}
               >
                 {children}
               </motion.div>

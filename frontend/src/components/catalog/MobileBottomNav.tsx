@@ -1,22 +1,32 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Home, Grid3X3, Package } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, Grid3X3, Package, ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { v0Ease } from '@/lib/animations';
+import { useCart } from '@/hooks/useCart';
 
 const navItems = [
-  { href: '/', icon: Home, label: 'Inicio', gradient: 'from-violet-500 to-purple-600' },
-  { href: '/categorias', icon: Grid3X3, label: 'Categorías', gradient: 'from-blue-500 to-cyan-500' },
-  { href: '/productos', icon: Package, label: 'Productos', gradient: 'from-emerald-500 to-teal-500' },
+  { href: '/', icon: Home, label: 'Inicio' },
+  { href: '/categorias', icon: Grid3X3, label: 'Categorías' },
+  { href: '/productos', icon: Package, label: 'Productos' },
+  { href: 'cart', icon: ShoppingCart, label: 'Carrito', showBadge: true, isCartAction: true },
 ];
 
 export function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { items, openCart } = useCart();
 
-  const handleNavClick = (href: string) => {
-    router.push(href);
+  const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleNavClick = (href: string, isCartAction?: boolean) => {
+    if (isCartAction) {
+      openCart();
+    } else {
+      router.push(href);
+    }
   };
 
   return (
@@ -24,66 +34,73 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      transition={{ duration: 0.4, ease: v0Ease }}
     >
-      {/* Glassmorphism background */}
-      <div className="absolute inset-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-lg" />
+      {/* V0 Minimal Glass Background */}
+      <div className="absolute inset-0 bg-white/80 dark:bg-neutral-950/90 backdrop-blur-xl border-t border-neutral-200/50 dark:border-white/[0.08]" />
 
-      {/* Safe area padding for iPhone */}
-      <div className="relative flex items-center justify-around px-4 pt-2 pb-safe">
+      {/* Navigation Items */}
+      <div className="relative flex items-center justify-around px-4 py-2 pb-safe">
         {navItems.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== '/' && pathname.startsWith(item.href));
+          const isActive = !item.isCartAction && (pathname === item.href ||
+            (item.href !== '/' && pathname.startsWith(item.href)));
           const Icon = item.icon;
+          const showBadge = item.showBadge && cartItemCount > 0;
 
           return (
-            <button
+            <motion.button
               key={item.href}
-              onClick={() => handleNavClick(item.href)}
-              className="relative flex flex-col items-center justify-center min-w-[72px] py-2 touch-manipulation"
+              onClick={() => handleNavClick(item.href, item.isCartAction)}
+              className="relative flex flex-col items-center justify-center px-4 py-1.5 touch-manipulation"
+              whileTap={{ scale: 0.95 }}
             >
-              {/* Icon container */}
-              <div
-                className={cn(
-                  'relative p-2 rounded-xl transition-all duration-200',
-                  isActive ? `bg-gradient-to-br ${item.gradient}` : 'bg-transparent'
-                )}
-              >
+              {/* Icon */}
+              <div className="relative">
                 <Icon
                   className={cn(
-                    'w-6 h-6 transition-colors duration-200',
-                    isActive ? 'text-white' : 'text-slate-400'
+                    'w-5 h-5 transition-colors duration-200',
+                    isActive
+                      ? 'text-neutral-900 dark:text-white'
+                      : 'text-neutral-400 dark:text-neutral-500'
                   )}
+                  strokeWidth={isActive ? 2 : 1.5}
                 />
+
+                {/* Cart Badge */}
+                {showBadge && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-violet-600 text-white">
+                    {cartItemCount > 9 ? '9+' : cartItemCount}
+                  </span>
+                )}
               </div>
 
               {/* Label */}
               <span
                 className={cn(
-                  'mt-1 text-[10px] font-semibold transition-colors duration-200',
-                  isActive ? 'text-slate-900' : 'text-slate-400'
+                  'mt-1 text-[10px] font-medium transition-colors duration-200',
+                  isActive
+                    ? 'text-neutral-900 dark:text-white'
+                    : 'text-neutral-400 dark:text-neutral-500'
                 )}
               >
                 {item.label}
               </span>
 
-              {/* Active indicator dot */}
-              {isActive && (
-                <div
-                  className={cn(
-                    'absolute -bottom-0.5 w-1 h-1 rounded-full bg-gradient-to-r',
-                    item.gradient
-                  )}
-                />
-              )}
-            </button>
+              {/* Active Indicator - Subtle dot */}
+              <AnimatePresence>
+                {isActive && (
+                  <motion.div
+                    className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-violet-600"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  />
+                )}
+              </AnimatePresence>
+            </motion.button>
           );
         })}
-      </div>
-
-      {/* Home indicator line for iPhone style */}
-      <div className="flex justify-center pb-1">
-        <div className="w-32 h-1 bg-slate-200 rounded-full" />
       </div>
     </motion.nav>
   );

@@ -130,13 +130,13 @@ export default function EstadisticasPage() {
       {/* Header */}
       <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white">
               <BarChart3 className="w-6 h-6" />
             </div>
             Estadísticas
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-neutral-500 dark:text-neutral-400 dark:text-neutral-500 mt-1">
             Analiza el rendimiento de tu catálogo
           </p>
         </div>
@@ -172,8 +172,8 @@ export default function EstadisticasPage() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Visitas Hoy</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 dark:text-neutral-500">Visitas Hoy</p>
+                <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
                   {formatNumber(summary?.today || 0)}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
@@ -185,7 +185,7 @@ export default function EstadisticasPage() {
                   <span className={`text-sm font-medium ${(summary?.trend || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                     {summary?.trend || 0}%
                   </span>
-                  <span className="text-xs text-slate-400">vs ayer</span>
+                  <span className="text-xs text-neutral-400 dark:text-neutral-500">vs ayer</span>
                 </div>
               </div>
               <div className="p-3 bg-violet-100 dark:bg-violet-500/20 rounded-xl">
@@ -201,11 +201,11 @@ export default function EstadisticasPage() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Productos</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 dark:text-neutral-500">Productos</p>
+                <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
                   {summary?.counts.products || 0}
                 </p>
-                <p className="text-sm text-slate-400 mt-2">
+                <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-2">
                   {summary?.counts.activeProducts || 0} activos
                 </p>
               </div>
@@ -222,11 +222,11 @@ export default function EstadisticasPage() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">WhatsApp Clicks</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 dark:text-neutral-500">WhatsApp Clicks</p>
+                <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
                   {formatNumber(stats?.totals.whatsappClicks || 0)}
                 </p>
-                <p className="text-sm text-slate-400 mt-2">
+                <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-2">
                   en {periodOptions.find(p => p.value === period)?.label.toLowerCase()}
                 </p>
               </div>
@@ -243,11 +243,11 @@ export default function EstadisticasPage() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Búsquedas</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 dark:text-neutral-500">Búsquedas</p>
+                <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
                   {formatNumber(stats?.totals.searches || 0)}
                 </p>
-                <p className="text-sm text-slate-400 mt-2">
+                <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-2">
                   en {periodOptions.find(p => p.value === period)?.label.toLowerCase()}
                 </p>
               </div>
@@ -286,7 +286,7 @@ export default function EstadisticasPage() {
                       <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-neutral-200 dark:stroke-neutral-700" />
                   <XAxis
                     dataKey="date"
                     tickFormatter={formatDate}
@@ -325,7 +325,7 @@ export default function EstadisticasPage() {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[350px] flex items-center justify-center text-slate-400">
+              <div className="h-[350px] flex items-center justify-center text-neutral-400 dark:text-neutral-500">
                 <div className="text-center">
                   <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p>No hay datos para este período</p>
@@ -358,12 +358,12 @@ export default function EstadisticasPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-200 dark:bg-neutral-700  flex-shrink-0">
                       {product.image ? (
                         <Image
                           src={product.image}
@@ -374,12 +374,12 @@ export default function EstadisticasPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-5 h-5 text-slate-400" />
+                          <Package className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-900 dark:text-white truncate">
+                      <p className="font-medium text-neutral-900 dark:text-white truncate">
                         {product.name}
                       </p>
                     </div>
@@ -390,7 +390,7 @@ export default function EstadisticasPage() {
                 ))}
               </div>
             ) : (
-              <div className="h-48 flex items-center justify-center text-slate-400">
+              <div className="h-48 flex items-center justify-center text-neutral-400 dark:text-neutral-500">
                 <div className="text-center">
                   <Package className="w-10 h-10 mx-auto mb-2 opacity-50" />
                   <p>No hay datos de productos</p>
@@ -420,12 +420,12 @@ export default function EstadisticasPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-200 dark:bg-neutral-700  flex-shrink-0">
                       {product.image ? (
                         <Image
                           src={product.image}
@@ -436,12 +436,12 @@ export default function EstadisticasPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-5 h-5 text-slate-400" />
+                          <Package className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-900 dark:text-white truncate">
+                      <p className="font-medium text-neutral-900 dark:text-white truncate">
                         {product.name}
                       </p>
                     </div>
@@ -452,7 +452,7 @@ export default function EstadisticasPage() {
                 ))}
               </div>
             ) : (
-              <div className="h-48 flex items-center justify-center text-slate-400">
+              <div className="h-48 flex items-center justify-center text-neutral-400 dark:text-neutral-500">
                 <div className="text-center">
                   <MessageCircle className="w-10 h-10 mx-auto mb-2 opacity-50" />
                   <p>No hay datos de WhatsApp</p>
@@ -474,33 +474,33 @@ export default function EstadisticasPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
+              <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  text-center">
                 <Eye className="w-6 h-6 mx-auto text-violet-500 mb-2" />
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                   {formatNumber(stats?.totals.productViews || 0)}
                 </p>
-                <p className="text-xs text-slate-500">Vistas de productos</p>
+                <p className="text-xs text-neutral-500">Vistas de productos</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
+              <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  text-center">
                 <MousePointerClick className="w-6 h-6 mx-auto text-blue-500 mb-2" />
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                   {formatNumber(stats?.totals.pageViews || 0)}
                 </p>
-                <p className="text-xs text-slate-500">Vistas de página</p>
+                <p className="text-xs text-neutral-500">Vistas de página</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
+              <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  text-center">
                 <ShoppingCart className="w-6 h-6 mx-auto text-amber-500 mb-2" />
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                   {formatNumber(stats?.totals.addToCart || 0)}
                 </p>
-                <p className="text-xs text-slate-500">Añadidos al carrito</p>
+                <p className="text-xs text-neutral-500">Añadidos al carrito</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
+              <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  text-center">
                 <Package className="w-6 h-6 mx-auto text-green-500 mb-2" />
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                   {formatNumber(stats?.totals.categoryViews || 0)}
                 </p>
-                <p className="text-xs text-slate-500">Vistas de categorías</p>
+                <p className="text-xs text-neutral-500">Vistas de categorías</p>
               </div>
             </div>
           </CardContent>

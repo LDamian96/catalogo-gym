@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Loader2, Mail, Lock, LogIn, Sparkles } from 'lucide-react';
+import { Loader2, Mail, Lock, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 import { useAuthStore } from '@/lib/stores/auth.store';
 import { login } from '@/lib/api/auth';
-import { fadeInUp, staggerContainer, staggerItem, scaleInBounce } from '@/lib/utils/animations';
+import { v0Ease } from '@/lib/animations';
 
 // Schema de validación
 const loginSchema = z.object({
@@ -76,26 +76,38 @@ export default function LoginPage() {
 
   return (
     <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: v0Ease }}
       className="w-full"
     >
-      <Card className="border-0 shadow-2xl bg-white/10 backdrop-blur-xl">
+      {/* V0 Style Card */}
+      <Card className="border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl shadow-2xl">
         <CardHeader className="space-y-1 text-center pb-8">
+          {/* V0 Style Logo */}
           <motion.div
-            variants={scaleInBounce}
-            className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
+            className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center"
           >
-            <Sparkles className="w-8 h-8 text-white" />
+            <span className="text-white font-bold text-2xl">C</span>
           </motion.div>
-          <motion.div variants={staggerItem}>
-            <CardTitle className="text-2xl font-bold text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: v0Ease }}
+          >
+            <CardTitle className="text-2xl font-semibold text-neutral-900 dark:text-white">
               Catálogo Digital
             </CardTitle>
           </motion.div>
-          <motion.div variants={staggerItem}>
-            <CardDescription className="text-slate-300">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: v0Ease }}
+          >
+            <CardDescription className="text-neutral-500 dark:text-white/50">
               Ingresa a tu panel de administración
             </CardDescription>
           </motion.div>
@@ -103,17 +115,22 @@ export default function LoginPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <motion.div variants={staggerItem} className="space-y-2">
-              <Label htmlFor="email" className="text-slate-200">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: v0Ease }}
+              className="space-y-2"
+            >
+              <Label htmlFor="email" className="text-neutral-600 dark:text-white/70">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 dark:text-white/40" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="tu@email.com"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-400/20 transition-all duration-300"
+                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-violet-500/50 focus-visible:shadow-[0_0_0_3px_rgba(139,92,246,0.15)] transition-all duration-300"
                   {...register('email')}
                   disabled={isLoading}
                 />
@@ -122,24 +139,29 @@ export default function LoginPage() {
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-red-400"
+                  className="text-sm text-red-500 dark:text-red-400"
                 >
                   {errors.email.message}
                 </motion.p>
               )}
             </motion.div>
 
-            <motion.div variants={staggerItem} className="space-y-2">
-              <Label htmlFor="password" className="text-slate-200">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5, ease: v0Ease }}
+              className="space-y-2"
+            >
+              <Label htmlFor="password" className="text-neutral-600 dark:text-white/70">
                 Contraseña
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 dark:text-white/40" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-400/20 transition-all duration-300"
+                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-violet-500/50 focus-visible:shadow-[0_0_0_3px_rgba(139,92,246,0.15)] transition-all duration-300"
                   {...register('password')}
                   disabled={isLoading}
                 />
@@ -148,17 +170,21 @@ export default function LoginPage() {
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-red-400"
+                  className="text-sm text-red-500 dark:text-red-400"
                 >
                   {errors.password.message}
                 </motion.p>
               )}
             </motion.div>
 
-            <motion.div variants={staggerItem}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6, ease: v0Ease }}
+            >
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                className="w-full bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-white/90 hover:shadow-[0_0_20px_rgba(139,92,246,0.35)] font-medium py-6 rounded-xl transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -174,7 +200,7 @@ export default function LoginPage() {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-2"
+                    className="flex items-center justify-center gap-2"
                   >
                     <LogIn className="w-5 h-5" />
                     Iniciar Sesión
@@ -184,9 +210,14 @@ export default function LoginPage() {
             </motion.div>
           </form>
 
-          {/* Demo Accounts */}
-          <motion.div variants={staggerItem} className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-center text-sm text-slate-400 mb-3">
+          {/* Demo Accounts - V0 Style */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7, ease: v0Ease }}
+            className="mt-6 pt-6 border-t border-black/[0.08] dark:border-white/[0.08]"
+          >
+            <p className="text-center text-sm text-neutral-400 dark:text-white/40 mb-3">
               Acceso rápido (Demo)
             </p>
             <div className="flex gap-2">
@@ -195,7 +226,7 @@ export default function LoginPage() {
                   key={account.email}
                   type="button"
                   variant="outline"
-                  className="flex-1 bg-white/5 border-white/20 text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-300"
+                  className="flex-1 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] transition-all duration-300"
                   onClick={() => fillDemoAccount(account.email, account.password)}
                   disabled={isLoading}
                 >
@@ -207,10 +238,12 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      {/* Footer */}
+      {/* Footer - V0 Style */}
       <motion.p
-        variants={fadeInUp}
-        className="text-center mt-6 text-slate-400 text-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.8, ease: v0Ease }}
+        className="text-center mt-6 text-neutral-400 dark:text-white/40 text-sm"
       >
         Panel de Administración
       </motion.p>
