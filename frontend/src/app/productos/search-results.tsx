@@ -181,15 +181,15 @@ export function SearchResults({
       <div className="h-16 lg:h-20" />
 
       {/* Simple Header with subtle gradient */}
-      <div className="relative bg-gradient-to-br from-violet-50/80 via-white to-pink-50/50 dark:from-violet-950/30 dark:via-[#0a0a0f] dark:to-pink-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
+      <div className="relative bg-gradient-to-br from-cyan-50/80 via-white to-sky-50/50 dark:from-cyan-950/30 dark:via-[#0a0a0f] dark:to-blue-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
         {/* Subtle decorative elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(139,92,246,0.08),transparent)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(236,72,153,0.06),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(34,211,238,0.08),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(59,130,246,0.06),transparent)] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-4 lg:py-6">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm mb-4">
-            <Link href="/" className="text-neutral-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors flex items-center gap-1">
+            <Link href="/" className="text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1">
               <Home className="w-4 h-4" />
               Inicio
             </Link>
@@ -202,7 +202,7 @@ export function SearchResults({
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
                 {query ? (
-                  <>Resultados para "<span className="text-violet-600 dark:text-violet-400">{query}</span>"</>
+                  <>Resultados para "<span className="text-cyan-600 dark:text-cyan-400">{query}</span>"</>
                 ) : (
                   'Todos los Productos'
                 )}
@@ -213,7 +213,7 @@ export function SearchResults({
             <div className="w-full lg:w-80">
               <div className="relative">
                 {isSearching ? (
-                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-violet-500 animate-spin" />
+                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-500 animate-spin" />
                 ) : (
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 )}
@@ -230,7 +230,7 @@ export function SearchResults({
                       handleSearch(inputValue, 1);
                     }
                   }}
-                  className="w-full pl-10 pr-10 py-2.5 text-sm bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
+                  className="w-full pl-10 pr-10 py-2.5 text-sm bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
                 />
                 {inputValue && (
                   <button
@@ -258,8 +258,8 @@ export function SearchResults({
                 className={cn(
                   'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border',
                   activeFilter === tab.value
-                    ? 'bg-gradient-to-r from-violet-500 to-pink-500 text-white border-transparent shadow-lg shadow-violet-500/25'
-                    : 'bg-white/80 dark:bg-white/5 text-neutral-600 dark:text-neutral-300 border-neutral-200/80 dark:border-white/10 hover:border-violet-300 dark:hover:border-violet-500/30 hover:shadow-md'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-transparent shadow-lg shadow-cyan-500/25'
+                    : 'bg-white/80 dark:bg-white/5 text-neutral-600 dark:text-neutral-300 border-neutral-200/80 dark:border-white/10 hover:border-cyan-300 dark:hover:border-cyan-500/30 hover:shadow-md'
                 )}
               >
                 <tab.icon className="w-4 h-4" />
@@ -306,8 +306,8 @@ export function SearchResults({
                 onClick={() => setShowFilters(true)}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg',
-                  'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-medium',
-                  hasActiveFilters && 'ring-2 ring-violet-500'
+                  'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 text-xs font-medium',
+                  hasActiveFilters && 'ring-2 ring-cyan-500'
                 )}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -327,13 +327,13 @@ export function SearchResults({
               {/* Sidebar Header */}
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-violet-500" />
+                  <SlidersHorizontal className="w-4 h-4 text-cyan-500" />
                   Filtros
                 </h2>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="text-xs text-violet-600 dark:text-violet-400 hover:underline"
+                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
                   >
                     Limpiar todo
                   </button>
@@ -356,13 +356,13 @@ export function SearchResults({
                       className={cn(
                         'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                         sort === option.value
-                          ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                          ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                           : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                       )}
                     >
                       {option.label}
                       {sort === option.value && (
-                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />
+                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
                       )}
                     </button>
                   ))}
@@ -383,13 +383,13 @@ export function SearchResults({
                     className={cn(
                       'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                       !selectedCategory
-                        ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                         : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                     )}
                   >
                     Todas
                     {!selectedCategory && (
-                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
                     )}
                   </button>
                   {categories.map((category) => (
@@ -402,7 +402,7 @@ export function SearchResults({
                       className={cn(
                         'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                         selectedCategory === category.id
-                          ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
+                          ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                           : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                       )}
                     >
@@ -413,7 +413,7 @@ export function SearchResults({
                         </span>
                       )}
                       {selectedCategory === category.id && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                       )}
                     </button>
                   ))}
@@ -434,7 +434,7 @@ export function SearchResults({
                         placeholder="S/ 0"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
                       />
                     </div>
                     <div className="flex-1">
@@ -444,13 +444,13 @@ export function SearchResults({
                         placeholder="S/ 999"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
                       />
                     </div>
                   </div>
                   <button
                     onClick={() => handleSearch(query, 1)}
-                    className="w-full py-2 text-sm font-medium text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-500/10 rounded-lg hover:bg-violet-200 dark:hover:bg-violet-500/20 transition-colors"
+                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
                   >
                     Aplicar precio
                   </button>
@@ -464,17 +464,17 @@ export function SearchResults({
             {/* Active filters indicator - Only show on desktop when filters active */}
             {hasActiveFilters && (
               <motion.div
-                className="hidden lg:flex items-center gap-2 mb-4 p-3 bg-violet-50 dark:bg-violet-500/10 rounded-xl border border-violet-200 dark:border-violet-500/20"
+                className="hidden lg:flex items-center gap-2 mb-4 p-3 bg-cyan-50 dark:bg-cyan-500/10 rounded-xl border border-cyan-200 dark:border-cyan-500/20"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <SlidersHorizontal className="w-4 h-4 text-violet-500" />
-                <span className="text-sm text-violet-700 dark:text-violet-300">
+                <SlidersHorizontal className="w-4 h-4 text-cyan-500" />
+                <span className="text-sm text-cyan-700 dark:text-cyan-300">
                   Filtros activos
                 </span>
                 <button
                   onClick={clearFilters}
-                  className="ml-auto text-xs font-medium text-violet-600 dark:text-violet-400 hover:underline flex items-center gap-1"
+                  className="ml-auto text-xs font-medium text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1"
                 >
                   <X className="w-3 h-3" />
                   Limpiar todo
@@ -486,7 +486,7 @@ export function SearchResults({
             {isSearching && (
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
-                  <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto mb-3" />
+                  <Loader2 className="w-8 h-8 text-cyan-600 animate-spin mx-auto mb-3" />
                   <p className="text-sm text-neutral-500">Buscando productos...</p>
                 </div>
               </div>
@@ -542,7 +542,7 @@ export function SearchResults({
                               className={cn(
                                 'w-10 h-10 rounded-lg text-sm font-medium transition-colors',
                                 p === currentPage
-                                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/25'
+                                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25'
                                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                               )}
                             >
@@ -577,8 +577,8 @@ export function SearchResults({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
-                  <Search className="w-8 h-8 text-violet-500" />
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-cyan-100 dark:bg-cyan-500/10 flex items-center justify-center">
+                  <Search className="w-8 h-8 text-cyan-500" />
                 </div>
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                   No encontramos resultados
@@ -594,7 +594,7 @@ export function SearchResults({
                         setQuery(suggestion);
                         handleSearch(suggestion, 1);
                       }}
-                      className="px-4 py-2 bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-lg text-sm hover:bg-violet-200 dark:hover:bg-violet-500/30 transition-colors"
+                      className="px-4 py-2 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 rounded-lg text-sm hover:bg-cyan-200 dark:hover:bg-cyan-500/30 transition-colors"
                     >
                       {suggestion}
                     </button>
@@ -618,13 +618,13 @@ export function SearchResults({
               onClick={() => setShowFilters(false)}
             />
             <motion.div
-              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-slate-900 z-50 shadow-2xl overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-neutral-900 z-50 shadow-2xl overflow-y-auto"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
             >
-              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-800">
                 <h2 className="text-lg font-semibold">Filtros</h2>
                 <button onClick={() => setShowFilters(false)}>
                   <X className="w-6 h-6" />
@@ -644,8 +644,8 @@ export function SearchResults({
                         className={cn(
                           'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                           sort === option.value
-                            ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         )}
                       >
                         {option.label}
@@ -665,8 +665,8 @@ export function SearchResults({
                       className={cn(
                         'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                         !selectedCategory
-                          ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300'
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       )}
                     >
                       Todas las categorías
@@ -678,8 +678,8 @@ export function SearchResults({
                         className={cn(
                           'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                           selectedCategory === category.id
-                            ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         )}
                       >
                         {category.name}
@@ -700,14 +700,14 @@ export function SearchResults({
                         placeholder="Min"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                       />
                       <input
                         type="number"
                         placeholder="Max"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                       />
                     </div>
                   </div>
@@ -720,7 +720,7 @@ export function SearchResults({
                       handleSearch(query, 1);
                       setShowFilters(false);
                     }}
-                    className="w-full py-3 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700"
+                    className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700"
                   >
                     Aplicar filtros
                   </button>
@@ -730,7 +730,7 @@ export function SearchResults({
                         clearFilters();
                         setShowFilters(false);
                       }}
-                      className="w-full py-2 text-sm text-slate-600 dark:text-slate-400"
+                      className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400"
                     >
                       Limpiar filtros
                     </button>

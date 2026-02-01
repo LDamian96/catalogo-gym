@@ -42,14 +42,14 @@ export function ProductSlider({ title, products, viewAllHref, className }: Produ
     <section className={cn('py-8', className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 md:px-6">
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
           {title}
         </h2>
         <div className="flex items-center gap-2">
           {viewAllHref && (
             <a
               href={viewAllHref}
-              className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline mr-4"
+              className="text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:underline mr-4"
             >
               Ver todos
             </a>
@@ -60,10 +60,10 @@ export function ProductSlider({ title, products, viewAllHref, className }: Produ
             disabled={!canScrollLeft}
             className={cn(
               'w-10 h-10 rounded-full flex items-center justify-center transition-all',
-              'border border-slate-200 dark:border-slate-700',
+              'border border-neutral-200 dark:border-neutral-700',
               canScrollLeft
-                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
-                : 'bg-slate-100 dark:bg-slate-800/50 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                ? 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                : 'bg-neutral-100 dark:bg-neutral-800/50 text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
             )}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -73,10 +73,10 @@ export function ProductSlider({ title, products, viewAllHref, className }: Produ
             disabled={!canScrollRight}
             className={cn(
               'w-10 h-10 rounded-full flex items-center justify-center transition-all',
-              'border border-slate-200 dark:border-slate-700',
+              'border border-neutral-200 dark:border-neutral-700',
               canScrollRight
-                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
-                : 'bg-slate-100 dark:bg-slate-800/50 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                ? 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                : 'bg-neutral-100 dark:bg-neutral-800/50 text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
             )}
           >
             <ChevronRight className="w-5 h-5" />
@@ -87,8 +87,8 @@ export function ProductSlider({ title, products, viewAllHref, className }: Produ
       {/* Slider */}
       <div className="relative">
         {/* Gradient Masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-neutral-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-neutral-950 to-transparent z-10 pointer-events-none" />
 
         {/* Products Container */}
         <motion.div

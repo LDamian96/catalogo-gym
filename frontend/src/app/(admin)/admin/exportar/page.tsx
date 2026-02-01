@@ -138,7 +138,7 @@ export default function ExportarPage() {
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-violet-500" />
+                <Package className="w-5 h-5 text-cyan-500" />
                 Exportar Productos
               </CardTitle>
               <CardDescription>
@@ -183,7 +183,7 @@ export default function ExportarPage() {
               <Button
                 onClick={handleExportProducts}
                 disabled={loading === 'products'}
-                className="w-full gap-2 bg-violet-600 hover:bg-violet-700"
+                className="w-full gap-2 bg-cyan-600 hover:bg-cyan-700"
               >
                 {loading === 'products' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -353,7 +353,7 @@ export default function ExportarPage() {
             </h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-400">
               <div className="flex gap-2">
-                <span className="text-violet-500">•</span>
+                <span className="text-cyan-500">•</span>
                 <span>Los archivos se generan en formato .xlsx compatible con Excel y Google Sheets</span>
               </div>
               <div className="flex gap-2">

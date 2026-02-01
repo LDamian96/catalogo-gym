@@ -10,16 +10,16 @@ import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/ca
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
 import { staggerContainer, staggerItem, v0Ease } from '@/lib/animations';
 
-// Gradient colors for category cards (matching inicio)
+// Gradient colors for category cards (v0 Cyan/Blue palette)
 const cardGradients = [
-  'from-rose-400 to-pink-500',
-  'from-sky-400 to-blue-500',
-  'from-lime-400 to-green-500',
-  'from-amber-400 to-orange-500',
-  'from-violet-400 to-purple-500',
-  'from-emerald-400 to-teal-500',
-  'from-fuchsia-400 to-pink-500',
   'from-cyan-400 to-blue-500',
+  'from-sky-400 to-blue-500',
+  'from-teal-400 to-cyan-500',
+  'from-blue-400 to-indigo-500',
+  'from-cyan-500 to-sky-500',
+  'from-emerald-400 to-teal-500',
+  'from-sky-500 to-blue-600',
+  'from-cyan-400 to-blue-600',
 ];
 
 interface CategoriesPageProps {
@@ -48,7 +48,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
   }, [categoriesWithImages.length]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
       {/* Navbar */}
       <Navbar settings={settings} categories={categories} />
 
@@ -56,7 +56,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       <div className="h-16 md:h-20" />
 
       {/* Hero with Category Images Carousel */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-violet-900/50 to-slate-900 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0a0a0f] via-cyan-900/50 to-[#0a0a0f] overflow-hidden">
         {/* Background Images Carousel - Auto rotate */}
         <AnimatePresence mode="wait">
           {categoriesWithImages.length > 0 && categoriesWithImages[currentSlide]?.image && (
@@ -80,7 +80,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
         </AnimatePresence>
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/60 to-[#0a0a0f]/40" />
 
         {/* Content */}
         <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-16">
@@ -186,8 +186,8 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
-                <Layers className="w-8 h-8 text-violet-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-cyan-100 dark:bg-cyan-500/10 flex items-center justify-center">
+                <Layers className="w-8 h-8 text-cyan-500" />
               </div>
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 No hay categorías

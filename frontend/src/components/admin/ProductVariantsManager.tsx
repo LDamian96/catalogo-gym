@@ -242,7 +242,7 @@ function DraggableVariantItem({
                     />
                     {/* Indicator for fallback image (from variant value) */}
                     {!variant.image && fallbackImage && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-violet-500/80 text-white text-[8px] text-center py-0.5 font-medium">
+                      <div className="absolute bottom-0 left-0 right-0 bg-cyan-500/80 text-white text-[8px] text-center py-0.5 font-medium">
                         Auto
                       </div>
                     )}
@@ -809,7 +809,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       {/* Empty State with Generate hint */}
       {!loading && variants.length === 0 && parentVariantValues.length > 0 && (
         <div className="text-center py-8 bg-white dark:bg-slate-900 rounded-lg border border-dashed">
-          <Sparkles className="w-8 h-8 mx-auto text-violet-500 mb-2" />
+          <Sparkles className="w-8 h-8 mx-auto text-cyan-500 mb-2" />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             No hay sub-productos configurados
           </p>

@@ -107,7 +107,7 @@ export function HeroCarousel({
     <div
       className={cn(
         'relative overflow-hidden rounded-3xl',
-        'shadow-2xl shadow-slate-900/20 dark:shadow-black/40',
+        'shadow-2xl shadow-neutral-900/20 dark:shadow-black/40',
         className
       )}
       onMouseEnter={() => setIsPaused(true)}
@@ -201,8 +201,8 @@ export function HeroCarousel({
               'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold',
               'backdrop-blur-md border shadow-lg',
               currentSlide.type === 'category'
-                ? 'bg-violet-500/80 border-violet-400/30 text-white'
-                : 'bg-gradient-to-r from-rose-500/80 to-orange-500/80 border-rose-400/30 text-white'
+                ? 'bg-cyan-500/80 border-cyan-400/30 text-white'
+                : 'bg-gradient-to-r from-cyan-500/80 to-orange-500/80 border-cyan-400/30 text-white'
             )}
           >
             {currentSlide.type === 'category' ? (
@@ -242,7 +242,7 @@ function CategorySlide({ category }: { category: CatalogCategory }) {
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
           </>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600">
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-sky-600 to-blue-600">
             <div className="absolute inset-0 opacity-30">
               <motion.div
                 className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/20 rounded-full blur-3xl"
@@ -253,7 +253,7 @@ function CategorySlide({ category }: { category: CatalogCategory }) {
                 transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.div
-                className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-fuchsia-400/30 rounded-full blur-3xl"
+                className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-400/30 rounded-full blur-3xl"
                 animate={{
                   x: [-50, 0, -50],
                   y: [50, 0, 50],
@@ -306,7 +306,7 @@ function CategorySlide({ category }: { category: CatalogCategory }) {
               animate="animate"
               transition={{ delay: 0.4 }}
             >
-              <span className="inline-flex items-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-full font-semibold text-base sm:text-lg hover:bg-slate-100 transition-all duration-300 shadow-xl shadow-black/20 group-hover:shadow-2xl group-hover:gap-4">
+              <span className="inline-flex items-center gap-3 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-base sm:text-lg hover:bg-slate-100 transition-all duration-300 shadow-xl shadow-black/20 group-hover:shadow-2xl group-hover:gap-4">
                 Explorar colección
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </span>
@@ -341,7 +341,7 @@ function OfferSlide({ product }: { product: CatalogProduct }) {
             <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
           </>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-600 via-orange-500 to-amber-500">
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-600 via-orange-500 to-amber-500">
             <div className="absolute inset-0 opacity-30">
               <motion.div
                 className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/20 rounded-full blur-3xl"
@@ -364,7 +364,7 @@ function OfferSlide({ product }: { product: CatalogProduct }) {
                 initial="initial"
                 animate="animate"
                 transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-full text-base sm:text-lg font-bold mb-6 shadow-xl shadow-rose-500/30"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-orange-500 text-white rounded-full text-base sm:text-lg font-bold mb-6 shadow-xl shadow-cyan-500/30"
               >
                 <Tag className="w-5 h-5" />
                 {discount}% DESCUENTO
@@ -410,7 +410,7 @@ function OfferSlide({ product }: { product: CatalogProduct }) {
               animate="animate"
               transition={{ delay: 0.4 }}
             >
-              <span className="inline-flex items-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-full font-semibold text-base sm:text-lg hover:bg-slate-100 transition-all duration-300 shadow-xl shadow-black/20 group-hover:shadow-2xl group-hover:gap-4">
+              <span className="inline-flex items-center gap-3 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-base sm:text-lg hover:bg-slate-100 transition-all duration-300 shadow-xl shadow-black/20 group-hover:shadow-2xl group-hover:gap-4">
                 Ver oferta
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </span>

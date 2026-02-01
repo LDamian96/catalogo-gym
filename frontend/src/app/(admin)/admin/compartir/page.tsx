@@ -19,17 +19,17 @@ import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 
 const QR_COLORS = [
   { name: 'Negro', fg: '#000000', bg: '#FFFFFF' },
-  { name: 'Violeta', fg: '#7c3aed', bg: '#FFFFFF' },
+  { name: 'Cyan', fg: '#22d3ee', bg: '#FFFFFF' },
   { name: 'Azul', fg: '#2563eb', bg: '#FFFFFF' },
   { name: 'Verde', fg: '#16a34a', bg: '#FFFFFF' },
-  { name: 'Rosa', fg: '#db2777', bg: '#FFFFFF' },
-  { name: 'Naranja', fg: '#ea580c', bg: '#FFFFFF' },
+  { name: 'Sky', fg: '#0ea5e9', bg: '#FFFFFF' },
+  { name: 'Teal', fg: '#14b8a6', bg: '#FFFFFF' },
 ];
 
 export default function CompartirPage() {
   const [catalogUrl, setCatalogUrl] = useState('');
   const [copied, setCopied] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(QR_COLORS[1]); // Violeta por defecto
+  const [selectedColor, setSelectedColor] = useState(QR_COLORS[1]); // Cyan por defecto
   const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function CompartirPage() {
                 onClick={handleDownloadQR}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition-colors"
               >
                 <Download className="w-5 h-5" />
                 Descargar QR (PNG)
@@ -252,12 +252,12 @@ export default function CompartirPage() {
           </Card>
 
           {/* Tips Card */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Tips para Compartir</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-3 text-violet-100">
+              <ul className="space-y-3 text-cyan-100">
                 <li className="flex items-start gap-2">
                   <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-xs font-bold">1</span>

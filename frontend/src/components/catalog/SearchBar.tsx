@@ -90,7 +90,7 @@ export function SearchBar({
             variant === 'hero' && 'rounded-2xl h-16',
             variant === 'default' && 'rounded-xl h-12',
             variant === 'compact' && 'rounded-lg h-10',
-            isFocused && 'ring-2 ring-violet-500/50 border-violet-500/50 bg-white/20'
+            isFocused && 'ring-2 ring-cyan-500/50 border-cyan-500/50 bg-white/20'
           )}
           animate={isFocused ? { scale: 1.02 } : { scale: 1 }}
           transition={{ duration: 0.2 }}
@@ -156,7 +156,7 @@ export function SearchBar({
             type="submit"
             className={cn(
               'flex items-center justify-center',
-              'bg-gradient-to-r from-violet-600 to-fuchsia-600',
+              'bg-gradient-to-r from-cyan-600 to-blue-600',
               'text-white font-medium',
               'transition-all duration-300',
               variant === 'hero' && 'h-12 px-6 rounded-xl mr-2',
@@ -182,7 +182,7 @@ export function SearchBar({
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="bg-slate-900/95 backdrop-blur-md rounded-xl border border-white/10 p-4 shadow-2xl">
+            <div className="bg-[#0a0a0f]/95 backdrop-blur-md rounded-xl border border-white/10 p-4 shadow-2xl">
               <div className="flex items-center gap-2 text-white/50 text-sm mb-3">
                 <TrendingUp className="w-4 h-4" />
                 <span>Búsquedas populares</span>
@@ -195,7 +195,7 @@ export function SearchBar({
                     onClick={() => handleQuickSearch(term)}
                     className={cn(
                       'px-4 py-2 rounded-full',
-                      'bg-white/10 hover:bg-violet-600/50',
+                      'bg-white/10 hover:bg-cyan-600/50',
                       'text-white/80 hover:text-white',
                       'text-sm font-medium',
                       'transition-all duration-200'

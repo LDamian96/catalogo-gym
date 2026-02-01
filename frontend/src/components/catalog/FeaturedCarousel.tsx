@@ -83,7 +83,7 @@ export function FeaturedCarousel({
 
   return (
     <section
-      className="relative py-20 overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900"
+      className="relative py-20 overflow-hidden bg-gradient-to-b from-neutral-950 to-neutral-900"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -101,7 +101,7 @@ export function FeaturedCarousel({
             <span className="text-sm font-medium text-amber-400">Destacados</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Productos <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">Destacados</span>
+            Productos <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Destacados</span>
           </h2>
           <p className="text-white/50 max-w-xl mx-auto">
             Descubre nuestra selección especial de productos premium
@@ -111,7 +111,7 @@ export function FeaturedCarousel({
 
       {/* Carousel Container */}
       <div className="relative max-w-6xl mx-auto px-6">
-        <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-3xl overflow-hidden bg-slate-800/50 backdrop-blur-sm">
+        <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-3xl overflow-hidden bg-neutral-800/50 backdrop-blur-sm">
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
               key={page}
@@ -134,7 +134,7 @@ export function FeaturedCarousel({
               <Link href={`/productos/${currentProduct.slug}`} className="block h-full">
                 <div className="grid md:grid-cols-2 h-full">
                   {/* Image Side */}
-                  <div className="relative h-full min-h-[200px] md:min-h-0 bg-gradient-to-br from-slate-800 to-slate-900">
+                  <div className="relative h-full min-h-[200px] md:min-h-0 bg-gradient-to-br from-neutral-800 to-neutral-900">
                     {mainImage ? (
                       <motion.div
                         className="absolute inset-0"
@@ -151,12 +151,12 @@ export function FeaturedCarousel({
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
                         {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-900/90 md:block hidden" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent md:hidden" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-neutral-900/90 md:block hidden" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent md:hidden" />
                       </motion.div>
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <ShoppingBag className="w-24 h-24 text-slate-700" />
+                        <ShoppingBag className="w-24 h-24 text-neutral-700" />
                       </div>
                     )}
 
@@ -168,7 +168,7 @@ export function FeaturedCarousel({
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
                       >
-                        <div className="px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full text-white font-bold shadow-lg shadow-rose-500/30">
+                        <div className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-white font-bold shadow-lg shadow-cyan-500/30">
                           -{discount}% OFF
                         </div>
                       </motion.div>
@@ -179,7 +179,7 @@ export function FeaturedCarousel({
                   <div className="relative flex flex-col justify-center p-6 md:p-10 lg:p-16">
                     {/* Category */}
                     <motion.span
-                      className="text-violet-400 text-sm font-medium uppercase tracking-wider mb-3"
+                      className="text-cyan-400 text-sm font-medium uppercase tracking-wider mb-3"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
@@ -219,7 +219,7 @@ export function FeaturedCarousel({
                       >
                         {salePrice ? (
                           <>
-                            <span className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
+                            <span className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
                               S/ {salePrice.toFixed(2)}
                             </span>
                             <span className="text-lg text-white/40 line-through">
@@ -243,8 +243,8 @@ export function FeaturedCarousel({
                       <span
                         className={cn(
                           'inline-flex items-center gap-2 px-6 py-3',
-                          'bg-white text-slate-900 rounded-full font-semibold',
-                          'hover:bg-violet-500 hover:text-white transition-colors duration-300'
+                          'bg-white text-neutral-900 rounded-full font-semibold',
+                          'hover:bg-cyan-500 hover:text-white transition-colors duration-300'
                         )}
                       >
                         Ver producto
@@ -259,14 +259,14 @@ export function FeaturedCarousel({
         </div>
 
         {/* Navigation Buttons */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 md:px-0 pointer-events-none">
+        <div className="absolute top-1/2 -tranneutral-y-1/2 left-0 right-0 flex justify-between px-2 md:px-0 pointer-events-none">
           <motion.button
             className={cn(
               'pointer-events-auto',
               'w-12 h-12 md:w-14 md:h-14 -ml-6 md:-ml-7',
               'flex items-center justify-center',
               'bg-white/10 backdrop-blur-sm rounded-full',
-              'text-white hover:bg-white hover:text-slate-900',
+              'text-white hover:bg-white hover:text-neutral-900',
               'transition-colors duration-300',
               'shadow-lg'
             )}
@@ -282,7 +282,7 @@ export function FeaturedCarousel({
               'w-12 h-12 md:w-14 md:h-14 -mr-6 md:-mr-7',
               'flex items-center justify-center',
               'bg-white/10 backdrop-blur-sm rounded-full',
-              'text-white hover:bg-white hover:text-slate-900',
+              'text-white hover:bg-white hover:text-neutral-900',
               'transition-colors duration-300',
               'shadow-lg'
             )}
@@ -302,7 +302,7 @@ export function FeaturedCarousel({
               className={cn(
                 'h-2 rounded-full transition-all duration-300',
                 index === productIndex
-                  ? 'w-8 bg-gradient-to-r from-violet-500 to-fuchsia-500'
+                  ? 'w-8 bg-gradient-to-r from-cyan-500 to-blue-500'
                   : 'w-2 bg-white/20 hover:bg-white/40'
               )}
               whileHover={{ scale: 1.2 }}
@@ -314,8 +314,8 @@ export function FeaturedCarousel({
       </div>
 
       {/* Background Decoration */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-violet-600/10 rounded-full blur-[150px] -translate-y-1/2" />
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[150px] -translate-y-1/2" />
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-cyan-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
     </section>
   );
 }

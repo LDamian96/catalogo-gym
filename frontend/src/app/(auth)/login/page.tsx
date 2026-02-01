@@ -89,7 +89,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
-            className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center"
+            className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center"
           >
             <span className="text-white font-bold text-2xl">C</span>
           </motion.div>
@@ -130,7 +130,7 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="tu@email.com"
-                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-violet-500/50 focus-visible:shadow-[0_0_0_3px_rgba(139,92,246,0.15)] transition-all duration-300"
+                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-cyan-500/50 focus-visible:shadow-[0_0_0_3px_rgba(34,211,238,0.15)] transition-all duration-300"
                   {...register('email')}
                   disabled={isLoading}
                 />
@@ -161,7 +161,7 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-violet-500/50 focus-visible:shadow-[0_0_0_3px_rgba(139,92,246,0.15)] transition-all duration-300"
+                  className="pl-10 bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.08] dark:border-white/[0.08] text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus-visible:border-cyan-500/50 focus-visible:shadow-[0_0_0_3px_rgba(34,211,238,0.15)] transition-all duration-300"
                   {...register('password')}
                   disabled={isLoading}
                 />
@@ -184,7 +184,7 @@ export default function LoginPage() {
             >
               <Button
                 type="submit"
-                className="w-full bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-white/90 hover:shadow-[0_0_20px_rgba(139,92,246,0.35)] font-medium py-6 rounded-xl transition-all duration-300"
+                className="w-full bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-white/90 hover:shadow-[0_0_20px_rgba(34,211,238,0.35)] font-medium py-6 rounded-xl transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (

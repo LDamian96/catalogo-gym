@@ -72,7 +72,7 @@ export default function DashboardPage() {
       value: summary?.counts.categories.toString() || '0',
       subtext: 'disponibles',
       icon: FolderOpen,
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       name: 'Visitas Hoy',
@@ -117,7 +117,7 @@ export default function DashboardPage() {
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
           Ver Catálogo
@@ -192,8 +192,8 @@ export default function DashboardPage() {
                   <AreaChart data={chartData}>
                     <defs>
                       <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
@@ -214,7 +214,7 @@ export default function DashboardPage() {
                     <Area
                       type="monotone"
                       dataKey="views"
-                      stroke="#8b5cf6"
+                      stroke="#22d3ee"
                       fillOpacity={1}
                       fill="url(#colorViews)"
                       name="Visitas"
@@ -306,7 +306,7 @@ export default function DashboardPage() {
             <CardContent className="space-y-3">
               {[
                 { label: 'Agregar Producto', icon: Package, href: '/admin/productos', color: 'from-blue-500 to-blue-600' },
-                { label: 'Categorías', icon: FolderOpen, href: '/admin/categorias', color: 'from-purple-500 to-purple-600' },
+                { label: 'Categorías', icon: FolderOpen, href: '/admin/categorias', color: 'from-blue-500 to-blue-600' },
                 { label: 'Tipos de Variante', icon: TrendingUp, href: '/admin/tipos-variante', color: 'from-green-500 to-green-600' },
                 { label: 'Configuración', icon: Settings, href: '/admin/configuracion', color: 'from-orange-500 to-orange-600' },
               ].map((action) => (
@@ -335,24 +335,24 @@ export default function DashboardPage() {
 
         {/* Share / QR Card */}
         <motion.div variants={staggerItem}>
-          <Card className="h-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0">
+          <Card className="h-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white border-0">
             <CardHeader>
               <CardTitle className="text-lg text-white flex items-center gap-2">
                 <QrCode className="w-5 h-5" />
                 Comparte tu Catálogo
               </CardTitle>
-              <CardDescription className="text-indigo-100">
+              <CardDescription className="text-cyan-100">
                 Genera un código QR para compartir
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <p className="text-indigo-100 text-sm">
+                <p className="text-cyan-100 text-sm">
                   Tus clientes pueden escanear el código QR o acceder directamente al link de tu catálogo.
                 </p>
 
                 <div className="bg-white/10 rounded-xl p-4">
-                  <p className="text-xs text-indigo-200 mb-2">Link del catálogo:</p>
+                  <p className="text-xs text-cyan-200 mb-2">Link del catálogo:</p>
                   <p className="font-mono text-sm break-all">
                     {typeof window !== 'undefined' ? window.location.origin : 'tu-dominio.com'}
                   </p>
@@ -362,7 +362,7 @@ export default function DashboardPage() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-3 px-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 transition-colors"
+                    className="w-full py-3 px-4 bg-white text-cyan-600 font-semibold rounded-xl hover:bg-cyan-50 transition-colors"
                   >
                     Generar Código QR
                   </motion.button>

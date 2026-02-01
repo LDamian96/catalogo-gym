@@ -35,11 +35,11 @@ import { fadeIn, staggerContainer, staggerItem } from '@/lib/utils/animations';
 
 const presetColors = [
   { name: 'Negro', fg: '#000000', bg: '#ffffff' },
-  { name: 'Violeta', fg: '#7c3aed', bg: '#ffffff' },
+  { name: 'Cyan', fg: '#22d3ee', bg: '#ffffff' },
   { name: 'Azul', fg: '#2563eb', bg: '#ffffff' },
   { name: 'Verde', fg: '#16a34a', bg: '#ffffff' },
-  { name: 'Rojo', fg: '#dc2626', bg: '#ffffff' },
-  { name: 'Naranja', fg: '#ea580c', bg: '#ffffff' },
+  { name: 'Sky', fg: '#0ea5e9', bg: '#ffffff' },
+  { name: 'Teal', fg: '#14b8a6', bg: '#ffffff' },
 ];
 
 export default function QRPage() {
@@ -154,7 +154,7 @@ export default function QRPage() {
       {/* Header */}
       <motion.div variants={staggerItem}>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white">
+          <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white">
             <QrCode className="w-6 h-6" />
           </div>
           Código QR
@@ -170,7 +170,7 @@ export default function QRPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Smartphone className="w-5 h-5 text-violet-500" />
+                <Smartphone className="w-5 h-5 text-cyan-500" />
                 Vista Previa
               </CardTitle>
               <CardDescription>
@@ -226,7 +226,7 @@ export default function QRPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-violet-500" />
+                <Palette className="w-5 h-5 text-cyan-500" />
                 Personalizar
               </CardTitle>
               <CardDescription>
@@ -299,8 +299,8 @@ export default function QRPage() {
                         }}
                         className={`p-3 rounded-xl border-2 transition-all ${
                           fgColor === preset.fg && bgColor === preset.bg
-                            ? 'border-violet-500 ring-2 ring-violet-500/20'
-                            : 'border-slate-200 dark:border-slate-700 hover:border-violet-300'
+                            ? 'border-cyan-500 ring-2 ring-cyan-500/20'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-cyan-300'
                         }`}
                       >
                         <div
@@ -354,11 +354,11 @@ export default function QRPage() {
               </Tabs>
 
               {/* Tips */}
-              <div className="p-4 bg-violet-50 dark:bg-violet-500/10 rounded-xl">
-                <h4 className="font-medium text-violet-700 dark:text-violet-300 mb-2">
+              <div className="p-4 bg-cyan-50 dark:bg-cyan-500/10 rounded-xl">
+                <h4 className="font-medium text-cyan-700 dark:text-cyan-300 mb-2">
                   💡 Tips
                 </h4>
-                <ul className="text-sm text-violet-600 dark:text-violet-400 space-y-1">
+                <ul className="text-sm text-cyan-600 dark:text-cyan-400 space-y-1">
                   <li>• Usa colores con buen contraste para mejor lectura</li>
                   <li>• PNG es ideal para impresión y redes sociales</li>
                   <li>• SVG es mejor para escalado sin pérdida de calidad</li>

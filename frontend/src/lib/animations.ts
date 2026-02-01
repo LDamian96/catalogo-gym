@@ -1,8 +1,8 @@
 import { Variants, Transition } from 'framer-motion';
 
 // ============================================
-// VERCEL V0 SOFT STYLE - ANIMATION SYSTEM
-// Paleta: Violet/Purple/Pink | Transiciones suaves y elegantes
+// V0 DESIGN SYSTEM - ANIMATION LIBRARY
+// Paleta: Cyan/Blue | Transiciones suaves y elegantes
 // ============================================
 
 // V0 Easing Functions
@@ -12,17 +12,17 @@ export const v0EaseSmooth = [0.4, 0, 0.2, 1] as const;
 
 // V0 Base Transitions
 export const v0Transition: Transition = {
-  duration: 0.6,
+  duration: 0.5,
   ease: v0Ease,
 };
 
 export const v0TransitionFast: Transition = {
-  duration: 0.4,
+  duration: 0.3,
   ease: v0Ease,
 };
 
 export const v0TransitionSlow: Transition = {
-  duration: 0.8,
+  duration: 0.7,
   ease: v0Ease,
 };
 
@@ -44,32 +44,32 @@ export const v0SpringSoft: Transition = {
 
 export const fadeIn: Variants = {
   initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.6, ease: v0Ease } },
-  exit: { opacity: 0, transition: { duration: 0.4, ease: v0Ease } },
+  animate: { opacity: 1, transition: { duration: 0.5, ease: v0Ease } },
+  exit: { opacity: 0, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const fadeInUp: Variants = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: v0Ease } },
-  exit: { opacity: 0, y: -16, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: v0Ease } },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const fadeInDown: Variants = {
-  initial: { opacity: 0, y: -24 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: v0Ease } },
-  exit: { opacity: 0, y: 16, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, y: -20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: v0Ease } },
+  exit: { opacity: 0, y: 12, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const fadeInLeft: Variants = {
-  initial: { opacity: 0, x: -32 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.6, ease: v0Ease } },
-  exit: { opacity: 0, x: 32, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, x: -24 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.5, ease: v0Ease } },
+  exit: { opacity: 0, x: 24, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const fadeInRight: Variants = {
-  initial: { opacity: 0, x: 32 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.6, ease: v0Ease } },
-  exit: { opacity: 0, x: -32, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, x: 24 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.5, ease: v0Ease } },
+  exit: { opacity: 0, x: -24, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 // ============================================
@@ -77,15 +77,15 @@ export const fadeInRight: Variants = {
 // ============================================
 
 export const scaleIn: Variants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: v0Ease } },
-  exit: { opacity: 0, scale: 0.95, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: v0Ease } },
+  exit: { opacity: 0, scale: 0.96, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const scaleUp: Variants = {
-  initial: { opacity: 0, scale: 0.8 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: v0EaseSpring } },
-  exit: { opacity: 0, scale: 0.8, transition: { duration: 0.4, ease: v0Ease } },
+  initial: { opacity: 0, scale: 0.85 },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: v0EaseSpring } },
+  exit: { opacity: 0, scale: 0.85, transition: { duration: 0.3, ease: v0Ease } },
 };
 
 export const scaleInBounce: Variants = {
@@ -99,7 +99,7 @@ export const scaleInBounce: Variants = {
       damping: 20,
     }
   },
-  exit: { opacity: 0, scale: 0.5, transition: { duration: 0.3 } },
+  exit: { opacity: 0, scale: 0.5, transition: { duration: 0.25 } },
 };
 
 // ============================================
@@ -110,8 +110,8 @@ export const staggerContainer: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
+      staggerChildren: 0.06,
+      delayChildren: 0.08,
     },
   },
 };
@@ -120,8 +120,8 @@ export const staggerContainerFast: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05,
+      staggerChildren: 0.03,
+      delayChildren: 0.04,
     },
   },
 };
@@ -130,72 +130,72 @@ export const staggerContainerSlow: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15,
+      staggerChildren: 0.1,
+      delayChildren: 0.12,
     },
   },
 };
 
 export const staggerItem: Variants = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: v0Ease } },
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: v0Ease } },
 };
 
 export const staggerItemScale: Variants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: v0Ease } },
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: v0Ease } },
 };
 
 // ============================================
-// V0 CARD HOVER ANIMATIONS
+// V0 CARD HOVER ANIMATIONS - CYAN/BLUE
 // ============================================
 
 export const cardHover = {
   rest: {
     scale: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.06)',
-    transition: { duration: 0.5, ease: v0Ease },
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.08)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
   hover: {
     scale: 1,
-    borderColor: 'rgba(139, 92, 246, 0.3)',
-    boxShadow: '0 0 0 1px rgba(139, 92, 246, 0.3), 0 8px 40px rgba(139, 92, 246, 0.12)',
-    transition: { duration: 0.5, ease: v0Ease },
+    borderColor: 'rgba(34, 211, 238, 0.4)',
+    boxShadow: '0 0 0 1px rgba(34, 211, 238, 0.4), 0 8px 40px rgba(34, 211, 238, 0.1)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
 };
 
-export const cardHoverPink = {
+export const cardHoverBlue = {
   rest: {
     scale: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.06)',
-    transition: { duration: 0.5, ease: v0Ease },
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.08)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
   hover: {
     scale: 1,
-    borderColor: 'rgba(236, 72, 153, 0.3)',
-    boxShadow: '0 0 0 1px rgba(236, 72, 153, 0.3), 0 8px 40px rgba(236, 72, 153, 0.12)',
-    transition: { duration: 0.5, ease: v0Ease },
+    borderColor: 'rgba(59, 130, 246, 0.4)',
+    boxShadow: '0 0 0 1px rgba(59, 130, 246, 0.4), 0 8px 40px rgba(59, 130, 246, 0.1)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
 };
 
 export const cardHoverLift = {
   rest: {
     y: 0,
-    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.06)',
-    transition: { duration: 0.5, ease: v0Ease },
+    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.08)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
   hover: {
-    y: -6,
-    boxShadow: '0 0 0 1px rgba(139, 92, 246, 0.3), 0 20px 50px rgba(139, 92, 246, 0.15)',
-    transition: { duration: 0.5, ease: v0Ease },
+    y: -4,
+    boxShadow: '0 0 0 1px rgba(34, 211, 238, 0.4), 0 16px 40px rgba(34, 211, 238, 0.12)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
 };
 
 export const cardImageHover = {
-  rest: { scale: 1, transition: { duration: 0.6, ease: v0Ease } },
-  hover: { scale: 1.05, transition: { duration: 0.6, ease: v0Ease } },
+  rest: { scale: 1, transition: { duration: 0.5, ease: v0Ease } },
+  hover: { scale: 1.05, transition: { duration: 0.5, ease: v0Ease } },
 };
 
 // ============================================
@@ -209,68 +209,68 @@ export const buttonTap = {
 
 export const buttonHover = {
   scale: 1.01,
-  transition: { duration: 0.3, ease: v0Ease },
+  transition: { duration: 0.25, ease: v0Ease },
 };
 
 export const buttonGlow = {
   rest: {
-    boxShadow: '0 0 0 0 rgba(139, 92, 246, 0)',
-    transition: { duration: 0.5, ease: v0Ease },
+    boxShadow: '0 0 0 0 rgba(34, 211, 238, 0)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
   hover: {
-    boxShadow: '0 0 25px rgba(139, 92, 246, 0.35)',
-    transition: { duration: 0.5, ease: v0Ease },
+    boxShadow: '0 0 25px rgba(34, 211, 238, 0.3)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
 };
 
-export const buttonGlowPink = {
+export const buttonGlowBlue = {
   rest: {
-    boxShadow: '0 0 0 0 rgba(236, 72, 153, 0)',
-    transition: { duration: 0.5, ease: v0Ease },
+    boxShadow: '0 0 0 0 rgba(59, 130, 246, 0)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
   hover: {
-    boxShadow: '0 0 25px rgba(236, 72, 153, 0.35)',
-    transition: { duration: 0.5, ease: v0Ease },
+    boxShadow: '0 0 25px rgba(59, 130, 246, 0.3)',
+    transition: { duration: 0.4, ease: v0Ease },
   },
 };
 
 // ============================================
-// V0 SLIDE ANIMATIONS (for carousels)
+// V0 SLIDE ANIMATIONS
 // ============================================
 
 export const slideVariants: Variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
+    x: direction > 0 ? 250 : -250,
     opacity: 0,
   }),
   center: {
     zIndex: 1,
     x: 0,
     opacity: 1,
-    transition: { duration: 0.6, ease: v0Ease },
+    transition: { duration: 0.5, ease: v0Ease },
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? 300 : -300,
+    x: direction < 0 ? 250 : -250,
     opacity: 0,
-    transition: { duration: 0.6, ease: v0Ease },
+    transition: { duration: 0.5, ease: v0Ease },
   }),
 };
 
 export const slideUpVariants: Variants = {
   enter: {
-    y: 40,
+    y: 30,
     opacity: 0,
   },
   center: {
     y: 0,
     opacity: 1,
-    transition: { duration: 0.6, ease: v0Ease },
+    transition: { duration: 0.5, ease: v0Ease },
   },
   exit: {
-    y: -40,
+    y: -30,
     opacity: 0,
-    transition: { duration: 0.4, ease: v0Ease },
+    transition: { duration: 0.35, ease: v0Ease },
   },
 };
 
@@ -279,38 +279,38 @@ export const slideUpVariants: Variants = {
 // ============================================
 
 export const scrollReveal: Variants = {
-  initial: { opacity: 0, y: 40 },
+  initial: { opacity: 0, y: 32 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: v0Ease },
+    transition: { duration: 0.6, ease: v0Ease },
   },
 };
 
 export const scrollRevealLeft: Variants = {
-  initial: { opacity: 0, x: -60 },
+  initial: { opacity: 0, x: -48 },
   animate: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: v0Ease },
+    transition: { duration: 0.6, ease: v0Ease },
   },
 };
 
 export const scrollRevealRight: Variants = {
-  initial: { opacity: 0, x: 60 },
+  initial: { opacity: 0, x: 48 },
   animate: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: v0Ease },
+    transition: { duration: 0.6, ease: v0Ease },
   },
 };
 
 export const scrollRevealScale: Variants = {
-  initial: { opacity: 0, scale: 0.9 },
+  initial: { opacity: 0, scale: 0.92 },
   animate: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.8, ease: v0Ease },
+    transition: { duration: 0.6, ease: v0Ease },
   },
 };
 
@@ -319,39 +319,39 @@ export const scrollRevealScale: Variants = {
 // ============================================
 
 export const heroTitle: Variants = {
-  initial: { opacity: 0, y: 32 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, delay: 0.1, ease: v0Ease },
-  },
-};
-
-export const heroSubtitle: Variants = {
   initial: { opacity: 0, y: 24 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay: 0.3, ease: v0Ease },
+    transition: { duration: 0.6, delay: 0.1, ease: v0Ease },
+  },
+};
+
+export const heroSubtitle: Variants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: 0.25, ease: v0Ease },
   },
 };
 
 export const heroCTA: Variants = {
-  initial: { opacity: 0, y: 16 },
+  initial: { opacity: 0, y: 12 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: 0.5, ease: v0Ease },
+    transition: { duration: 0.5, delay: 0.4, ease: v0Ease },
   },
 };
 
 export const heroImage: Variants = {
-  initial: { opacity: 0, scale: 0.95, y: 20 },
+  initial: { opacity: 0, scale: 0.96, y: 16 },
   animate: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 1, delay: 0.2, ease: v0Ease },
+    transition: { duration: 0.8, delay: 0.15, ease: v0Ease },
   },
 };
 
@@ -360,18 +360,18 @@ export const heroImage: Variants = {
 // ============================================
 
 export const floatingAnimation = {
-  y: [-8, 8, -8],
+  y: [-6, 6, -6],
   transition: {
-    duration: 5,
+    duration: 4,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
 export const floatingAnimationSlow = {
-  y: [-12, 12, -12],
+  y: [-10, 10, -10],
   transition: {
-    duration: 8,
+    duration: 6,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -382,10 +382,10 @@ export const floatingAnimationSlow = {
 // ============================================
 
 export const pulseAnimation = {
-  scale: [1, 1.03, 1],
+  scale: [1, 1.02, 1],
   opacity: [1, 0.85, 1],
   transition: {
-    duration: 2.5,
+    duration: 2,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -394,37 +394,37 @@ export const pulseAnimation = {
 export const pulseSoft = {
   opacity: [1, 0.7, 1],
   transition: {
-    duration: 2,
+    duration: 1.8,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
 // ============================================
-// V0 SOFT GLOW EFFECTS - VIOLET/PURPLE/PINK
+// V0 GLOW EFFECTS - CYAN/BLUE
 // ============================================
 
 export const glowAnimation = {
   boxShadow: [
-    '0 0 20px rgba(139, 92, 246, 0.2)',
-    '0 0 40px rgba(139, 92, 246, 0.35)',
-    '0 0 20px rgba(139, 92, 246, 0.2)',
+    '0 0 20px rgba(34, 211, 238, 0.15)',
+    '0 0 35px rgba(34, 211, 238, 0.3)',
+    '0 0 20px rgba(34, 211, 238, 0.15)',
   ],
   transition: {
-    duration: 3,
+    duration: 2.5,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
-export const glowAnimationPink = {
+export const glowAnimationBlue = {
   boxShadow: [
-    '0 0 20px rgba(236, 72, 153, 0.2)',
-    '0 0 40px rgba(236, 72, 153, 0.35)',
-    '0 0 20px rgba(236, 72, 153, 0.2)',
+    '0 0 20px rgba(59, 130, 246, 0.15)',
+    '0 0 35px rgba(59, 130, 246, 0.3)',
+    '0 0 20px rgba(59, 130, 246, 0.15)',
   ],
   transition: {
-    duration: 3,
+    duration: 2.5,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -432,12 +432,12 @@ export const glowAnimationPink = {
 
 export const glowAnimationIntense = {
   boxShadow: [
-    '0 0 30px rgba(139, 92, 246, 0.25)',
-    '0 0 60px rgba(139, 92, 246, 0.45)',
-    '0 0 30px rgba(139, 92, 246, 0.25)',
+    '0 0 25px rgba(34, 211, 238, 0.2)',
+    '0 0 50px rgba(34, 211, 238, 0.4)',
+    '0 0 25px rgba(34, 211, 238, 0.2)',
   ],
   transition: {
-    duration: 2.5,
+    duration: 2,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -445,25 +445,25 @@ export const glowAnimationIntense = {
 
 export const borderGlowAnimation = {
   borderColor: [
-    'rgba(139, 92, 246, 0.2)',
-    'rgba(139, 92, 246, 0.5)',
-    'rgba(139, 92, 246, 0.2)',
+    'rgba(34, 211, 238, 0.2)',
+    'rgba(34, 211, 238, 0.5)',
+    'rgba(34, 211, 238, 0.2)',
   ],
   transition: {
-    duration: 2.5,
+    duration: 2,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
-export const borderGlowAnimationPink = {
+export const borderGlowAnimationBlue = {
   borderColor: [
-    'rgba(236, 72, 153, 0.2)',
-    'rgba(236, 72, 153, 0.5)',
-    'rgba(236, 72, 153, 0.2)',
+    'rgba(59, 130, 246, 0.2)',
+    'rgba(59, 130, 246, 0.5)',
+    'rgba(59, 130, 246, 0.2)',
   ],
   transition: {
-    duration: 2.5,
+    duration: 2,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -474,21 +474,21 @@ export const borderGlowAnimationPink = {
 // ============================================
 
 export const gradientOrbAnimation = {
-  scale: [1, 1.15, 1],
-  opacity: [0.3, 0.5, 0.3],
+  scale: [1, 1.1, 1],
+  opacity: [0.25, 0.45, 0.25],
   transition: {
-    duration: 10,
+    duration: 8,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
 export const gradientOrbMove = {
-  x: [0, 30, 0],
-  y: [0, -20, 0],
-  scale: [1, 1.1, 1],
+  x: [0, 25, 0],
+  y: [0, -15, 0],
+  scale: [1, 1.08, 1],
   transition: {
-    duration: 12,
+    duration: 10,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -499,30 +499,30 @@ export const gradientOrbMove = {
 // ============================================
 
 export const pageTransition: Variants = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 8 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: v0Ease }
+    transition: { duration: 0.4, ease: v0Ease }
   },
   exit: {
     opacity: 0,
-    y: -10,
-    transition: { duration: 0.3, ease: v0Ease }
+    y: -8,
+    transition: { duration: 0.25, ease: v0Ease }
   },
 };
 
 export const pageTransitionSlide: Variants = {
-  initial: { opacity: 0, x: 20 },
+  initial: { opacity: 0, x: 16 },
   animate: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.5, ease: v0Ease }
+    transition: { duration: 0.4, ease: v0Ease }
   },
   exit: {
     opacity: 0,
-    x: -20,
-    transition: { duration: 0.3, ease: v0Ease }
+    x: -16,
+    transition: { duration: 0.25, ease: v0Ease }
   },
 };
 
@@ -531,7 +531,7 @@ export const pageTransitionSlide: Variants = {
 // ============================================
 
 export const dropdownVariants: Variants = {
-  initial: { opacity: 0, y: -8, scale: 0.96 },
+  initial: { opacity: 0, y: -6, scale: 0.97 },
   animate: {
     opacity: 1,
     y: 0,
@@ -540,14 +540,14 @@ export const dropdownVariants: Variants = {
   },
   exit: {
     opacity: 0,
-    y: -8,
-    scale: 0.96,
+    y: -6,
+    scale: 0.97,
     transition: { duration: 0.15, ease: v0Ease }
   },
 };
 
 export const menuItemVariants: Variants = {
-  initial: { opacity: 0, x: -8 },
+  initial: { opacity: 0, x: -6 },
   animate: {
     opacity: 1,
     x: 0,
@@ -561,22 +561,22 @@ export const menuItemVariants: Variants = {
 
 export const modalBackdrop: Variants = {
   initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.3 } },
+  animate: { opacity: 1, transition: { duration: 0.25 } },
   exit: { opacity: 0, transition: { duration: 0.2 } },
 };
 
 export const modalContent: Variants = {
-  initial: { opacity: 0, scale: 0.95, y: 10 },
+  initial: { opacity: 0, scale: 0.96, y: 8 },
   animate: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.3, ease: v0Ease }
+    transition: { duration: 0.25, ease: v0Ease }
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
-    y: 10,
+    scale: 0.96,
+    y: 8,
     transition: { duration: 0.2, ease: v0Ease }
   },
 };
@@ -609,14 +609,14 @@ export const sidebarContentVariants: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      delay: 0.1,
+      delay: 0.08,
       duration: 0.2,
       ease: v0Ease,
     },
   },
   collapsed: {
     opacity: 0,
-    x: -10,
+    x: -8,
     transition: {
       duration: 0.1,
       ease: v0Ease,
@@ -629,13 +629,13 @@ export const sidebarContentVariants: Variants = {
 // ============================================
 
 export const particleAnimation = (delay: number = 0) => ({
-  y: [0, -20, 0],
-  opacity: [0.3, 0.7, 0.3],
+  y: [0, -16, 0],
+  opacity: [0.25, 0.6, 0.25],
   transition: {
-    duration: 4 + Math.random() * 2,
+    duration: 3.5 + Math.random() * 1.5,
     repeat: Infinity,
     ease: 'easeInOut',
-    delay: delay + Math.random() * 2,
+    delay: delay + Math.random() * 1.5,
   },
 });
 
@@ -644,17 +644,17 @@ export const particleAnimation = (delay: number = 0) => ({
 // ============================================
 
 export const textRevealVariants: Variants = {
-  initial: { opacity: 0, y: 20, rotateX: -40 },
+  initial: { opacity: 0, y: 16, rotateX: -30 },
   animate: {
     opacity: 1,
     y: 0,
     rotateX: 0,
-    transition: { duration: 0.6, ease: v0Ease }
+    transition: { duration: 0.5, ease: v0Ease }
   },
 };
 
 export const letterAnimation = {
-  initial: { opacity: 0, y: 40 },
+  initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
 };
 
@@ -665,7 +665,7 @@ export const letterAnimation = {
 export const shimmerAnimation = {
   x: ['-100%', '100%'],
   transition: {
-    duration: 1.5,
+    duration: 1.2,
     repeat: Infinity,
     ease: 'linear',
   },
@@ -676,7 +676,7 @@ export const shimmerAnimation = {
 // ============================================
 
 export const toastVariants: Variants = {
-  initial: { opacity: 0, y: 50, scale: 0.95 },
+  initial: { opacity: 0, y: 40, scale: 0.96 },
   animate: {
     opacity: 1,
     y: 0,
@@ -689,14 +689,14 @@ export const toastVariants: Variants = {
   },
   exit: {
     opacity: 0,
-    y: 20,
-    scale: 0.95,
+    y: 16,
+    scale: 0.96,
     transition: { duration: 0.2, ease: v0Ease }
   },
 };
 
 // ============================================
-// V0 COUNTER ANIMATION (for stats)
+// V0 COUNTER ANIMATION
 // ============================================
 
 export const counterSpring = {
@@ -712,17 +712,17 @@ export const counterSpring = {
 export const spinnerAnimation = {
   rotate: 360,
   transition: {
-    duration: 1,
+    duration: 0.9,
     repeat: Infinity,
     ease: 'linear',
   },
 };
 
 export const dotsLoadingAnimation = {
-  scale: [1, 1.2, 1],
+  scale: [1, 1.15, 1],
   opacity: [0.5, 1, 0.5],
   transition: {
-    duration: 0.8,
+    duration: 0.7,
     repeat: Infinity,
     ease: 'easeInOut',
   },
@@ -733,20 +733,20 @@ export const dotsLoadingAnimation = {
 // ============================================
 
 export const scrollIndicatorAnimation = {
-  y: [0, 8, 0],
+  y: [0, 6, 0],
   opacity: [1, 0.5, 1],
   transition: {
-    duration: 1.5,
+    duration: 1.3,
     repeat: Infinity,
     ease: 'easeInOut',
   },
 };
 
 export const scrollDotAnimation = {
-  y: [0, 12, 0],
+  y: [0, 10, 0],
   opacity: [1, 0.3, 1],
   transition: {
-    duration: 1.5,
+    duration: 1.3,
     repeat: Infinity,
     ease: 'easeInOut',
   },

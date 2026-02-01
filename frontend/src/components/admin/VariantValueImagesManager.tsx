@@ -265,7 +265,7 @@ function VariantValueImageGroup({
                   onChange={handleFileChange}
                   disabled={uploading}
                 />
-                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:border-violet-400 transition-colors">
+                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:border-cyan-400 transition-colors">
                   {uploading ? (
                     <Loader2 className="w-6 h-6 mx-auto animate-spin text-slate-400" />
                   ) : (
@@ -302,7 +302,7 @@ function VariantValueImageGroup({
                     onChange={handleFileChange}
                     disabled={uploading}
                   />
-                  <div className="w-20 h-20 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:border-violet-400 transition-colors">
+                  <div className="w-20 h-20 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:border-cyan-400 transition-colors">
                     {uploading ? (
                       <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
                     ) : (

@@ -85,6 +85,7 @@ export default function TiposVariantePage() {
     value: '',
     isActive: true,
   });
+  const [bulkValues, setBulkValues] = useState(''); // Para agregar múltiples valores
 
   // Delete confirmation
   const [deleteTypeId, setDeleteTypeId] = useState<string | null>(null);
@@ -193,32 +194,74 @@ export default function TiposVariantePage() {
         value: value.value,
         isActive: value.isActive,
       });
+      setBulkValues('');
     } else {
       setEditingValue(null);
       setValueFormData({
         value: '',
         isActive: true,
       });
+      setBulkValues('');
     }
     setShowValueModal(true);
   };
 
   const handleSaveValue = async () => {
-    if (!valueFormData.value.trim()) {
-      toast.error('El valor es requerido');
-      return;
-    }
-
     if (!valueParentTypeId) return;
 
     setLoadingAction(true);
     try {
       if (editingValue) {
+        // Editando un valor existente
+        if (!valueFormData.value.trim()) {
+          toast.error('El valor es requerido');
+          setLoadingAction(false);
+          return;
+        }
         await api.patch(`/variant-types/values/${editingValue.id}`, valueFormData);
         toast.success('Valor actualizado');
       } else {
-        await api.post(`/variant-types/${valueParentTypeId}/values`, valueFormData);
-        toast.success('Valor agregado');
+        // Creando nuevos valores (puede ser múltiples separados por coma)
+        const inputValues = bulkValues.trim();
+        if (!inputValues) {
+          toast.error('Ingresa al menos un valor');
+          setLoadingAction(false);
+          return;
+        }
+
+        // Parsear valores separados por coma
+        const valuesToCreate = inputValues
+          .split(',')
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+
+        if (valuesToCreate.length === 0) {
+          toast.error('Ingresa al menos un valor válido');
+          setLoadingAction(false);
+          return;
+        }
+
+        // Crear cada valor
+        let created = 0;
+        let errors = 0;
+        for (const val of valuesToCreate) {
+          try {
+            await api.post(`/variant-types/${valueParentTypeId}/values`, {
+              value: val,
+              isActive: true,
+            });
+            created++;
+          } catch {
+            errors++;
+          }
+        }
+
+        if (created > 0) {
+          toast.success(`${created} valor${created > 1 ? 'es' : ''} agregado${created > 1 ? 's' : ''}`);
+        }
+        if (errors > 0) {
+          toast.error(`${errors} valor${errors > 1 ? 'es' : ''} no se pudo crear (posiblemente duplicado${errors > 1 ? 's' : ''})`);
+        }
       }
       setShowValueModal(false);
       await loadVariantTypes();
@@ -498,39 +541,73 @@ export default function TiposVariantePage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingValue ? 'Editar Valor' : 'Agregar Valor'}
+              {editingValue ? 'Editar Valor' : 'Agregar Valores'}
             </DialogTitle>
             <DialogDescription>
               {editingValue
                 ? 'Actualiza el valor'
-                : 'Agrega un nuevo valor (ej: S, M, L, XL, Negro, Blanco)'}
+                : 'Agrega uno o varios valores separados por coma'}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="valueName">Valor *</Label>
-              <Input
-                id="valueName"
-                placeholder="Ej: S, M, L, XL, Negro, Blanco"
-                value={valueFormData.value}
-                onChange={(e) => setValueFormData({ ...valueFormData, value: e.target.value })}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
+            {editingValue ? (
+              // Modo edición: solo un valor
+              <>
+                <div>
+                  <Label htmlFor="valueName">Valor *</Label>
+                  <Input
+                    id="valueName"
+                    placeholder="Ej: S, M, L"
+                    value={valueFormData.value}
+                    onChange={(e) => setValueFormData({ ...valueFormData, value: e.target.value })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="valueIsActive">Estado</Label>
+                    <p className="text-sm text-slate-500">
+                      Los valores inactivos no aparecen en los selectores
+                    </p>
+                  </div>
+                  <Switch
+                    id="valueIsActive"
+                    checked={valueFormData.isActive}
+                    onCheckedChange={(checked) => setValueFormData({ ...valueFormData, isActive: checked })}
+                  />
+                </div>
+              </>
+            ) : (
+              // Modo creación: múltiples valores
               <div>
-                <Label htmlFor="valueIsActive">Estado</Label>
-                <p className="text-sm text-slate-500">
-                  Los valores inactivos no aparecen en los selectores
+                <Label htmlFor="bulkValues">Valores (separados por coma) *</Label>
+                <Textarea
+                  id="bulkValues"
+                  placeholder="Ej: S, M, L, XL, XXL"
+                  value={bulkValues}
+                  onChange={(e) => setBulkValues(e.target.value)}
+                  rows={3}
+                  className="mt-1"
+                />
+                <p className="text-xs text-slate-500 mt-2">
+                  Escribe varios valores separados por coma para agregarlos todos de una vez.
+                  <br />
+                  Ejemplo: <span className="font-medium">S, M, L, XL</span> o <span className="font-medium">Rojo, Azul, Verde, Negro</span>
                 </p>
+                {bulkValues.trim() && (
+                  <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <p className="text-xs text-slate-500 mb-2">Vista previa:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {bulkValues.split(',').map((v, i) => v.trim()).filter(v => v).map((v, i) => (
+                        <Badge key={i} variant="secondary" className="text-xs">
+                          {v}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <Switch
-                id="valueIsActive"
-                checked={valueFormData.isActive}
-                onCheckedChange={(checked) => setValueFormData({ ...valueFormData, isActive: checked })}
-              />
-            </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -539,7 +616,7 @@ export default function TiposVariantePage() {
             </Button>
             <Button onClick={handleSaveValue} disabled={loadingAction}>
               {loadingAction && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {editingValue ? 'Guardar' : 'Agregar'}
+              {editingValue ? 'Guardar' : 'Agregar Valores'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -131,7 +131,7 @@ export default function EstadisticasPage() {
       <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white">
+            <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl text-white">
               <BarChart3 className="w-6 h-6" />
             </div>
             Estadísticas
@@ -188,11 +188,11 @@ export default function EstadisticasPage() {
                   <span className="text-xs text-neutral-400 dark:text-neutral-500">vs ayer</span>
                 </div>
               </div>
-              <div className="p-3 bg-violet-100 dark:bg-violet-500/20 rounded-xl">
-                <Eye className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+              <div className="p-3 bg-cyan-100 dark:bg-cyan-500/20 rounded-xl">
+                <Eye className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
               </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500" />
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500" />
           </CardContent>
         </Card>
 
@@ -265,7 +265,7 @@ export default function EstadisticasPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-violet-500" />
+              <TrendingUp className="w-5 h-5 text-cyan-500" />
               Actividad del Catálogo
             </CardTitle>
             <CardDescription>
@@ -278,8 +278,8 @@ export default function EstadisticasPage() {
                 <AreaChart data={stats.chartData}>
                   <defs>
                     <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
@@ -308,7 +308,7 @@ export default function EstadisticasPage() {
                     type="monotone"
                     dataKey="views"
                     name="Visitas"
-                    stroke="#8b5cf6"
+                    stroke="#22d3ee"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorViews)"
@@ -342,7 +342,7 @@ export default function EstadisticasPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Eye className="w-5 h-5 text-violet-500" />
+              <Eye className="w-5 h-5 text-cyan-500" />
               Productos Más Vistos
             </CardTitle>
             <CardDescription>
@@ -360,7 +360,7 @@ export default function EstadisticasPage() {
                     transition={{ delay: index * 0.05 }}
                     className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                   >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
                       {index + 1}
                     </div>
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-200 dark:bg-neutral-700  flex-shrink-0">
@@ -475,7 +475,7 @@ export default function EstadisticasPage() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50  text-center">
-                <Eye className="w-6 h-6 mx-auto text-violet-500 mb-2" />
+                <Eye className="w-6 h-6 mx-auto text-cyan-500 mb-2" />
                 <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                   {formatNumber(stats?.totals.productViews || 0)}
                 </p>

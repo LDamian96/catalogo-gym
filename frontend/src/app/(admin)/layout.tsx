@@ -126,7 +126,7 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
       {/* Logo */}
       <div className="p-6">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/25">
+          <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
             <span className="text-white font-bold text-lg">C</span>
           </div>
           <div>
@@ -158,7 +158,7 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
                   group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-300 relative overflow-hidden
                   ${isActive
-                    ? 'text-violet-700 dark:text-white'
+                    ? 'text-cyan-700 dark:text-white'
                     : 'text-neutral-600 dark:text-white/60 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/[0.04]'
                   }
                 `}
@@ -166,14 +166,14 @@ function MobileSidebarContent({ pathname, onItemClick }: { pathname: string; onI
                 {isActive && (
                   <motion.div
                     layoutId="mobileActiveNav"
-                    className="absolute inset-0 bg-violet-50 dark:bg-white/[0.08] rounded-xl border-l-2 border-violet-500"
+                    className="absolute inset-0 bg-cyan-50 dark:bg-white/[0.08] rounded-xl border-l-2 border-cyan-500"
                     transition={{ duration: 0.4, ease: v0Ease }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 relative z-10 ${isActive ? 'text-violet-500 dark:text-violet-400' : ''}`} />
+                <item.icon className={`w-5 h-5 relative z-10 ${isActive ? 'text-cyan-500 dark:text-cyan-400' : ''}`} />
                 <span className="relative z-10">{item.name}</span>
                 {isActive && (
-                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-violet-500 dark:text-violet-400" />
+                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-cyan-500 dark:text-cyan-400" />
                 )}
               </Link>
             </motion.div>
@@ -211,7 +211,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             <motion.div
               variants={iconVariants}
               animate={isCollapsed ? 'collapsed' : 'expanded'}
-              className="w-10 h-10 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/25"
+              className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/25"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -249,7 +249,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   transition-all duration-300 relative overflow-hidden
                   ${isCollapsed ? 'justify-center p-3' : 'px-4 py-3'}
                   ${isActive
-                    ? 'text-violet-700 dark:text-white'
+                    ? 'text-cyan-700 dark:text-white'
                     : 'text-neutral-600 dark:text-white/60 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/[0.04]'
                   }
                 `}
@@ -257,14 +257,14 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                 {isActive && (
                   <motion.div
                     layoutId="desktopActiveNav"
-                    className={`absolute inset-0 bg-violet-50 dark:bg-white/[0.08] rounded-xl ${!isCollapsed ? 'border-l-2 border-violet-500' : ''}`}
+                    className={`absolute inset-0 bg-cyan-50 dark:bg-white/[0.08] rounded-xl ${!isCollapsed ? 'border-l-2 border-cyan-500' : ''}`}
                     transition={{ duration: 0.4, ease: v0Ease }}
                   />
                 )}
                 {/* Subtle glow for active state */}
                 {isActive && (
                   <motion.div
-                    className="absolute inset-0 bg-violet-500/5 rounded-xl blur-xl"
+                    className="absolute inset-0 bg-cyan-500/5 rounded-xl blur-xl"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -274,7 +274,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   variants={iconVariants}
                   animate={isCollapsed ? 'collapsed' : 'expanded'}
                 >
-                  <item.icon className={`w-5 h-5 relative z-10 flex-shrink-0 transition-colors duration-300 ${isActive ? 'text-violet-500 dark:text-violet-400' : ''}`} />
+                  <item.icon className={`w-5 h-5 relative z-10 flex-shrink-0 transition-colors duration-300 ${isActive ? 'text-cyan-500 dark:text-cyan-400' : ''}`} />
                 </motion.div>
                 <AnimatePresence>
                   {!isCollapsed && (
@@ -290,7 +290,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   )}
                 </AnimatePresence>
                 {isActive && !isCollapsed && (
-                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-violet-500 dark:text-violet-400" />
+                  <ChevronRight className="w-4 h-4 ml-auto relative z-10 text-cyan-500 dark:text-cyan-400" />
                 )}
               </Link>
             );
@@ -484,8 +484,8 @@ function Header() {
                       {user?.role === 'ADMIN' ? 'Administrador' : 'Editor'}
                     </p>
                   </div>
-                  <Avatar className="w-10 h-10 border-2 border-violet-500/30">
-                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-pink-500 text-white font-semibold">
+                  <Avatar className="w-10 h-10 border-2 border-cyan-500/30">
+                    <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-500 text-white font-semibold">
                       {user ? getInitials(user.name, user.email) : 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -566,7 +566,7 @@ export default function AdminLayout({
           transition={{ duration: 0.5, ease: v0Ease }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center">
             <motion.span
               className="text-white font-bold text-2xl"
               animate={{ opacity: [1, 0.5, 1] }}

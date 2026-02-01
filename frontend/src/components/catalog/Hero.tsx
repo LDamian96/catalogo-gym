@@ -1,96 +1,107 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Phone, MapPin, Clock, Sparkles } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Phone, MapPin, Clock, Sparkles, Star, Zap, ShoppingBag, Gift, Truck, Shield, Tag } from 'lucide-react';
 import Image from 'next/image';
-import { useRef } from 'react';
+import Link from 'next/link';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { v0Ease, gradientOrbAnimation } from '@/lib/animations';
-import type { CatalogSettings } from '@/lib/api/catalog';
+import { v0Ease } from '@/lib/animations';
+import type { CatalogSettings, CatalogProduct } from '@/lib/api/catalog';
 
 interface HeroProps {
   settings: CatalogSettings;
+  products?: CatalogProduct[];
 }
 
-export function Hero({ settings }: HeroProps) {
+export function Hero({ settings, products = [] }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   });
 
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
-  const hasContactInfo = settings.phone || settings.address || settings.businessHours;
+  // Auto-rotate products
+  useEffect(() => {
+    if (products.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % products.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [products.length]);
+
+  const currentProduct = products[currentIndex];
+  const salePrice = currentProduct?.salePrice ? Number(currentProduct.salePrice) : null;
+  const price = currentProduct ? Number(currentProduct.price) : 0;
+  const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
 
   return (
     <section
       ref={containerRef}
-      className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-[#0a0a0f] pt-20 md:pt-24"
+      className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-700 to-purple-800 dark:from-cyan-900 dark:via-blue-950 dark:to-purple-950"
     >
-      {/* V0 Soft Background */}
-      <div className="absolute inset-0">
-        {/* Radial gradient from top - Soft Violet */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(139,92,246,0.15),transparent)]" />
-
-        {/* Subtle mesh gradient - Multi-color */}
-        <div className="absolute inset-0 bg-[radial-gradient(at_27%_37%,hsla(263,70%,50%,0.1)_0px,transparent_50%),radial-gradient(at_97%_21%,hsla(330,70%,50%,0.08)_0px,transparent_50%),radial-gradient(at_52%_99%,hsla(289,70%,50%,0.06)_0px,transparent_50%)]" />
-
-        {/* Animated Gradient Orbs - Soft Violet/Pink */}
+      {/* Animated Background - Colorful */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Large gradient orbs */}
         <motion.div
-          className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[120px]"
-          animate={gradientOrbAnimation}
-        />
-        <motion.div
-          className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-pink-500/8 rounded-full blur-[100px]"
-          animate={{
-            scale: [1.1, 1, 1.1],
-            opacity: [0.15, 0.3, 0.15],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        />
-        <motion.div
-          className="absolute top-1/2 right-1/3 w-[300px] h-[300px] bg-purple-500/6 rounded-full blur-[80px]"
+          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-cyan-400/40 via-blue-500/30 to-purple-500/20 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.1, 0.25, 0.1],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-blue-500/30 via-cyan-400/30 to-teal-400/20 blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            x: [0, -30, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 blur-3xl"
+          animate={{
+            rotate: [0, 360],
+          }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
         />
 
-        {/* V0 Dot Pattern - Soft Violet */}
+        {/* Grid pattern */}
         <div
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
           style={{
-            backgroundImage: 'radial-gradient(rgba(167, 139, 250, 0.1) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
+            backgroundImage: `linear-gradient(rgba(34,211,238,1) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
           }}
         />
 
-        {/* Floating Particles - Soft colors */}
-        {[...Array(10)].map((_, i) => (
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
-            className={cn(
-              "absolute w-1.5 h-1.5 rounded-full",
-              i % 3 === 0 ? "bg-violet-400/40" : i % 3 === 1 ? "bg-pink-400/40" : "bg-purple-400/40"
-            )}
+            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"
             style={{
-              left: `${10 + Math.random() * 80}%`,
-              top: `${20 + Math.random() * 60}%`,
+              left: `${15 + i * 15}%`,
+              top: `${20 + (i % 3) * 25}%`,
             }}
             animate={{
               y: [0, -30, 0],
-              opacity: [0.2, 0.7, 0.2],
-              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.5, 1],
             }}
             transition={{
-              duration: 5 + Math.random() * 4,
+              duration: 4 + i * 0.5,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: Math.random() * 3,
+              delay: i * 0.3,
             }}
           />
         ))}
@@ -98,170 +109,329 @@ export function Hero({ settings }: HeroProps) {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 max-w-4xl mx-auto px-6 text-center py-8 md:py-0"
-        style={{ y, opacity, scale }}
+        className="relative z-10 flex-1 flex items-center justify-center pt-24 pb-16"
+        style={{ y, opacity }}
       >
-        {/* Decorative Badge */}
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: v0Ease }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-violet-500/10 border border-violet-500/20 rounded-full">
-            <Sparkles className="w-4 h-4 text-violet-400" />
-            <span className="text-sm font-medium text-violet-300">Catálogo Digital</span>
-          </div>
-        </motion.div>
+        <div className="max-w-6xl mx-auto px-6 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-        {/* Logo */}
-        {settings.logo && (
-          <motion.div
-            className="flex justify-center mb-8"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: v0Ease }}
-          >
-            <div className="relative w-20 h-20 md:w-24 md:h-24 p-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(139,92,246,0.15)]">
-              <Image
-                src={settings.logo}
-                alt={settings.businessName || 'Logo'}
-                fill
-                className="object-contain p-2"
-              />
-            </div>
-          </motion.div>
-        )}
-
-        {/* Business Name */}
-        <motion.h1
-          className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: v0Ease }}
-        >
-          <span className="bg-gradient-to-r from-white via-violet-100 to-pink-100 bg-clip-text text-transparent">
-            {settings.businessName || 'Bienvenido'}
-          </span>
-        </motion.h1>
-
-        {/* Description */}
-        {settings.description && (
-          <motion.p
-            className="text-base md:text-lg text-white/50 max-w-xl mx-auto mb-8 leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: v0Ease }}
-          >
-            {settings.description}
-          </motion.p>
-        )}
-
-        {/* Contact Info Pills - V0 Soft Style */}
-        {hasContactInfo && (
-          <motion.div
-            className="flex flex-wrap justify-center gap-3 mb-10"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5, ease: v0Ease }}
-          >
-            {settings.phone && (
-              <a
-                href={`tel:${settings.phone}`}
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-violet-500/10 border border-white/10 hover:border-violet-500/30 rounded-full text-white/70 hover:text-white transition-all duration-500 text-sm"
+            {/* Left - Text Content */}
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              {/* Badge - Colorful */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: v0Ease }}
               >
-                <Phone className="w-4 h-4 text-violet-400" />
-                {settings.phone}
-              </a>
-            )}
-            {settings.address && (
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white/70 text-sm">
-                <MapPin className="w-4 h-4 text-pink-400" />
-                <span className="max-w-[200px] truncate">{settings.address}</span>
-              </div>
-            )}
-            {settings.businessHours && (
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white/70 text-sm">
-                <Clock className="w-4 h-4 text-purple-400" />
-                {settings.businessHours}
-              </div>
-            )}
-          </motion.div>
-        )}
+                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full shadow-lg shadow-cyan-500/30">
+                  <Sparkles className="w-4 h-4" />
+                  Catálogo Digital
+                  <Zap className="w-4 h-4" />
+                </span>
+              </motion.div>
 
-        {/* CTA Button - V0 Soft Style with Gradient */}
-        <motion.div
-          className="flex justify-center"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7, ease: v0Ease }}
-        >
-          <motion.a
-            href="#productos"
-            className={cn(
-              'group relative inline-flex items-center gap-3 px-8 py-4',
-              'bg-gradient-to-r from-violet-500 to-pink-500',
-              'rounded-full font-medium text-white',
-              'transition-all duration-500',
-              'hover:shadow-[0_0_40px_rgba(139,92,246,0.4)]',
-              'overflow-hidden'
-            )}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {/* Shine Effect */}
+              {/* Title - Bold & Colorful */}
+              <motion.h1
+                className="mt-8 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: v0Ease }}
+              >
+                <span className="block text-neutral-900 dark:text-white drop-shadow-sm">
+                  {settings.businessName || 'Tu Tienda'}
+                </span>
+                <span className="block mt-2 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-lg">
+                  Online
+                </span>
+              </motion.h1>
+
+              {/* Description */}
+              <motion.p
+                className="mt-6 text-lg md:text-xl text-neutral-600 dark:text-neutral-300 max-w-lg mx-auto lg:mx-0 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: v0Ease }}
+              >
+                {settings.description || 'Descubre nuestra increíble colección de productos. Calidad premium y los mejores precios.'}
+              </motion.p>
+
+              {/* CTAs - Vibrant */}
+              <motion.div
+                className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: v0Ease }}
+              >
+                <motion.a
+                  href="#productos"
+                  className={cn(
+                    'group relative inline-flex items-center justify-center gap-3',
+                    'px-8 py-4 rounded-2xl font-bold text-lg',
+                    'bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_auto]',
+                    'text-white',
+                    'shadow-xl shadow-cyan-500/40',
+                    'hover:shadow-2xl hover:shadow-cyan-500/50',
+                    'transition-all duration-500'
+                  )}
+                  whileHover={{ scale: 1.05, backgroundPosition: 'right center' }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span>Ver Productos</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </motion.a>
+
+                <motion.a
+                  href="/categorias"
+                  className={cn(
+                    'inline-flex items-center justify-center gap-2',
+                    'px-8 py-4 rounded-2xl font-bold text-lg',
+                    'bg-white dark:bg-neutral-800',
+                    'text-neutral-800 dark:text-white',
+                    'border-2 border-neutral-200 dark:border-neutral-700',
+                    'shadow-lg hover:shadow-xl',
+                    'hover:border-cyan-400 dark:hover:border-cyan-500',
+                    'transition-all duration-300'
+                  )}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Star className="w-5 h-5 text-amber-500" />
+                  Categorías
+                </motion.a>
+              </motion.div>
+
+              {/* Contact Info - With colors */}
+              {(settings.phone || settings.address || settings.businessHours) && (
+                <motion.div
+                  className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.5, ease: v0Ease }}
+                >
+                  {settings.phone && (
+                    <a
+                      href={`tel:${settings.phone}`}
+                      className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-full text-sm font-medium hover:bg-emerald-200 dark:hover:bg-emerald-500/30 transition-colors"
+                    >
+                      <Phone className="w-4 h-4" />
+                      <span>{settings.phone}</span>
+                    </a>
+                  )}
+                  {settings.address && (
+                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium">
+                      <MapPin className="w-4 h-4" />
+                      <span className="max-w-[180px] truncate">{settings.address}</span>
+                    </div>
+                  )}
+                  {settings.businessHours && (
+                    <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-sm font-medium">
+                      <Clock className="w-4 h-4" />
+                      <span>{settings.businessHours}</span>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Right - Product Showcase Card */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: '100%' }}
-              transition={{ duration: 0.6 }}
-            />
-            <span className="relative">Ver Catálogo</span>
-            <ArrowRight className="w-5 h-5 relative group-hover:translate-x-1 transition-transform duration-300" />
-          </motion.a>
-        </motion.div>
+              className="relative order-1 lg:order-2"
+              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: v0Ease }}
+            >
+              <div className="relative aspect-square max-w-lg mx-auto">
+                {/* Colorful background shape */}
+                <motion.div
+                  className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 opacity-20 dark:opacity-30 blur-2xl"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 5, 0],
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                />
 
-        {/* Secondary CTA */}
-        <motion.div
-          className="flex justify-center mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.9, ease: v0Ease }}
-        >
-          <a
-            href="/categorias"
-            className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-violet-400 transition-colors duration-300"
-          >
-            <span>Explorar categorías</span>
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </motion.div>
+                {/* Main card with product */}
+                <motion.div
+                  className="relative bg-white dark:bg-neutral-900 rounded-[2.5rem] p-4 shadow-2xl shadow-cyan-500/20 dark:shadow-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20 overflow-hidden"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  {/* Product Image Container */}
+                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/50 dark:to-blue-950/50">
+                    <AnimatePresence mode="wait">
+                      {currentProduct?.images?.[0]?.url ? (
+                        <motion.div
+                          key={currentProduct.id}
+                          initial={{ opacity: 0, scale: 1.1 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.5, ease: v0Ease }}
+                          className="absolute inset-0"
+                        >
+                          <Link href={`/productos/${currentProduct.slug}`}>
+                            <Image
+                              src={currentProduct.images[0].url}
+                              alt={currentProduct.name}
+                              fill
+                              quality={90}
+                              className="object-cover hover:scale-105 transition-transform duration-700"
+                              priority
+                            />
+                            {/* Gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                          </Link>
+                        </motion.div>
+                      ) : settings.logo ? (
+                        <Image
+                          src={settings.logo}
+                          alt={settings.businessName || 'Logo'}
+                          fill
+                          quality={90}
+                          className="object-contain p-8"
+                          priority
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600">
+                          <span className="text-8xl font-black text-white drop-shadow-lg">
+                            {(settings.businessName || 'T')[0]}
+                          </span>
+                        </div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Product Info Overlay */}
+                    {currentProduct && (
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 p-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <Link href={`/productos/${currentProduct.slug}`}>
+                          {/* Category */}
+                          <span className="inline-block px-3 py-1 mb-2 text-xs font-bold text-white bg-white/20 backdrop-blur-sm rounded-full">
+                            {currentProduct.category?.name}
+                          </span>
+                          {/* Product Name */}
+                          <h3 className="text-lg font-bold text-white line-clamp-1 drop-shadow-lg mb-1">
+                            {currentProduct.name}
+                          </h3>
+                          {/* Price */}
+                          {currentProduct.showPrice && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl font-black text-white drop-shadow-lg">
+                                S/ {salePrice ? salePrice.toFixed(2) : price.toFixed(2)}
+                              </span>
+                              {salePrice && (
+                                <span className="text-sm text-white/70 line-through">
+                                  S/ {price.toFixed(2)}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </Link>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Progress Dots */}
+                  {products.length > 1 && (
+                    <div className="flex justify-center gap-2 mt-3">
+                      {products.slice(0, 6).map((_, index) => (
+                        <motion.button
+                          key={index}
+                          onClick={() => setCurrentIndex(index)}
+                          className={cn(
+                            'h-2 rounded-full transition-all duration-300',
+                            index === currentIndex
+                              ? 'w-6 bg-gradient-to-r from-cyan-500 to-blue-600'
+                              : 'w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-cyan-400'
+                          )}
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Sale Badge */}
+                  {salePrice && (
+                    <motion.div
+                      className="absolute top-2 left-2 px-3 py-1.5 bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-500/40 flex items-center gap-1"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      <Tag className="w-3 h-3" />
+                      -{discount}%
+                    </motion.div>
+                  )}
+
+                  {/* Premium Badge */}
+                  <motion.div
+                    className="absolute -top-3 -right-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-500/40"
+                    animate={{ rotate: [-5, 5, -5], scale: [1, 1.05, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    ⭐ Premium
+                  </motion.div>
+                </motion.div>
+
+                {/* Floating colored shapes */}
+                <motion.div
+                  className="absolute -right-6 top-1/4 w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-xl shadow-cyan-500/50"
+                  animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <motion.div
+                  className="absolute -left-4 top-1/3 w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-xl shadow-purple-500/50"
+                  animate={{ y: [0, 15, 0], rotate: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                />
+                <motion.div
+                  className="absolute right-1/4 -bottom-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-xl shadow-orange-500/50"
+                  animate={{ y: [0, 10, 0], rotate: [0, 5, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                />
+                <motion.div
+                  className="absolute -left-8 bottom-1/4 w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-teal-500/50"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0f] to-transparent" />
-
-      {/* V0 Style Scroll Indicator */}
+      {/* Scroll Indicator - Colorful */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:block"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.6, ease: v0Ease }}
       >
-        <motion.div
-          className="flex flex-col items-center gap-2"
-          animate={{ y: [0, 8, 0] }}
+        <motion.a
+          href="#productos"
+          className="flex flex-col items-center gap-2 px-6 py-3 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-full shadow-lg border border-cyan-200 dark:border-cyan-800"
+          animate={{ y: [0, 5, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          whileHover={{ scale: 1.05 }}
         >
-          <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1.5">
-            <motion.div
-              className="w-1 h-1.5 rounded-full bg-gradient-to-b from-violet-400 to-pink-400"
-              animate={{ y: [0, 10, 0], opacity: [1, 0.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </div>
-        </motion.div>
+          <span className="text-sm font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            Explorar Catálogo
+          </span>
+          <motion.div
+            animate={{ y: [0, 3, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <ArrowRight className="w-4 h-4 text-cyan-600 rotate-90" />
+          </motion.div>
+        </motion.a>
       </motion.div>
+
+      {/* Bottom gradient */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-[#0a0a0f] to-transparent pointer-events-none" />
     </section>
   );
 }

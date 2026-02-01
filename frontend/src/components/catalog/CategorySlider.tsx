@@ -41,7 +41,7 @@ export function CategorySlider({ categories, className }: CategorySliderProps) {
     <section className={cn('py-6', className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4 px-4 md:px-6">
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
           Categorías
         </h2>
         <div className="flex items-center gap-2">
@@ -50,10 +50,10 @@ export function CategorySlider({ categories, className }: CategorySliderProps) {
             disabled={!canScrollLeft}
             className={cn(
               'w-9 h-9 rounded-full flex items-center justify-center transition-all',
-              'border border-slate-200 dark:border-slate-700',
+              'border border-neutral-200 dark:border-neutral-700',
               canScrollLeft
-                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300'
-                : 'bg-slate-100 dark:bg-slate-800/50 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                ? 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 text-neutral-700 dark:text-neutral-300'
+                : 'bg-neutral-100 dark:bg-neutral-800/50 text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
             )}
           >
             <ChevronLeft className="w-4 h-4" />
@@ -63,10 +63,10 @@ export function CategorySlider({ categories, className }: CategorySliderProps) {
             disabled={!canScrollRight}
             className={cn(
               'w-9 h-9 rounded-full flex items-center justify-center transition-all',
-              'border border-slate-200 dark:border-slate-700',
+              'border border-neutral-200 dark:border-neutral-700',
               canScrollRight
-                ? 'bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300'
-                : 'bg-slate-100 dark:bg-slate-800/50 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                ? 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 text-neutral-700 dark:text-neutral-300'
+                : 'bg-neutral-100 dark:bg-neutral-800/50 text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
             )}
           >
             <ChevronRight className="w-4 h-4" />
@@ -95,7 +95,7 @@ export function CategorySlider({ categories, className }: CategorySliderProps) {
               >
                 <div className={cn(
                   'relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden',
-                  'bg-gradient-to-br from-violet-500 to-fuchsia-600',
+                  'bg-gradient-to-br from-cyan-500 to-blue-600',
                   'transition-transform duration-300 group-hover:scale-105'
                 )}>
                   {category.image ? (

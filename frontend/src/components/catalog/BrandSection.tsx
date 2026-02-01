@@ -21,7 +21,7 @@ export function BrandSection({ brands }: BrandSectionProps) {
   const duplicatedBrands = [...brands, ...brands];
 
   return (
-    <section className="py-20 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900/50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-12">
         <motion.div
           className="text-center"
@@ -30,10 +30,10 @@ export function BrandSection({ brands }: BrandSectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
-            Marcas que <span className="text-violet-600">Confían</span> en Nosotros
+          <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+            Marcas que <span className="text-cyan-600">Confían</span> en Nosotros
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+          <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
             Trabajamos con las mejores marcas para ofrecerte productos de calidad
           </p>
         </motion.div>
@@ -42,8 +42,8 @@ export function BrandSection({ brands }: BrandSectionProps) {
       {/* Infinite Scroll Container */}
       <div className="relative">
         {/* Gradient Masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-neutral-50 dark:from-neutral-900 to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-neutral-50 dark:from-neutral-900 to-transparent z-10" />
 
         {/* Scrolling Brands */}
         <motion.div
@@ -79,7 +79,7 @@ export function BrandSection({ brands }: BrandSectionProps) {
                   className="object-contain max-h-full"
                 />
               ) : (
-                <div className="text-slate-400 dark:text-slate-600 font-semibold text-lg">
+                <div className="text-neutral-400 dark:text-neutral-600 font-semibold text-lg">
                   {brand.name}
                 </div>
               )}

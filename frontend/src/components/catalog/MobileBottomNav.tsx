@@ -37,7 +37,7 @@ export function MobileBottomNav() {
       transition={{ duration: 0.4, ease: v0Ease }}
     >
       {/* V0 Minimal Glass Background */}
-      <div className="absolute inset-0 bg-white/80 dark:bg-neutral-950/90 backdrop-blur-xl border-t border-neutral-200/50 dark:border-white/[0.08]" />
+      <div className="absolute inset-0 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-t border-black/[0.08] dark:border-white/[0.08]" />
 
       {/* Navigation Items */}
       <div className="relative flex items-center justify-around px-4 py-2 pb-safe">
@@ -60,7 +60,7 @@ export function MobileBottomNav() {
                   className={cn(
                     'w-5 h-5 transition-colors duration-200',
                     isActive
-                      ? 'text-neutral-900 dark:text-white'
+                      ? 'text-cyan-600 dark:text-cyan-400'
                       : 'text-neutral-400 dark:text-neutral-500'
                   )}
                   strokeWidth={isActive ? 2 : 1.5}
@@ -68,7 +68,7 @@ export function MobileBottomNav() {
 
                 {/* Cart Badge */}
                 {showBadge && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-violet-600 text-white">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
                     {cartItemCount > 9 ? '9+' : cartItemCount}
                   </span>
                 )}
@@ -79,18 +79,18 @@ export function MobileBottomNav() {
                 className={cn(
                   'mt-1 text-[10px] font-medium transition-colors duration-200',
                   isActive
-                    ? 'text-neutral-900 dark:text-white'
+                    ? 'text-cyan-600 dark:text-cyan-400'
                     : 'text-neutral-400 dark:text-neutral-500'
                 )}
               >
                 {item.label}
               </span>
 
-              {/* Active Indicator - Subtle dot */}
+              {/* Active Indicator */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
-                    className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-violet-600"
+                    className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}

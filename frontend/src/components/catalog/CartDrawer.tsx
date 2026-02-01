@@ -58,28 +58,28 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-[#0a0a0f] shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
-                  <ShoppingBag className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-slate-900 dark:text-white">
+                  <h2 className="font-semibold text-[#0a0a0f] dark:text-white">
                     Mi Carrito
                   </h2>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-neutral-500">
                     {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={closeCart}
-                className="w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 flex items-center justify-center transition-colors"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-neutral-500" />
               </button>
             </div>
 
@@ -91,13 +91,13 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                   animate={{ opacity: 1, y: 0 }}
                   className="flex flex-col items-center justify-center h-full text-center"
                 >
-                  <div className="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                    <ShoppingBag className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+                  <div className="w-24 h-24 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
+                    <ShoppingBag className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
                   </div>
-                  <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-medium text-[#0a0a0f] dark:text-white mb-2">
                     Tu carrito está vacío
                   </h3>
-                  <p className="text-slate-500 text-sm">
+                  <p className="text-neutral-500 text-sm">
                     Agrega productos para comenzar tu pedido
                   </p>
                 </motion.div>
@@ -111,10 +111,10 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20, height: 0 }}
-                        className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl"
+                        className="flex gap-4 p-4 bg-slate-50 dark:bg-neutral-800/50 rounded-xl"
                       >
                         {/* Image */}
-                        <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                        <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-neutral-200 dark:bg-slate-700 flex-shrink-0">
                           {item.image ? (
                             <Image
                               src={item.image}
@@ -132,15 +132,15 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-slate-900 dark:text-white truncate">
+                          <h4 className="font-medium text-[#0a0a0f] dark:text-white truncate">
                             {item.name}
                           </h4>
                           {item.variant && (
-                            <p className="text-xs text-slate-500 mt-0.5">
+                            <p className="text-xs text-neutral-500 mt-0.5">
                               {item.variant.values}
                             </p>
                           )}
-                          <p className="text-sm font-semibold text-violet-600 dark:text-violet-400 mt-1">
+                          <p className="text-sm font-semibold text-cyan-600 dark:text-cyan-400 mt-1">
                             {currency} {item.price.toFixed(2)}
                           </p>
 
@@ -148,11 +148,11 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                           <div className="flex items-center gap-2 mt-2">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                              className="w-7 h-7 rounded-full border border-neutral-200 dark:border-slate-700 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-slate-700 transition-colors"
                             >
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="w-8 text-center text-sm font-medium text-slate-900 dark:text-white">
+                            <span className="w-8 text-center text-sm font-medium text-[#0a0a0f] dark:text-white">
                               {item.quantity}
                             </span>
                             <button
@@ -163,12 +163,12 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                                 item.quantity >= item.maxStock
                               }
                               className={cn(
-                                'w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors',
+                                'w-7 h-7 rounded-full border border-neutral-200 dark:border-slate-700 flex items-center justify-center transition-colors',
                                 item.maxStock !== null &&
                                   item.maxStock !== undefined &&
                                   item.quantity >= item.maxStock
                                   ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-slate-100 dark:hover:bg-slate-700'
+                                  : 'hover:bg-neutral-100 dark:hover:bg-slate-700'
                               )}
                             >
                               <Plus className="w-3 h-3" />
@@ -191,7 +191,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       onClick={clearCart}
-                      className="w-full py-2 text-sm text-slate-500 hover:text-rose-500 transition-colors"
+                      className="w-full py-2 text-sm text-neutral-500 hover:text-rose-500 transition-colors"
                     >
                       Vaciar carrito
                     </motion.button>
@@ -205,12 +205,12 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="border-t border-slate-200 dark:border-slate-800 p-6 space-y-4"
+                className="border-t border-neutral-200 dark:border-neutral-800 p-6 space-y-4"
               >
                 {/* Total */}
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-400">Total</span>
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                  <span className="text-neutral-600 dark:text-slate-400">Total</span>
+                  <span className="text-2xl font-bold text-[#0a0a0f] dark:text-white">
                     {currency} {totalPrice.toFixed(2)}
                   </span>
                 </div>
@@ -232,7 +232,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                   Enviar pedido por WhatsApp
                 </motion.button>
 
-                <p className="text-xs text-center text-slate-500">
+                <p className="text-xs text-center text-neutral-500">
                   Se abrirá WhatsApp con tu pedido listo para enviar
                 </p>
               </motion.div>

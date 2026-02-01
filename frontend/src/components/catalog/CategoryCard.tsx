@@ -44,12 +44,13 @@ export function CategoryCard({ category, index = 0, variant = 'default' }: Categ
                 src={category.image}
                 alt={category.name}
                 fill
+                quality={90}
                 className="object-cover"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             </motion.div>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-600" />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-600" />
           )}
 
           {/* Overlay Gradient */}
@@ -64,7 +65,7 @@ export function CategoryCard({ category, index = 0, variant = 'default' }: Categ
           <motion.div
             className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             style={{
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3))',
+              background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.3), rgba(59, 130, 246, 0.3))',
               filter: 'blur(20px)',
             }}
           />

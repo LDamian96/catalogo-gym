@@ -104,9 +104,9 @@ export function CategoryProducts({
   const hasActiveFilters = currentMinPrice || currentMaxPrice || currentSort;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
       {/* Header with Category Info */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-violet-900/50 to-slate-900 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0a0a0f] via-cyan-900/50 to-[#0a0a0f] overflow-hidden">
         {/* Background Image */}
         {category.image && (
           <div className="absolute inset-0 opacity-20">
@@ -114,13 +114,14 @@ export function CategoryProducts({
               src={category.image}
               alt={category.name}
               fill
+              quality={85}
               className="object-cover"
             />
           </div>
         )}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
 
         {/* Content */}
         <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-16">
@@ -179,7 +180,7 @@ export function CategoryProducts({
       </div>
 
       {/* Search & Filters Bar */}
-      <div className="sticky top-0 z-30 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="sticky top-0 z-30 bg-white dark:bg-[#0a0a0f] border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {/* Search */}
@@ -196,10 +197,10 @@ export function CategoryProducts({
                   onChange={(e) => updateFilters({ sort: e.target.value || undefined })}
                   className={cn(
                     'appearance-none px-4 py-2.5 pr-10 rounded-xl',
-                    'bg-slate-100 dark:bg-slate-800',
-                    'border border-slate-200 dark:border-slate-700',
-                    'text-slate-700 dark:text-slate-300 text-sm',
-                    'focus:outline-none focus:ring-2 focus:ring-violet-500/50'
+                    'bg-neutral-100 dark:bg-neutral-800',
+                    'border border-neutral-200 dark:border-neutral-700',
+                    'text-neutral-700 dark:text-neutral-300 text-sm',
+                    'focus:outline-none focus:ring-2 focus:ring-cyan-500/50'
                   )}
                 >
                   <option value="">Ordenar por</option>
@@ -209,7 +210,7 @@ export function CategoryProducts({
                     </option>
                   ))}
                 </select>
-                <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
               </div>
 
               {/* Filter Button */}
@@ -217,10 +218,10 @@ export function CategoryProducts({
                 onClick={() => setShowFilters(true)}
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 rounded-xl',
-                  'bg-slate-100 dark:bg-slate-800',
-                  'border border-slate-200 dark:border-slate-700',
-                  'text-slate-700 dark:text-slate-300 text-sm',
-                  hasActiveFilters && 'border-violet-500 text-violet-600 dark:text-violet-400'
+                  'bg-neutral-100 dark:bg-neutral-800',
+                  'border border-neutral-200 dark:border-neutral-700',
+                  'text-neutral-700 dark:text-neutral-300 text-sm',
+                  hasActiveFilters && 'border-cyan-500 text-cyan-600 dark:text-cyan-400'
                 )}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -228,19 +229,19 @@ export function CategoryProducts({
                 <SlidersHorizontal className="w-4 h-4" />
                 Filtros
                 {hasActiveFilters && (
-                  <span className="w-2 h-2 rounded-full bg-violet-500" />
+                  <span className="w-2 h-2 rounded-full bg-cyan-500" />
                 )}
               </motion.button>
 
               {/* View Mode */}
-              <div className="hidden sm:flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+              <div className="hidden sm:flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     viewMode === 'grid'
-                      ? 'bg-white dark:bg-slate-700 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-600'
+                      ? 'bg-white dark:bg-neutral-700 shadow-sm'
+                      : 'text-neutral-400 hover:text-neutral-600'
                   )}
                 >
                   <Grid3X3 className="w-4 h-4" />
@@ -250,8 +251,8 @@ export function CategoryProducts({
                   className={cn(
                     'p-2 rounded-md transition-colors',
                     viewMode === 'large'
-                      ? 'bg-white dark:bg-slate-700 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-600'
+                      ? 'bg-white dark:bg-neutral-700 shadow-sm'
+                      : 'text-neutral-400 hover:text-neutral-600'
                   )}
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -274,7 +275,7 @@ export function CategoryProducts({
           >
             <div className="sticky top-32 space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">
+                <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
                   Categorías
                 </h3>
                 <ul className="space-y-2">
@@ -285,12 +286,12 @@ export function CategoryProducts({
                         className={cn(
                           'block px-4 py-2 rounded-lg text-sm transition-colors',
                           cat.slug === category.slug
-                            ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         )}
                       >
                         {cat.name}
-                        <span className="ml-2 text-xs text-slate-400">
+                        <span className="ml-2 text-xs text-neutral-400">
                           ({cat._count?.products || 0})
                         </span>
                       </Link>
@@ -301,7 +302,7 @@ export function CategoryProducts({
 
               {/* Price Range */}
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">
+                <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
                   Rango de Precio
                 </h3>
                 <div className="space-y-3">
@@ -311,26 +312,26 @@ export function CategoryProducts({
                       placeholder="Min"
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                      className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                      className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                     />
                   </div>
                   <button
                     onClick={applyPriceFilter}
-                    className="w-full py-2 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 transition-colors"
+                    className="w-full py-2 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 transition-colors"
                   >
                     Aplicar
                   </button>
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="w-full py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-violet-600 transition-colors"
+                      className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-cyan-600 transition-colors"
                     >
                       Limpiar filtros
                     </button>
@@ -376,8 +377,8 @@ export function CategoryProducts({
                       className={cn(
                         'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
                         pagination.page <= 1
-                          ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       )}
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -390,15 +391,15 @@ export function CategoryProducts({
                         .map((p, idx, arr) => (
                           <span key={p}>
                             {idx > 0 && arr[idx - 1] !== p - 1 && (
-                              <span className="px-2 text-slate-400">...</span>
+                              <span className="px-2 text-neutral-400">...</span>
                             )}
                             <button
                               onClick={() => updateFilters({ page: String(p) })}
                               className={cn(
                                 'w-10 h-10 rounded-lg font-medium transition-colors',
                                 p === pagination.page
-                                  ? 'bg-violet-600 text-white'
-                                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                  ? 'bg-cyan-600 text-white'
+                                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                               )}
                             >
                               {p}
@@ -413,8 +414,8 @@ export function CategoryProducts({
                       className={cn(
                         'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
                         pagination.page >= pagination.totalPages
-                          ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       )}
                     >
                       Siguiente
@@ -429,19 +430,19 @@ export function CategoryProducts({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                  <Grid3X3 className="w-10 h-10 text-slate-400" />
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                  <Grid3X3 className="w-10 h-10 text-neutral-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                <h3 className="text-xl font-semibold text-[#0a0a0f] dark:text-white mb-2">
                   No hay productos
                 </h3>
-                <p className="text-slate-500 dark:text-slate-400 mb-6">
+                <p className="text-slate-500 dark:text-neutral-400 mb-6">
                   No encontramos productos con los filtros seleccionados
                 </p>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-6 py-3 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors"
+                    className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-medium hover:bg-cyan-700 transition-colors"
                   >
                     Limpiar filtros
                   </button>
@@ -464,13 +465,13 @@ export function CategoryProducts({
               onClick={() => setShowFilters(false)}
             />
             <motion.div
-              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-slate-900 z-50 lg:hidden shadow-2xl"
+              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#0a0a0f] z-50 lg:hidden shadow-2xl"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
             >
-              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-800">
                 <h2 className="text-lg font-semibold">Filtros</h2>
                 <button onClick={() => setShowFilters(false)}>
                   <X className="w-6 h-6" />
@@ -491,8 +492,8 @@ export function CategoryProducts({
                           className={cn(
                             'block px-4 py-2 rounded-lg text-sm transition-colors',
                             cat.slug === category.slug
-                              ? 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 font-medium'
-                              : 'text-slate-600 dark:text-slate-400'
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                              : 'text-neutral-600 dark:text-neutral-400'
                           )}
                         >
                           {cat.name}
@@ -514,14 +515,14 @@ export function CategoryProducts({
                         placeholder="Min"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                       />
                       <input
                         type="number"
                         placeholder="Max"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-slate-100 dark:bg-slate-800 border-0"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                       />
                     </div>
                     <button
@@ -529,7 +530,7 @@ export function CategoryProducts({
                         applyPriceFilter();
                         setShowFilters(false);
                       }}
-                      className="w-full py-3 text-sm font-medium text-white bg-violet-600 rounded-lg"
+                      className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
                     >
                       Aplicar filtros
                     </button>
@@ -539,7 +540,7 @@ export function CategoryProducts({
                           clearFilters();
                           setShowFilters(false);
                         }}
-                        className="w-full py-2 text-sm text-slate-600 dark:text-slate-400"
+                        className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400"
                       >
                         Limpiar filtros
                       </button>

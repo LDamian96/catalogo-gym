@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShoppingBag, Eye, Sparkles, Heart } from 'lucide-react';
+import { ShoppingBag, Eye, Zap, Heart, Sparkles, Tag, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { v0Ease } from '@/lib/animations';
@@ -32,12 +32,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <motion.article
         className={cn(
           'group relative h-full flex flex-col overflow-hidden rounded-2xl',
-          'bg-gradient-to-b from-white to-violet-50/30 dark:from-[#12121a] dark:to-violet-950/20',
-          'border-2 border-violet-300/50 dark:border-violet-500/30',
-          'shadow-lg shadow-violet-500/10 dark:shadow-violet-500/5',
-          'transition-all duration-300 ease-out',
-          'hover:border-violet-500/70 dark:hover:border-violet-400/50',
-          'hover:shadow-xl hover:shadow-violet-500/20 dark:hover:shadow-violet-500/15',
+          'bg-white dark:bg-neutral-900',
+          'border-2 border-cyan-100 dark:border-cyan-500/20',
+          'transition-all duration-500',
+          'hover:border-cyan-400 dark:hover:border-cyan-500',
+          'hover:shadow-2xl hover:shadow-cyan-500/30',
           'hover:-translate-y-2 hover:scale-[1.02]',
           'active:scale-[0.98]'
         )}
@@ -45,127 +44,128 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.5,
-          delay: index * 0.05,
+          delay: index * 0.06,
           ease: v0Ease,
         }}
       >
+        {/* Glow Effect on Hover */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500 -z-10" />
+
         {/* Image Container */}
-        <div className="relative aspect-square overflow-hidden bg-neutral-50 dark:bg-[#0a0a0f]">
-          {/* Main Image */}
+        <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-cyan-50 via-blue-50 to-purple-50 dark:from-cyan-950/50 dark:via-blue-950/50 dark:to-purple-950/50">
           {mainImage ? (
             <>
               <Image
                 src={mainImage}
                 alt={product.name}
                 fill
+                quality={90}
                 className={cn(
-                  'object-cover transition-all duration-700 ease-out',
-                  'group-hover:scale-105',
+                  'object-cover transition-all duration-700',
+                  'group-hover:scale-110',
                   secondImage && 'group-hover:opacity-0'
                 )}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
-              {/* Second Image on Hover */}
               {secondImage && (
                 <Image
                   src={secondImage}
                   alt={`${product.name} - Vista 2`}
                   fill
-                  className="object-cover transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  quality={90}
+                  className="object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-110"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               )}
             </>
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-violet-50 to-pink-50 dark:from-violet-500/5 dark:to-pink-500/5">
-              <ShoppingBag className="w-10 h-10 text-violet-300 dark:text-violet-500/50" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-cyan-100 via-blue-100 to-purple-100 dark:from-cyan-900/30 dark:via-blue-900/30 dark:to-purple-900/30">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center mb-2 shadow-lg shadow-cyan-500/30">
+                <ShoppingBag className="w-8 h-8 text-white" />
+              </div>
+              <span className="text-xs font-medium text-cyan-600 dark:text-cyan-400">Sin imagen</span>
             </div>
           )}
 
-          {/* Subtle Gradient Overlay on Hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Colorful Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-          {/* Quick View Button */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-3 group-hover:translate-y-0">
-            <span className="flex items-center gap-2 px-4 py-2 bg-white/95 dark:bg-[#12121a]/95 backdrop-blur-sm rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-200 border border-violet-200/50 dark:border-violet-500/20 shadow-lg shadow-violet-500/10">
-              <Eye className="w-3.5 h-3.5 text-violet-500" />
-              Ver detalles
+          {/* Quick View Button - Colorful */}
+          <motion.div
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 rounded-xl text-sm font-bold text-white shadow-xl shadow-cyan-500/50">
+              <Eye className="w-4 h-4" />
+              Ver producto
+              <Sparkles className="w-4 h-4" />
             </span>
-          </div>
+          </motion.div>
 
-          {/* Badges Container - V0 Soft Style */}
-          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
-            {/* Sale Badge */}
+          {/* Badges Container - Colorful */}
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
             {salePrice && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 + index * 0.02, duration: 0.4, ease: v0Ease }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + index * 0.03, duration: 0.4, ease: v0Ease }}
               >
-                <span className="inline-flex items-center px-2.5 py-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-semibold rounded-lg shadow-lg shadow-pink-500/25">
-                  -{discount}%
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-rose-500 to-red-600 text-white text-xs font-bold rounded-lg shadow-lg shadow-rose-500/50">
+                  <Tag className="w-3 h-3" />
+                  -{discount}% OFF
                 </span>
               </motion.div>
             )}
 
-            {/* Featured Badge */}
-            {product.isFeatured && !salePrice && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 + index * 0.02, duration: 0.4, ease: v0Ease }}
-              >
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-violet-500 to-purple-500 text-white text-[10px] font-semibold rounded-lg shadow-lg shadow-violet-500/25">
-                  <Sparkles className="w-2.5 h-2.5" />
-                  Destacado
-                </span>
-              </motion.div>
-            )}
           </div>
 
-          {/* Variants Badge */}
+          {/* Variants Badge - Colorful */}
           {hasVariants && (
             <motion.div
-              className="absolute top-2.5 right-2.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 + index * 0.02, duration: 0.4, ease: v0Ease }}
+              className="absolute top-3 right-3"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 + index * 0.03, duration: 0.4, ease: v0Ease }}
             >
-              <span className="inline-flex items-center px-2.5 py-1 bg-white/95 dark:bg-[#12121a]/95 backdrop-blur-sm rounded-lg text-[10px] font-medium text-violet-600 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 shadow-sm">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-lg shadow-lg shadow-cyan-500/50">
+                <Zap className="w-3 h-3" />
                 +{product._count?.variants} opciones
               </span>
             </motion.div>
           )}
 
-          {/* Wishlist Button - Only show if no variants badge */}
+          {/* Wishlist Button - Colorful */}
           {!hasVariants && (
-            <button
-              className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-white/95 dark:bg-[#12121a]/95 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 border border-violet-200/30 dark:border-violet-500/20 hover:border-pink-400/50 hover:shadow-lg hover:shadow-pink-500/20"
+            <motion.button
+              className="absolute top-3 right-3 w-10 h-10 rounded-xl bg-white dark:bg-neutral-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg hover:shadow-rose-500/50 hover:bg-rose-50 dark:hover:bg-rose-500/20"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
               }}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <Heart className="w-4 h-4 text-neutral-400 hover:text-pink-500 transition-colors duration-300" />
-            </button>
+              <Heart className="w-5 h-5 text-neutral-400 group-hover:text-rose-500 transition-colors duration-300" />
+            </motion.button>
           )}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col p-4">
-          {/* Category */}
-          <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-1.5">
+        {/* Content - Colorful */}
+        <div className="flex-1 flex flex-col p-4 bg-gradient-to-b from-white to-cyan-50/50 dark:from-neutral-900 dark:to-cyan-950/30">
+          {/* Category - With color pill */}
+          <span className="inline-flex items-center gap-1 self-start px-2.5 py-1 bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-500/20 dark:to-blue-500/20 text-cyan-700 dark:text-cyan-400 text-[10px] font-bold uppercase tracking-wider rounded-md mb-2">
             {product.category.name}
           </span>
 
-          {/* Title */}
-          <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-100 leading-snug line-clamp-2 mb-1 group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors duration-300">
+          {/* Title - Bold */}
+          <h3 className="text-sm font-bold text-neutral-900 dark:text-white leading-snug line-clamp-2 mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 dark:group-hover:from-cyan-400 dark:group-hover:to-blue-400 transition-all duration-300">
             {product.name}
           </h3>
 
           {/* Brand */}
           {product.brand && (
-            <p className="text-[11px] text-neutral-500 dark:text-neutral-500 mb-2">
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mb-2 font-medium">
               {product.brand.name}
             </p>
           )}
@@ -173,43 +173,44 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Price */}
+          {/* Price - Colorful */}
           {product.showPrice && (
-            <div className="flex items-baseline gap-2 mt-2">
+            <div className="flex items-center gap-3 mt-3">
               {salePrice ? (
                 <>
-                  <span className="text-lg font-semibold bg-gradient-to-r from-violet-600 to-pink-600 dark:from-violet-400 dark:to-pink-400 bg-clip-text text-transparent">
+                  <span className="text-xl font-black bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                     S/ {salePrice.toFixed(2)}
                   </span>
-                  <span className="text-xs text-neutral-400 line-through">
+                  <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded text-xs text-neutral-400 line-through font-medium">
                     S/ {price.toFixed(2)}
                   </span>
                 </>
               ) : (
-                <span className="text-lg font-semibold text-neutral-900 dark:text-white">
+                <span className="text-xl font-black text-neutral-900 dark:text-white">
                   S/ {price.toFixed(2)}
                 </span>
               )}
             </div>
           )}
 
-          {/* Stock Indicator */}
+          {/* Stock Indicator - Colorful */}
           {product.showStock && product.stock !== null && (
-            <div className="mt-2.5">
+            <div className="mt-3">
               {product.stock > 0 ? (
-                <div className="flex items-center gap-1.5">
-                  <span className="relative flex h-1.5 w-1.5">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg">
+                  <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                   </span>
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                    {product.stock > 10 ? 'Disponible' : `${product.stock} unidades`}
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    {product.stock > 10 ? 'En stock' : `Solo ${product.stock} disponibles`}
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
-                  <span className="text-[10px] text-neutral-500 font-medium">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                  <span className="w-2 h-2 rounded-full bg-neutral-400" />
+                  <span className="text-xs text-neutral-500 font-medium">
                     {product.stockMessage || 'Agotado'}
                   </span>
                 </div>
@@ -218,8 +219,13 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
 
-        {/* Bottom Accent Line - V0 Soft Gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-400 via-purple-400 to-pink-400 opacity-50 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
+        {/* Bottom Gradient Bar - Animated */}
+        <div className="h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Corner Decoration */}
+        <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rotate-45 transform origin-center" />
+        </div>
       </motion.article>
     </a>
   );

@@ -49,21 +49,21 @@ export default function AuthLayout({
         </Button>
       </div>
 
-      {/* V0 Soft Background */}
+      {/* V0 Soft Background - Cyan/Blue */}
       <div className="absolute inset-0">
         {/* Light mode background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(139,92,246,0.08),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(139,92,246,0.15),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,211,238,0.08),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(34,211,238,0.15),transparent)]" />
 
-        {/* Subtle mesh gradient - Multi-color */}
-        <div className="absolute inset-0 bg-[radial-gradient(at_27%_37%,hsla(263,70%,50%,0.05)_0px,transparent_50%),radial-gradient(at_97%_21%,hsla(330,70%,50%,0.04)_0px,transparent_50%)] dark:bg-[radial-gradient(at_27%_37%,hsla(263,70%,50%,0.1)_0px,transparent_50%),radial-gradient(at_97%_21%,hsla(330,70%,50%,0.08)_0px,transparent_50%)]" />
+        {/* Subtle mesh gradient - Cyan/Blue */}
+        <div className="absolute inset-0 bg-[radial-gradient(at_27%_37%,hsla(192,95%,53%,0.05)_0px,transparent_50%),radial-gradient(at_97%_21%,hsla(217,91%,60%,0.04)_0px,transparent_50%)] dark:bg-[radial-gradient(at_27%_37%,hsla(192,95%,53%,0.1)_0px,transparent_50%),radial-gradient(at_97%_21%,hsla(217,91%,60%,0.08)_0px,transparent_50%)]" />
 
-        {/* Animated Gradient Orbs - V0 Soft Style */}
+        {/* Animated Gradient Orbs - V0 Cyan Style */}
         <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-violet-500/5 dark:bg-violet-500/10 rounded-full blur-[120px]"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[120px]"
           animate={gradientOrbAnimation}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500/5 dark:bg-pink-500/8 rounded-full blur-[100px]"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/5 dark:bg-blue-500/8 rounded-full blur-[100px]"
           animate={{
             scale: [1.1, 1, 1.1],
             opacity: [0.15, 0.3, 0.15],
@@ -71,7 +71,7 @@ export default function AuthLayout({
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/3 dark:bg-purple-500/6 rounded-full blur-[150px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-sky-500/3 dark:bg-sky-500/6 rounded-full blur-[150px]"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.1, 0.2, 0.1],
@@ -83,11 +83,11 @@ export default function AuthLayout({
           }}
         />
 
-        {/* V0 Dot Pattern - Violet */}
+        {/* V0 Dot Pattern - Cyan */}
         <div
           className="absolute inset-0 opacity-20 dark:opacity-40"
           style={{
-            backgroundImage: 'radial-gradient(rgba(167, 139, 250, 0.15) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px)',
             backgroundSize: '24px 24px',
           }}
         />

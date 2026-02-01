@@ -18,8 +18,8 @@ export function CartButton({ className }: CartButtonProps) {
       className={cn(
         'relative flex items-center justify-center',
         'w-12 h-12 rounded-full',
-        'bg-violet-600 hover:bg-violet-700 text-white',
-        'shadow-lg shadow-violet-500/30',
+        'bg-cyan-600 hover:bg-cyan-700 text-white',
+        'shadow-lg shadow-cyan-500/30',
         'transition-colors',
         className
       )}
@@ -39,7 +39,7 @@ export function CartButton({ className }: CartButtonProps) {
               'absolute -top-1 -right-1',
               'min-w-[20px] h-5 px-1.5',
               'flex items-center justify-center',
-              'bg-rose-500 text-white text-xs font-bold rounded-full'
+              'bg-blue-500 text-white text-xs font-bold rounded-full'
             )}
           >
             {totalItems > 99 ? '99+' : totalItems}
