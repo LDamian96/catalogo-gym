@@ -24,4 +24,14 @@ export class CreateVariantTypeDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiPropertyOptional({ description: 'Mostrar como filtro en /productos', default: false })
+  @IsOptional()
+  @IsBoolean()
+  showAsFilter?: boolean;
+
+  @ApiPropertyOptional({ description: 'Mostrar en landing page', default: false })
+  @IsOptional()
+  @IsBoolean()
+  showInLanding?: boolean;
 }

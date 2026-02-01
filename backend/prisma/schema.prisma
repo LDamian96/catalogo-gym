@@ -236,13 +236,15 @@ model ProductImage {
 // ============================================
 
 model VariantType {
-  id          String   @id @default(cuid())
-  name        String   @unique // Talla, Color, Material, Tamaño
-  description String?
-  order       Int      @default(0)
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  name          String   @unique // Talla, Color, Material, Tamaño
+  description   String?
+  order         Int      @default(0)
+  isActive      Boolean  @default(true) @map("is_active")
+  showAsFilter  Boolean  @default(false) @map("show_as_filter")  // Mostrar como filtro en /productos
+  showInLanding Boolean  @default(false) @map("show_in_landing") // Mostrar en landing page
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   // Relations
   values               VariantTypeValue[]            // Valores predefinidos (S, M, L, XL)

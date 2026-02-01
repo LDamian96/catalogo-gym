@@ -152,8 +152,22 @@ export interface CatalogHome {
   brands: CatalogBrand[];
 }
 
+export interface VariantTypeFilter {
+  id: string;
+  name: string;
+  values: { id: string; value: string }[];
+}
+
 export interface CatalogCategoryFilters {
   brands: { id: string; name: string; slug: string; logo: string | null }[];
+  priceRange: { min: number; max: number };
+  variantTypes?: VariantTypeFilter[];
+}
+
+export interface CatalogFilters {
+  categories: CatalogCategory[];
+  brands: CatalogBrand[];
+  variantTypes: VariantTypeFilter[];
   priceRange: { min: number; max: number };
 }
 
@@ -249,6 +263,11 @@ export async function trackEvent(event: {
   metadata?: Record<string, unknown>;
 }): Promise<void> {
   await catalogApi.post('/catalog/track', event);
+}
+
+export async function getCatalogFilters(): Promise<CatalogFilters> {
+  const { data } = await catalogApi.get<CatalogFilters>('/catalog/filters');
+  return data;
 }
 
 export default catalogApi;

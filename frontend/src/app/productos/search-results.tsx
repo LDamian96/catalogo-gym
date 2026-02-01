@@ -18,12 +18,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, Navbar, MobileBottomNav } from '@/components/catalog';
-import { searchCatalog } from '@/lib/api/catalog';
+import { searchCatalog, getCatalogFilters } from '@/lib/api/catalog';
 import type {
   CatalogSettings,
   CatalogCategory,
   CatalogProduct,
   CatalogSearchResponse,
+  VariantTypeFilter,
 } from '@/lib/api/catalog';
 import { staggerContainer, staggerItem } from '@/lib/animations';
 
@@ -71,7 +72,24 @@ export function SearchResults({
   const [inputValue, setInputValue] = useState(initialQuery);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Variant filters state
+  const [variantFilters, setVariantFilters] = useState<VariantTypeFilter[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
+
   const currentPage = parseInt(searchParams.get('page') || '1');
+
+  // Load variant filters on mount
+  useEffect(() => {
+    async function loadFilters() {
+      try {
+        const filters = await getCatalogFilters();
+        setVariantFilters(filters.variantTypes || []);
+      } catch (error) {
+        console.error('Error loading filters:', error);
+      }
+    }
+    loadFilters();
+  }, []);
 
   // Debounced live search - searches as user types
   const handleLiveSearch = useCallback((value: string) => {
@@ -164,10 +182,27 @@ export function SearchResults({
     setMinPrice('');
     setMaxPrice('');
     setActiveFilter('');
+    setSelectedVariants({});
     handleSearch(query, 1, true);
   };
 
-  const hasActiveFilters = selectedCategory || minPrice || maxPrice || (sort && sort !== 'relevance');
+  // Toggle variant value selection
+  const handleVariantToggle = (variantTypeId: string, value: string) => {
+    setSelectedVariants(prev => {
+      const current = prev[variantTypeId] || [];
+      const newValues = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
+
+      return {
+        ...prev,
+        [variantTypeId]: newValues,
+      };
+    });
+  };
+
+  const hasVariantFilters = Object.values(selectedVariants).some(v => v.length > 0);
+  const hasActiveFilters = selectedCategory || minPrice || maxPrice || (sort && sort !== 'relevance') || hasVariantFilters;
 
   // Popular search suggestions
   const suggestions = ['Nuevo', 'Oferta', 'Popular', 'Destacado'];
@@ -456,6 +491,37 @@ export function SearchResults({
                   </button>
                 </div>
               </div>
+
+              {/* Dynamic Variant Filters - Desktop */}
+              {variantFilters.map((variantType) => (
+                <div
+                  key={variantType.id}
+                  className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4"
+                >
+                  <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+                    {variantType.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {variantType.values.map((value) => {
+                      const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                      return (
+                        <button
+                          key={value.id}
+                          onClick={() => handleVariantToggle(variantType.id, value.value)}
+                          className={cn(
+                            'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
+                            isSelected
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
+                              : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
+                          )}
+                        >
+                          {value.value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </aside>
 
@@ -712,6 +778,34 @@ export function SearchResults({
                     </div>
                   </div>
                 </div>
+
+                {/* Dynamic Variant Filters - Mobile */}
+                {variantFilters.map((variantType) => (
+                  <div key={variantType.id}>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+                      {variantType.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {variantType.values.map((value) => {
+                        const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                        return (
+                          <button
+                            key={value.id}
+                            onClick={() => handleVariantToggle(variantType.id, value.value)}
+                            className={cn(
+                              'px-3 py-1.5 rounded-lg text-sm transition-colors',
+                              isSelected
+                                ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                                : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
+                            )}
+                          >
+                            {value.value}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
 
                 {/* Apply Buttons */}
                 <div className="space-y-3 pt-4">

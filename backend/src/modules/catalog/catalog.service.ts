@@ -342,6 +342,9 @@ export class CatalogService {
       _max: { price: true },
     });
 
+    // Get variant type filters (showAsFilter = true)
+    const variantFilters = await this.getVariantFiltersForCategory(category.id);
+
     const totalPages = Math.ceil(total / limit);
 
     return {
@@ -353,6 +356,7 @@ export class CatalogService {
           min: priceRange._min.price ? Number(priceRange._min.price) : 0,
           max: priceRange._max.price ? Number(priceRange._max.price) : 0,
         },
+        variantTypes: variantFilters,
       },
       meta: {
         total,
@@ -436,6 +440,128 @@ export class CatalogService {
   }
 
   /**
+   * Get variant type filters for a category
+   * Returns variant types with showAsFilter=true and their available values
+   */
+  private async getVariantFiltersForCategory(categoryId: string) {
+    // Get variant types that should show as filters
+    const variantTypes = await this.prisma.variantType.findMany({
+      where: {
+        isActive: true,
+        showAsFilter: true,
+      },
+      orderBy: { order: 'asc' },
+      include: {
+        values: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+
+    // Get all variant values used by products in this category
+    const usedValues = await this.prisma.productVariantValue.findMany({
+      where: {
+        product: {
+          categoryId,
+          isActive: true,
+        },
+        variantType: {
+          showAsFilter: true,
+        },
+      },
+      select: {
+        variantTypeId: true,
+        value: true,
+      },
+      distinct: ['variantTypeId', 'value'],
+    });
+
+    // Create a map of used values per variant type
+    const usedValuesMap = new Map<string, Set<string>>();
+    for (const item of usedValues) {
+      if (!usedValuesMap.has(item.variantTypeId)) {
+        usedValuesMap.set(item.variantTypeId, new Set());
+      }
+      usedValuesMap.get(item.variantTypeId)!.add(item.value);
+    }
+
+    // Filter variant types to only include those with used values
+    return variantTypes
+      .map((vt) => ({
+        id: vt.id,
+        name: vt.name,
+        values: vt.values
+          .filter((v) => usedValuesMap.get(vt.id)?.has(v.value))
+          .map((v) => ({
+            id: v.id,
+            value: v.value,
+          })),
+      }))
+      .filter((vt) => vt.values.length > 0);
+  }
+
+  /**
+   * Get variant type filters for all products (search page)
+   */
+  private async getVariantFiltersForSearch() {
+    // Get variant types that should show as filters
+    const variantTypes = await this.prisma.variantType.findMany({
+      where: {
+        isActive: true,
+        showAsFilter: true,
+      },
+      orderBy: { order: 'asc' },
+      include: {
+        values: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+
+    // Get all variant values used by active products
+    const usedValues = await this.prisma.productVariantValue.findMany({
+      where: {
+        product: {
+          isActive: true,
+        },
+        variantType: {
+          showAsFilter: true,
+        },
+      },
+      select: {
+        variantTypeId: true,
+        value: true,
+      },
+      distinct: ['variantTypeId', 'value'],
+    });
+
+    // Create a map of used values per variant type
+    const usedValuesMap = new Map<string, Set<string>>();
+    for (const item of usedValues) {
+      if (!usedValuesMap.has(item.variantTypeId)) {
+        usedValuesMap.set(item.variantTypeId, new Set());
+      }
+      usedValuesMap.get(item.variantTypeId)!.add(item.value);
+    }
+
+    // Filter variant types to only include those with used values
+    return variantTypes
+      .map((vt) => ({
+        id: vt.id,
+        name: vt.name,
+        values: vt.values
+          .filter((v) => usedValuesMap.get(vt.id)?.has(v.value))
+          .map((v) => ({
+            id: v.id,
+            value: v.value,
+          })),
+      }))
+      .filter((vt) => vt.values.length > 0);
+  }
+
+  /**
    * POST /catalog/track - Tracking de eventos
    */
   async trackEvent(dto: TrackEventDto) {
@@ -465,5 +591,57 @@ export class CatalogService {
     });
 
     return { success: true };
+  }
+
+  /**
+   * GET /catalog/filters - Get all available filters for products page
+   */
+  async getFilters() {
+    // Get all categories
+    const categories = await this.prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: [{ level: 'asc' }, { order: 'asc' }],
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        parentId: true,
+        level: true,
+        _count: { select: { products: { where: { isActive: true } } } },
+      },
+    });
+
+    // Get all brands
+    const brands = await this.prisma.brand.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        _count: { select: { products: { where: { isActive: true } } } },
+      },
+    });
+
+    // Get variant type filters
+    const variantTypes = await this.getVariantFiltersForSearch();
+
+    // Get global price range
+    const priceRange = await this.prisma.product.aggregate({
+      where: { isActive: true },
+      _min: { price: true },
+      _max: { price: true },
+    });
+
+    return {
+      categories,
+      brands,
+      variantTypes,
+      priceRange: {
+        min: priceRange._min.price ? Number(priceRange._min.price) : 0,
+        max: priceRange._max.price ? Number(priceRange._max.price) : 0,
+      },
+    };
   }
 }

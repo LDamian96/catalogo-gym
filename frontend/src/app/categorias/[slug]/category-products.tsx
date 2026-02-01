@@ -22,6 +22,7 @@ import type {
   CatalogCategory,
   CatalogProduct,
   CatalogCategoryFilters,
+  VariantTypeFilter,
 } from '@/lib/api/catalog';
 import { staggerContainer, staggerItem } from '@/lib/animations';
 
@@ -68,6 +69,10 @@ export function CategoryProducts({
   const [viewMode, setViewMode] = useState<'grid' | 'large'>('grid');
   const [minPrice, setMinPrice] = useState(currentMinPrice || '');
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice || '');
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
+
+  // Get variant type filters from the filters prop
+  const variantFilters: VariantTypeFilter[] = filters.variantTypes || [];
 
   const updateFilters = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -98,10 +103,27 @@ export function CategoryProducts({
   const clearFilters = () => {
     setMinPrice('');
     setMaxPrice('');
+    setSelectedVariants({});
     router.push(pathname);
   };
 
-  const hasActiveFilters = currentMinPrice || currentMaxPrice || currentSort;
+  // Toggle variant value selection
+  const handleVariantToggle = (variantTypeId: string, value: string) => {
+    setSelectedVariants(prev => {
+      const current = prev[variantTypeId] || [];
+      const newValues = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
+
+      return {
+        ...prev,
+        [variantTypeId]: newValues,
+      };
+    });
+  };
+
+  const hasVariantFilters = Object.values(selectedVariants).some(v => v.length > 0);
+  const hasActiveFilters = currentMinPrice || currentMaxPrice || currentSort || hasVariantFilters;
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
@@ -338,6 +360,34 @@ export function CategoryProducts({
                   )}
                 </div>
               </div>
+
+              {/* Dynamic Variant Filters - Desktop */}
+              {variantFilters.map((variantType) => (
+                <div key={variantType.id}>
+                  <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
+                    {variantType.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {variantType.values.map((value) => {
+                      const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                      return (
+                        <button
+                          key={value.id}
+                          onClick={() => handleVariantToggle(variantType.id, value.value)}
+                          className={cn(
+                            'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
+                            isSelected
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
+                              : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                          )}
+                        >
+                          {value.value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.aside>
 
@@ -525,27 +575,59 @@ export function CategoryProducts({
                         className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Dynamic Variant Filters - Mobile */}
+                {variantFilters.map((variantType) => (
+                  <div key={variantType.id}>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+                      {variantType.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {variantType.values.map((value) => {
+                        const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                        return (
+                          <button
+                            key={value.id}
+                            onClick={() => handleVariantToggle(variantType.id, value.value)}
+                            className={cn(
+                              'px-3 py-1.5 rounded-lg text-sm transition-colors',
+                              isSelected
+                                ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                                : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
+                            )}
+                          >
+                            {value.value}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Apply Buttons */}
+                <div className="space-y-3 pt-4">
+                  <button
+                    onClick={() => {
+                      applyPriceFilter();
+                      setShowFilters(false);
+                    }}
+                    className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
+                  >
+                    Aplicar filtros
+                  </button>
+                  {hasActiveFilters && (
                     <button
                       onClick={() => {
-                        applyPriceFilter();
+                        clearFilters();
                         setShowFilters(false);
                       }}
-                      className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
+                      className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400"
                     >
-                      Aplicar filtros
+                      Limpiar filtros
                     </button>
-                    {hasActiveFilters && (
-                      <button
-                        onClick={() => {
-                          clearFilters();
-                          setShowFilters(false);
-                        }}
-                        className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400"
-                      >
-                        Limpiar filtros
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </motion.div>

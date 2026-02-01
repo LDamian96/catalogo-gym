@@ -73,6 +73,15 @@ export class CatalogController {
     return this.catalogService.searchProducts(query);
   }
 
+  @Get('filters')
+  @ApiOperation({
+    summary: 'Get available filters',
+    description: 'Returns all available filters for the products page (categories, brands, variant types, price range)',
+  })
+  async getFilters() {
+    return this.catalogService.getFilters();
+  }
+
   @Post('track')
   @ApiOperation({
     summary: 'Track event',

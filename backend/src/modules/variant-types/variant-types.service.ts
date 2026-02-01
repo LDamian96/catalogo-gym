@@ -67,6 +67,8 @@ export class VariantTypesService {
         description: dto.description,
         order,
         isActive: dto.isActive ?? true,
+        showAsFilter: dto.showAsFilter ?? false,
+        showInLanding: dto.showInLanding ?? false,
       },
     });
   }

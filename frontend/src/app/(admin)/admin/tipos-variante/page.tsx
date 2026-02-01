@@ -12,6 +12,8 @@ import {
   ChevronDown,
   ChevronRight,
   X,
+  Filter,
+  Home,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -57,6 +59,8 @@ interface VariantType {
   description: string | null;
   order: number;
   isActive: boolean;
+  showAsFilter: boolean;
+  showInLanding: boolean;
   values: VariantTypeValue[];
   createdAt: string;
   updatedAt: string;
@@ -75,6 +79,8 @@ export default function TiposVariantePage() {
     name: '',
     description: '',
     isActive: true,
+    showAsFilter: false,
+    showInLanding: false,
   });
 
   // Modal states for Value
@@ -128,6 +134,8 @@ export default function TiposVariantePage() {
         name: type.name,
         description: type.description || '',
         isActive: type.isActive,
+        showAsFilter: type.showAsFilter,
+        showInLanding: type.showInLanding,
       });
     } else {
       setEditingType(null);
@@ -135,6 +143,8 @@ export default function TiposVariantePage() {
         name: '',
         description: '',
         isActive: true,
+        showAsFilter: false,
+        showInLanding: false,
       });
     }
     setShowTypeModal(true);
@@ -367,7 +377,7 @@ export default function TiposVariantePage() {
                       )}
 
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-medium">{type.name}</span>
                           <Badge variant={type.isActive ? 'default' : 'secondary'} className="text-xs">
                             {type.isActive ? 'Activo' : 'Inactivo'}
@@ -375,6 +385,18 @@ export default function TiposVariantePage() {
                           <Badge variant="outline" className="text-xs">
                             {type.values.length} valores
                           </Badge>
+                          {type.showAsFilter && (
+                            <Badge variant="outline" className="text-xs bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800">
+                              <Filter className="w-3 h-3 mr-1" />
+                              Filtro
+                            </Badge>
+                          )}
+                          {type.showInLanding && (
+                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800">
+                              <Home className="w-3 h-3 mr-1" />
+                              Landing
+                            </Badge>
+                          )}
                         </div>
                         {type.description && (
                           <p className="text-sm text-slate-500 mt-0.5">{type.description}</p>
@@ -521,6 +543,42 @@ export default function TiposVariantePage() {
                 checked={typeFormData.isActive}
                 onCheckedChange={(checked) => setTypeFormData({ ...typeFormData, isActive: checked })}
               />
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                Opciones de Filtro
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="showAsFilter">Mostrar en Filtros</Label>
+                    <p className="text-sm text-slate-500">
+                      Aparecerá como filtro en /productos y categorías
+                    </p>
+                  </div>
+                  <Switch
+                    id="showAsFilter"
+                    checked={typeFormData.showAsFilter}
+                    onCheckedChange={(checked) => setTypeFormData({ ...typeFormData, showAsFilter: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="showInLanding">Mostrar en Landing</Label>
+                    <p className="text-sm text-slate-500">
+                      Aparecerá en la página principal del catálogo
+                    </p>
+                  </div>
+                  <Switch
+                    id="showInLanding"
+                    checked={typeFormData.showInLanding}
+                    onCheckedChange={(checked) => setTypeFormData({ ...typeFormData, showInLanding: checked })}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
