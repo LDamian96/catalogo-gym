@@ -14,6 +14,7 @@ import {
   LayoutGrid,
   ChevronLeft,
   ArrowUpDown,
+  ChevronDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav } from '@/components/catalog';
@@ -70,6 +71,7 @@ export function CategoryProducts({
   const [minPrice, setMinPrice] = useState(currentMinPrice || '');
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice || '');
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
+  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({});
 
   // Get variant type filters from the filters prop
   const variantFilters: VariantTypeFilter[] = filters.variantTypes || [];
@@ -296,20 +298,107 @@ export function CategoryProducts({
             transition={{ delay: 0.2 }}
           >
             <div className="sticky top-32 space-y-6">
-              <div>
-                <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
+              {/* Sort & Variant Filters - Desktop */}
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4 space-y-4">
+                {/* Ordenar por */}
+                <div>
+                  <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+                    Ordenar por
+                  </h3>
+                  <div className="space-y-1">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => updateFilters({ sort: option.value || undefined })}
+                        className={cn(
+                          'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                          currentSort === option.value
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                        )}
+                      >
+                        {option.label}
+                        {currentSort === option.value && (
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dynamic Variant Filters - Collapsible */}
+                {variantFilters.map((variantType) => (
+                  <div key={variantType.id} className="border-t border-neutral-200 dark:border-white/10 pt-4">
+                    <button
+                      onClick={() => setExpandedFilters(prev => ({
+                        ...prev,
+                        [variantType.id]: !prev[variantType.id]
+                      }))}
+                      className="w-full flex items-center justify-between text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        {variantType.name}
+                        {selectedVariants[variantType.id]?.length > 0 && (
+                          <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                            {selectedVariants[variantType.id].length}
+                          </span>
+                        )}
+                      </span>
+                      <ChevronDown className={cn(
+                        'w-4 h-4 transition-transform duration-200',
+                        expandedFilters[variantType.id] && 'rotate-180'
+                      )} />
+                    </button>
+                    <AnimatePresence>
+                      {expandedFilters[variantType.id] && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="flex flex-wrap gap-2">
+                            {variantType.values.map((value) => {
+                              const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                              return (
+                                <button
+                                  key={value.id}
+                                  onClick={() => handleVariantToggle(variantType.id, value.value)}
+                                  className={cn(
+                                    'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
+                                    isSelected
+                                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
+                                      : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
+                                  )}
+                                >
+                                  {value.value}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
+
+              {/* Categories */}
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
                   Categorías
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-1 max-h-64 overflow-y-auto">
                   {categories.map((cat) => (
                     <li key={cat.id}>
                       <Link
                         href={`/categorias/${cat.slug}`}
                         className={cn(
-                          'block px-4 py-2 rounded-lg text-sm transition-colors',
+                          'block px-3 py-2 rounded-lg text-sm transition-colors',
                           cat.slug === category.slug
                             ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                         )}
                       >
                         {cat.name}
@@ -323,71 +412,49 @@ export function CategoryProducts({
               </div>
 
               {/* Price Range */}
-              <div>
-                <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
+              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
                   Rango de Precio
                 </h3>
                 <div className="space-y-3">
                   <div className="flex gap-2">
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0"
-                    />
+                    <div className="flex-1">
+                      <label className="text-xs text-neutral-500 mb-1 block">Mínimo</label>
+                      <input
+                        type="number"
+                        placeholder="S/ 0"
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-xs text-neutral-500 mb-1 block">Máximo</label>
+                      <input
+                        type="number"
+                        placeholder="S/ 999"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
+                      />
+                    </div>
                   </div>
                   <button
                     onClick={applyPriceFilter}
-                    className="w-full py-2 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 transition-colors"
+                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
                   >
-                    Aplicar
+                    Aplicar precio
                   </button>
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-cyan-600 transition-colors"
+                      className="w-full py-2 text-xs text-neutral-500 hover:text-cyan-600 transition-colors"
                     >
                       Limpiar filtros
                     </button>
                   )}
                 </div>
               </div>
-
-              {/* Dynamic Variant Filters - Desktop */}
-              {variantFilters.map((variantType) => (
-                <div key={variantType.id}>
-                  <h3 className="text-sm font-semibold text-[#0a0a0f] dark:text-white uppercase tracking-wider mb-4">
-                    {variantType.name}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {variantType.values.map((value) => {
-                      const isSelected = selectedVariants[variantType.id]?.includes(value.value);
-                      return (
-                        <button
-                          key={value.id}
-                          onClick={() => handleVariantToggle(variantType.id, value.value)}
-                          className={cn(
-                            'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
-                            isSelected
-                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
-                              : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                          )}
-                        >
-                          {value.value}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
             </div>
           </motion.aside>
 
@@ -528,6 +595,86 @@ export function CategoryProducts({
                 </button>
               </div>
               <div className="p-6 space-y-6">
+                {/* Sort & Variant Filters (Mobile) */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider">
+                    Ordenar por
+                  </h3>
+                  <div className="space-y-2">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => updateFilters({ sort: option.value || undefined })}
+                        className={cn(
+                          'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
+                          currentSort === option.value
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Dynamic Variant Filters - Collapsible */}
+                  {variantFilters.map((variantType) => (
+                    <div key={variantType.id} className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
+                      <button
+                        onClick={() => setExpandedFilters(prev => ({
+                          ...prev,
+                          [`mobile_${variantType.id}`]: !prev[`mobile_${variantType.id}`]
+                        }))}
+                        className="w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider mb-3 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          {variantType.name}
+                          {selectedVariants[variantType.id]?.length > 0 && (
+                            <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                              {selectedVariants[variantType.id].length}
+                            </span>
+                          )}
+                        </span>
+                        <ChevronDown className={cn(
+                          'w-4 h-4 transition-transform duration-200',
+                          expandedFilters[`mobile_${variantType.id}`] && 'rotate-180'
+                        )} />
+                      </button>
+                      <AnimatePresence>
+                        {expandedFilters[`mobile_${variantType.id}`] && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="flex flex-wrap gap-2">
+                              {variantType.values.map((value) => {
+                                const isSelected = selectedVariants[variantType.id]?.includes(value.value);
+                                return (
+                                  <button
+                                    key={value.id}
+                                    onClick={() => handleVariantToggle(variantType.id, value.value)}
+                                    className={cn(
+                                      'px-3 py-1.5 rounded-lg text-sm transition-colors',
+                                      isSelected
+                                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                                        : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
+                                    )}
+                                  >
+                                    {value.value}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+
                 {/* Categories */}
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
@@ -577,34 +724,6 @@ export function CategoryProducts({
                     </div>
                   </div>
                 </div>
-
-                {/* Dynamic Variant Filters - Mobile */}
-                {variantFilters.map((variantType) => (
-                  <div key={variantType.id}>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
-                      {variantType.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {variantType.values.map((value) => {
-                        const isSelected = selectedVariants[variantType.id]?.includes(value.value);
-                        return (
-                          <button
-                            key={value.id}
-                            onClick={() => handleVariantToggle(variantType.id, value.value)}
-                            className={cn(
-                              'px-3 py-1.5 rounded-lg text-sm transition-colors',
-                              isSelected
-                                ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                                : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
-                            )}
-                          >
-                            {value.value}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
 
                 {/* Apply Buttons */}
                 <div className="space-y-3 pt-4">

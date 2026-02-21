@@ -494,8 +494,9 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
               </p>
             )}
 
-            {/* Variants (Sub-products) - V0 Style */}
+            {/* Variants (Sub-products) - V0 Style - SEPARATED BY TYPE */}
             {variants.length > 0 && (() => {
+              // Filter variants by selected image variant value (e.g., Color)
               const filteredVariants = hasVariantImages && selectedVariantValue && product.imageVariantType
                 ? variants.filter(v => {
                     const matchingValue = v.variantValues?.find(
@@ -505,62 +506,120 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                   })
                 : variants;
 
-              const otherVariantTypes = hasVariantImages && product.imageVariantType
-                ? Array.from(new Set(variants.flatMap(v =>
-                    v.variantValues?.filter(vv => vv.variantType.id !== product.imageVariantType?.id)
-                      .map(vv => vv.variantType.name) || []
-                  )))
-                : [];
+              // Get all variant types except the image variant type (e.g., exclude Color)
+              const otherVariantTypesMap = new Map<string, { id: string; name: string; values: Set<string> }>();
 
-              return filteredVariants.length > 0 ? (
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                    {otherVariantTypes.length > 0
-                      ? `${otherVariantTypes.join(' / ')}`
-                      : 'Opciones'}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredVariants.map((variant) => {
-                      const variantPrice = variant.price ? Number(variant.price) : displayPrice;
-                      const isSelected = selectedVariant === variant.id;
+              filteredVariants.forEach(v => {
+                v.variantValues?.forEach(vv => {
+                  // Skip the image variant type (e.g., Color)
+                  if (hasVariantImages && product.imageVariantType && vv.variantType.id === product.imageVariantType.id) {
+                    return;
+                  }
 
-                      const displayValues = hasVariantImages && product.imageVariantType
-                        ? variant.variantValues?.filter(vv => vv.variantType.id !== product.imageVariantType?.id)
-                        : variant.variantValues;
+                  if (!otherVariantTypesMap.has(vv.variantType.id)) {
+                    otherVariantTypesMap.set(vv.variantType.id, {
+                      id: vv.variantType.id,
+                      name: vv.variantType.name,
+                      values: new Set(),
+                    });
+                  }
+                  otherVariantTypesMap.get(vv.variantType.id)!.values.add(vv.value);
+                });
+              });
 
-                      const label = displayValues?.map(v => v.value).join(' / ') || variant.name || 'Opción';
+              const otherVariantTypes = Array.from(otherVariantTypesMap.values());
 
-                      return (
-                        <button
-                          key={variant.id}
-                          onClick={() => setSelectedVariant(isSelected ? null : variant.id)}
-                          className={cn(
-                            'relative px-4 py-2.5 rounded-xl border transition-all min-w-[50px]',
-                            isSelected
-                              ? 'border-cyan-500 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300'
-                              : 'border-neutral-200 dark:border-neutral-700 hover:border-cyan-400 text-neutral-700 dark:text-neutral-300'
-                          )}
-                        >
-                          <span className="text-sm font-medium">{label}</span>
-                          {variant.price && (
-                            <span className="text-xs text-neutral-500 ml-1.5">
-                              S/{variantPrice.toFixed(0)}
+              // State for selected values per variant type (we need to track selections)
+              // For simplicity, we'll use the selectedVariant to determine current selections
+
+              // Get the currently selected values per variant type from the selected variant
+              const currentVariantValues = currentVariant?.variantValues || [];
+              const selectedValuesByType = new Map<string, string>();
+              currentVariantValues.forEach(vv => {
+                if (!(hasVariantImages && product.imageVariantType && vv.variantType.id === product.imageVariantType.id)) {
+                  selectedValuesByType.set(vv.variantType.id, vv.value);
+                }
+              });
+
+              // Function to find a variant that matches the selected values
+              const findMatchingVariant = (typeId: string, newValue: string) => {
+                const newSelections = new Map(selectedValuesByType);
+                newSelections.set(typeId, newValue);
+
+                return filteredVariants.find(v => {
+                  const vValues = v.variantValues?.filter(vv =>
+                    !(hasVariantImages && product.imageVariantType && vv.variantType.id === product.imageVariantType.id)
+                  ) || [];
+
+                  // Check if all selected values match
+                  return Array.from(newSelections.entries()).every(([tid, tval]) => {
+                    const match = vValues.find(vv => vv.variantType.id === tid);
+                    return match?.value === tval;
+                  });
+                });
+              };
+
+              return otherVariantTypes.length > 0 ? (
+                <div className="space-y-4">
+                  {otherVariantTypes.map((variantType) => {
+                    const values = Array.from(variantType.values);
+                    const selectedValue = selectedValuesByType.get(variantType.id);
+
+                    return (
+                      <div key={variantType.id} className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                            {variantType.name}
+                          </h3>
+                          {selectedValue && (
+                            <span className="text-sm text-cyan-600 dark:text-cyan-400 font-medium">
+                              {selectedValue}
                             </span>
                           )}
-                          {variant.stock !== null && variant.stock !== undefined && variant.stock <= 3 && variant.stock > 0 && (
-                            <span className="ml-1.5 text-xs text-amber-500">
-                              ({variant.stock})
-                            </span>
-                          )}
-                          {isSelected && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
-                              <Check className="w-2.5 h-2.5 text-white" />
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {values.map((value) => {
+                            const isSelected = selectedValue === value;
+                            const matchingVariant = findMatchingVariant(variantType.id, value);
+                            const isAvailable = !!matchingVariant;
+                            const variantStock = matchingVariant?.stock;
+
+                            return (
+                              <button
+                                key={value}
+                                onClick={() => {
+                                  if (matchingVariant) {
+                                    setSelectedVariant(matchingVariant.id);
+                                  }
+                                }}
+                                disabled={!isAvailable}
+                                className={cn(
+                                  'relative px-4 py-2.5 rounded-xl border transition-all min-w-[50px]',
+                                  isSelected
+                                    ? 'border-cyan-500 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300'
+                                    : isAvailable
+                                      ? 'border-neutral-200 dark:border-neutral-700 hover:border-cyan-400 text-neutral-700 dark:text-neutral-300'
+                                      : 'border-neutral-100 dark:border-neutral-800 text-neutral-300 dark:text-neutral-600 cursor-not-allowed opacity-50'
+                                )}
+                              >
+                                <span className="text-sm font-medium">{value}</span>
+                                {variantStock !== null && variantStock !== undefined && variantStock <= 3 && variantStock > 0 && (
+                                  <span className="ml-1.5 text-xs text-amber-500">
+                                    ({variantStock})
+                                  </span>
+                                )}
+                                {isSelected && (
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
+                                    <Check className="w-2.5 h-2.5 text-white" />
+                                  </div>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : null;
             })()}
