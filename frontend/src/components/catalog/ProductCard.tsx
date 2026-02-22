@@ -130,7 +130,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             >
               <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-red-500 to-orange-600 text-white text-xs font-bold rounded-lg shadow-lg shadow-red-500/50">
                 <Zap className="w-3 h-3" />
-                +{product._count?.variants} opciones
+                +{product._count?.variants} sabores
               </span>
             </motion.div>
           )}
