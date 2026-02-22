@@ -15,6 +15,14 @@ import {
   ChevronLeft,
   ArrowUpDown,
   ChevronDown,
+  Flame,
+  Zap,
+  Target,
+  Trophy,
+  TrendingUp,
+  Shield,
+  Dumbbell,
+  Heart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav } from '@/components/catalog';
@@ -50,6 +58,97 @@ const sortOptions = [
   { value: 'price_desc', label: 'Precio: Mayor a menor' },
   { value: 'name', label: 'Nombre: A-Z' },
 ];
+
+// Category-specific motivational content for supplements
+const categoryMotivation: Record<string, {
+  tagline: string;
+  benefits: { icon: React.ElementType; text: string }[];
+  accentColor: string;
+}> = {
+  'proteinas': {
+    tagline: 'CONSTRUYE MÚSCULO. DOMINA TU FÍSICO.',
+    benefits: [
+      { icon: Dumbbell, text: 'Máxima síntesis proteica' },
+      { icon: Zap, text: 'Recuperación acelerada' },
+      { icon: TrendingUp, text: 'Ganancia muscular real' },
+    ],
+    accentColor: 'from-red-600 to-orange-500',
+  },
+  'gainers': {
+    tagline: 'GANA MASA. ROMPE TUS LÍMITES.',
+    benefits: [
+      { icon: Flame, text: 'Alto contenido calórico' },
+      { icon: Target, text: 'Crecimiento explosivo' },
+      { icon: Trophy, text: 'Resultados visibles' },
+    ],
+    accentColor: 'from-orange-600 to-amber-500',
+  },
+  'pre-entrenos': {
+    tagline: 'ENERGÍA BRUTAL. ENTRENA COMO BESTIA.',
+    benefits: [
+      { icon: Zap, text: 'Energía explosiva' },
+      { icon: Flame, text: 'Foco mental extremo' },
+      { icon: Target, text: 'Rendimiento máximo' },
+    ],
+    accentColor: 'from-red-700 to-red-500',
+  },
+  'creatinas': {
+    tagline: 'FUERZA PURA. POTENCIA REAL.',
+    benefits: [
+      { icon: Dumbbell, text: '+20% más fuerza' },
+      { icon: Zap, text: 'ATP inmediato' },
+      { icon: Shield, text: 'Resistencia superior' },
+    ],
+    accentColor: 'from-purple-600 to-red-500',
+  },
+  'aminoacidos': {
+    tagline: 'RECUPERA. REPARA. CRECE.',
+    benefits: [
+      { icon: Heart, text: 'Anti-catabólico' },
+      { icon: Zap, text: 'Recuperación 24/7' },
+      { icon: TrendingUp, text: 'Síntesis constante' },
+    ],
+    accentColor: 'from-blue-600 to-purple-500',
+  },
+  'quemadores': {
+    tagline: 'QUEMA GRASA. DEFINE TU CUERPO.',
+    benefits: [
+      { icon: Flame, text: 'Metabolismo acelerado' },
+      { icon: Target, text: 'Definición extrema' },
+      { icon: Zap, text: 'Energía sin calorías' },
+    ],
+    accentColor: 'from-orange-600 to-red-600',
+  },
+  'vitaminas': {
+    tagline: 'OPTIMIZA TU CUERPO. RINDE AL 100%.',
+    benefits: [
+      { icon: Shield, text: 'Sistema inmune fuerte' },
+      { icon: Heart, text: 'Salud integral' },
+      { icon: Zap, text: 'Energía natural' },
+    ],
+    accentColor: 'from-green-600 to-emerald-500',
+  },
+  'accesorios': {
+    tagline: 'EQUÍPATE COMO PROFESIONAL.',
+    benefits: [
+      { icon: Trophy, text: 'Calidad premium' },
+      { icon: Target, text: 'Máximo rendimiento' },
+      { icon: Shield, text: 'Durabilidad garantizada' },
+    ],
+    accentColor: 'from-neutral-600 to-neutral-500',
+  },
+};
+
+// Default motivation for unknown categories
+const defaultMotivation = {
+  tagline: 'TRANSFORMA TU CUERPO. ALCANZA TUS METAS.',
+  benefits: [
+    { icon: Trophy, text: 'Resultados comprobados' },
+    { icon: Zap, text: 'Fórmulas premium' },
+    { icon: Shield, text: 'Calidad garantizada' },
+  ],
+  accentColor: 'from-red-600 to-orange-500',
+};
 
 export function CategoryProducts({
   category,
@@ -127,31 +226,44 @@ export function CategoryProducts({
   const hasVariantFilters = Object.values(selectedVariants).some(v => v.length > 0);
   const hasActiveFilters = currentMinPrice || currentMaxPrice || currentSort || hasVariantFilters;
 
+  // Get category-specific motivation or default
+  const motivation = categoryMotivation[category.slug] || defaultMotivation;
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
-      {/* Header with Category Info */}
-      <div className="relative bg-gradient-to-br from-[#0a0a0f] via-cyan-900/50 to-[#0a0a0f] overflow-hidden">
-        {/* Background Image */}
+      {/* Header with Category Info - BEAST MODE */}
+      <div className="relative bg-[#0a0a0f] overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0">
+          <div className={cn(
+            'absolute inset-0 bg-gradient-to-br opacity-90',
+            motivation.accentColor
+          )} />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyek0zNiAxNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
+        </div>
+
+        {/* Background Image with aggressive overlay */}
         {category.image && (
-          <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0">
             <Image
               src={category.image}
               alt={category.name}
               fill
               quality={85}
-              className="object-cover"
+              className="object-cover mix-blend-overlay opacity-40"
             />
           </div>
         )}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
+        {/* Diagonal cut overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent" />
 
         {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-16">
+        <div className="relative max-w-7xl mx-auto px-4 py-10 md:py-16">
           {/* Breadcrumb */}
           <motion.nav
-            className="flex items-center gap-2 text-sm mb-4"
+            className="flex items-center gap-2 text-sm mb-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -167,39 +279,101 @@ export function CategoryProducts({
             <span className="text-white font-medium">{category.name}</span>
           </motion.nav>
 
-          {/* Category Title */}
-          <motion.h1
-            className="text-3xl md:text-5xl font-bold text-white mb-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            {category.name}
-          </motion.h1>
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            {/* Left: Title & Tagline */}
+            <div className="flex-1">
+              {/* Category Badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full mb-4"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <Flame className="w-4 h-4 text-orange-400" />
+                <span className="text-white/90 text-xs font-semibold tracking-wider uppercase">
+                  {pagination.total} productos disponibles
+                </span>
+              </motion.div>
 
-          {/* Description */}
-          {category.description && (
-            <motion.p
-              className="text-white/60 max-w-2xl text-base md:text-lg"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              {/* Category Title */}
+              <motion.h1
+                className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-3 tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                style={{ textShadow: '0 4px 30px rgba(0,0,0,0.5)' }}
+              >
+                {category.name.toUpperCase()}
+              </motion.h1>
+
+              {/* Motivational Tagline */}
+              <motion.p
+                className={cn(
+                  'text-lg md:text-2xl font-bold tracking-wide',
+                  'bg-gradient-to-r bg-clip-text text-transparent',
+                  motivation.accentColor
+                )}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                style={{
+                  WebkitBackgroundClip: 'text',
+                  backgroundImage: `linear-gradient(to right, #fff, rgba(255,255,255,0.8))`
+                }}
+              >
+                {motivation.tagline}
+              </motion.p>
+
+              {/* Description */}
+              {category.description && (
+                <motion.p
+                  className="text-white/60 max-w-xl text-sm md:text-base mt-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  {category.description}
+                </motion.p>
+              )}
+            </div>
+
+            {/* Right: Benefits Cards */}
+            <motion.div
+              className="flex flex-wrap lg:flex-col gap-2 lg:gap-3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 }}
             >
-              {category.description}
-            </motion.p>
-          )}
-
-          {/* Product Count */}
-          <motion.div
-            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <span className="text-white/80 text-sm">
-              {pagination.total} {pagination.total === 1 ? 'producto' : 'productos'}
-            </span>
-          </motion.div>
+              {motivation.benefits.map((benefit, index) => {
+                const IconComponent = benefit.icon;
+                return (
+                  <motion.div
+                    key={benefit.text}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-2.5',
+                      'bg-white/10 backdrop-blur-md rounded-xl',
+                      'border border-white/10',
+                      'hover:bg-white/20 transition-all duration-300'
+                    )}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    whileHover={{ scale: 1.02, x: -5 }}
+                  >
+                    <div className={cn(
+                      'w-8 h-8 rounded-lg flex items-center justify-center',
+                      'bg-gradient-to-br',
+                      motivation.accentColor
+                    )}>
+                      <IconComponent className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-white font-semibold text-sm whitespace-nowrap">
+                      {benefit.text}
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </div>
         </div>
       </div>
 
@@ -224,7 +398,7 @@ export function CategoryProducts({
                     'bg-neutral-100 dark:bg-neutral-800',
                     'border border-neutral-200 dark:border-neutral-700',
                     'text-neutral-700 dark:text-neutral-300 text-sm',
-                    'focus:outline-none focus:ring-2 focus:ring-cyan-500/50'
+                    'focus:outline-none focus:ring-2 focus:ring-red-500/50'
                   )}
                 >
                   <option value="">Ordenar por</option>
@@ -245,7 +419,7 @@ export function CategoryProducts({
                   'bg-neutral-100 dark:bg-neutral-800',
                   'border border-neutral-200 dark:border-neutral-700',
                   'text-neutral-700 dark:text-neutral-300 text-sm',
-                  hasActiveFilters && 'border-cyan-500 text-cyan-600 dark:text-cyan-400'
+                  hasActiveFilters && 'border-red-500 text-red-600 dark:text-red-400'
                 )}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -253,7 +427,7 @@ export function CategoryProducts({
                 <SlidersHorizontal className="w-4 h-4" />
                 Filtros
                 {hasActiveFilters && (
-                  <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                  <span className="w-2 h-2 rounded-full bg-red-500" />
                 )}
               </motion.button>
 
@@ -313,13 +487,13 @@ export function CategoryProducts({
                         className={cn(
                           'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                           currentSort === option.value
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                         )}
                       >
                         {option.label}
                         {currentSort === option.value && (
-                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500" />
                         )}
                       </button>
                     ))}
@@ -339,7 +513,7 @@ export function CategoryProducts({
                       <span className="flex items-center gap-2">
                         {variantType.name}
                         {selectedVariants[variantType.id]?.length > 0 && (
-                          <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                          <span className="px-1.5 py-0.5 text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full normal-case font-medium">
                             {selectedVariants[variantType.id].length}
                           </span>
                         )}
@@ -368,7 +542,7 @@ export function CategoryProducts({
                                   className={cn(
                                     'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
                                     isSelected
-                                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
+                                      ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40 font-medium'
                                       : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
                                   )}
                                 >
@@ -397,7 +571,7 @@ export function CategoryProducts({
                         className={cn(
                           'block px-3 py-2 rounded-lg text-sm transition-colors',
                           cat.slug === category.slug
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                         )}
                       >
@@ -425,7 +599,7 @@ export function CategoryProducts({
                         placeholder="S/ 0"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all"
                       />
                     </div>
                     <div className="flex-1">
@@ -435,20 +609,20 @@ export function CategoryProducts({
                         placeholder="S/ 999"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all"
                       />
                     </div>
                   </div>
                   <button
                     onClick={applyPriceFilter}
-                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
+                    className="w-full py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-500/10 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors"
                   >
                     Aplicar precio
                   </button>
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="w-full py-2 text-xs text-neutral-500 hover:text-cyan-600 transition-colors"
+                      className="w-full py-2 text-xs text-neutral-500 hover:text-red-600 transition-colors"
                     >
                       Limpiar filtros
                     </button>
@@ -515,7 +689,7 @@ export function CategoryProducts({
                               className={cn(
                                 'w-10 h-10 rounded-lg font-medium transition-colors',
                                 p === pagination.page
-                                  ? 'bg-cyan-600 text-white'
+                                  ? 'bg-red-600 text-white'
                                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                               )}
                             >
@@ -559,7 +733,7 @@ export function CategoryProducts({
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-medium hover:bg-cyan-700 transition-colors"
+                    className="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
                   >
                     Limpiar filtros
                   </button>
@@ -608,7 +782,7 @@ export function CategoryProducts({
                         className={cn(
                           'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                           currentSort === option.value
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
+                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         )}
                       >
@@ -625,12 +799,12 @@ export function CategoryProducts({
                           ...prev,
                           [`mobile_${variantType.id}`]: !prev[`mobile_${variantType.id}`]
                         }))}
-                        className="w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider mb-3 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                        className="w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider mb-3 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                       >
                         <span className="flex items-center gap-2">
                           {variantType.name}
                           {selectedVariants[variantType.id]?.length > 0 && (
-                            <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                            <span className="px-1.5 py-0.5 text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full normal-case font-medium">
                               {selectedVariants[variantType.id].length}
                             </span>
                           )}
@@ -659,7 +833,7 @@ export function CategoryProducts({
                                     className={cn(
                                       'px-3 py-1.5 rounded-lg text-sm transition-colors',
                                       isSelected
-                                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                                        ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
                                         : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
                                     )}
                                   >
@@ -689,7 +863,7 @@ export function CategoryProducts({
                           className={cn(
                             'block px-4 py-2 rounded-lg text-sm transition-colors',
                             cat.slug === category.slug
-                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
+                              ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
                               : 'text-neutral-600 dark:text-neutral-400'
                           )}
                         >
@@ -732,7 +906,7 @@ export function CategoryProducts({
                       applyPriceFilter();
                       setShowFilters(false);
                     }}
-                    className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
+                    className="w-full py-3 text-sm font-medium text-white bg-red-600 rounded-lg"
                   >
                     Aplicar filtros
                   </button>

@@ -101,7 +101,7 @@ export function FeaturedCarousel({
             <span className="text-sm font-medium text-amber-400">Destacados</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Productos <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Destacados</span>
+            Productos <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">Destacados</span>
           </h2>
           <p className="text-white/50 max-w-xl mx-auto">
             Descubre nuestra selección especial de productos premium
@@ -168,7 +168,7 @@ export function FeaturedCarousel({
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
                       >
-                        <div className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-white font-bold shadow-lg shadow-cyan-500/30">
+                        <div className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 rounded-full text-white font-bold shadow-lg shadow-red-500/30">
                           -{discount}% OFF
                         </div>
                       </motion.div>
@@ -179,7 +179,7 @@ export function FeaturedCarousel({
                   <div className="relative flex flex-col justify-center p-6 md:p-10 lg:p-16">
                     {/* Category */}
                     <motion.span
-                      className="text-cyan-400 text-sm font-medium uppercase tracking-wider mb-3"
+                      className="text-red-400 text-sm font-medium uppercase tracking-wider mb-3"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
@@ -219,7 +219,7 @@ export function FeaturedCarousel({
                       >
                         {salePrice ? (
                           <>
-                            <span className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                            <span className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
                               S/ {salePrice.toFixed(2)}
                             </span>
                             <span className="text-lg text-white/40 line-through">
@@ -244,7 +244,7 @@ export function FeaturedCarousel({
                         className={cn(
                           'inline-flex items-center gap-2 px-6 py-3',
                           'bg-white text-neutral-900 rounded-full font-semibold',
-                          'hover:bg-cyan-500 hover:text-white transition-colors duration-300'
+                          'hover:bg-red-500 hover:text-white transition-colors duration-300'
                         )}
                       >
                         Ver producto
@@ -302,7 +302,7 @@ export function FeaturedCarousel({
               className={cn(
                 'h-2 rounded-full transition-all duration-300',
                 index === productIndex
-                  ? 'w-8 bg-gradient-to-r from-cyan-500 to-blue-500'
+                  ? 'w-8 bg-gradient-to-r from-red-500 to-orange-500'
                   : 'w-2 bg-white/20 hover:bg-white/40'
               )}
               whileHover={{ scale: 1.2 }}
@@ -314,8 +314,8 @@ export function FeaturedCarousel({
       </div>
 
       {/* Background Decoration */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-cyan-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-red-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-orange-600/10 rounded-full blur-[150px] -tranneutral-y-1/2" />
     </section>
   );
 }

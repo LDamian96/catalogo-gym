@@ -49,7 +49,7 @@ export function ProductSlider({ title, products, viewAllHref, className }: Produ
           {viewAllHref && (
             <a
               href={viewAllHref}
-              className="text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:underline mr-4"
+              className="text-sm font-medium text-red-600 dark:text-red-400 hover:underline mr-4"
             >
               Ver todos
             </a>

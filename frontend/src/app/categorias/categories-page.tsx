@@ -12,14 +12,14 @@ import { staggerContainer, staggerItem, v0Ease } from '@/lib/animations';
 
 // Gradient colors for category cards (v0 Cyan/Blue palette)
 const cardGradients = [
-  'from-cyan-400 to-blue-500',
-  'from-sky-400 to-blue-500',
-  'from-teal-400 to-cyan-500',
-  'from-blue-400 to-indigo-500',
-  'from-cyan-500 to-sky-500',
+  'from-red-400 to-orange-500',
+  'from-sky-400 to-orange-500',
+  'from-teal-400 to-red-500',
+  'from-orange-400 to-indigo-500',
+  'from-red-500 to-sky-500',
   'from-emerald-400 to-teal-500',
-  'from-sky-500 to-blue-600',
-  'from-cyan-400 to-blue-600',
+  'from-sky-500 to-orange-600',
+  'from-red-400 to-orange-600',
 ];
 
 interface CategoriesPageProps {
@@ -56,7 +56,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       <div className="h-16 md:h-20" />
 
       {/* Hero with Category Images Carousel */}
-      <div className="relative bg-gradient-to-br from-[#0a0a0f] via-cyan-900/50 to-[#0a0a0f] overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0a0a0f] via-red-900/50 to-[#0a0a0f] overflow-hidden">
         {/* Background Images Carousel - Auto rotate */}
         <AnimatePresence mode="wait">
           {categoriesWithImages.length > 0 && categoriesWithImages[currentSlide]?.image && (
@@ -186,8 +186,8 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-cyan-100 dark:bg-cyan-500/10 flex items-center justify-center">
-                <Layers className="w-8 h-8 text-cyan-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-red-100 dark:bg-red-500/10 flex items-center justify-center">
+                <Layers className="w-8 h-8 text-red-500" />
               </div>
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 No hay categorías

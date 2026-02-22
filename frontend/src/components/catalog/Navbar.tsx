@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import { v0Ease, dropdownVariants } from '@/lib/animations';
 import type { CatalogSettings, CatalogCategory, CatalogProduct } from '@/lib/api/catalog';
-import { catalogApi } from '@/lib/api/catalog';
+import { searchCatalog } from '@/lib/api/catalog';
 
 interface NavbarProps {
   settings: CatalogSettings;
@@ -55,7 +55,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
 
     setIsSearching(true);
     try {
-      const response = await catalogApi.getProducts({ search: query, limit: 8 });
+      const response = await searchCatalog({ q: query, limit: 8 });
       setSearchResults(response.products || []);
     } catch (error) {
       console.error('Search error:', error);
@@ -120,7 +120,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         isTransparent
           ? 'bg-transparent'
-          : 'bg-gradient-to-r from-cyan-600/95 via-blue-600/95 to-purple-600/95 dark:from-cyan-900/95 dark:via-blue-900/95 dark:to-purple-900/95 backdrop-blur-xl shadow-lg shadow-cyan-500/20'
+          : 'bg-gradient-to-r from-red-600/95 via-orange-600/95 to-amber-600/95 dark:from-red-900/95 dark:via-orange-900/95 dark:to-amber-900/95 backdrop-blur-xl shadow-lg shadow-red-500/20'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -145,7 +145,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
           <Link href="/" className="flex items-center gap-2.5 group">
             {settings.logo ? (
               <motion.div
-                className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white/30 shadow-lg shadow-cyan-500/30"
+                className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white/30 shadow-lg shadow-red-500/30"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -162,7 +162,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-600 to-purple-600 font-bold text-lg">
+                <span className="text-transparent bg-clip-text bg-gradient-to-br from-red-600 to-amber-600 font-bold text-lg">
                   {(settings.businessName || 'C')[0]}
                 </span>
               </motion.div>
@@ -214,7 +214,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
           <Link href="/" className="flex items-center gap-4 group">
             {settings.logo ? (
               <motion.div
-                className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-white/40 shadow-xl shadow-cyan-500/30"
+                className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-white/40 shadow-xl shadow-red-500/30"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
@@ -231,7 +231,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-600 to-purple-600 font-black text-xl">
+                <span className="text-transparent bg-clip-text bg-gradient-to-br from-red-600 to-amber-600 font-black text-xl">
                   {(settings.businessName || 'C')[0]}
                 </span>
               </motion.div>
@@ -282,10 +282,10 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className="absolute top-full left-0 mt-3 w-96 bg-gradient-to-br from-white to-cyan-50 dark:from-neutral-900 dark:to-cyan-950 rounded-2xl border-2 border-cyan-200 dark:border-cyan-500/30 overflow-hidden shadow-2xl shadow-cyan-500/30"
+                    className="absolute top-full left-0 mt-3 w-96 bg-gradient-to-br from-white to-red-50 dark:from-neutral-900 dark:to-red-950 rounded-2xl border-2 border-red-200 dark:border-red-500/30 overflow-hidden shadow-2xl shadow-red-500/30"
                   >
                     {/* Header con gradiente */}
-                    <div className="px-5 py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600">
+                    <div className="px-5 py-4 bg-gradient-to-r from-red-500 via-orange-600 to-amber-600">
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/20 rounded-lg">
                           <Zap className="w-5 h-5 text-white" />
@@ -311,10 +311,10 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                         >
                           <Link
                             href={`/categorias/${category.slug}`}
-                            className="flex items-center gap-4 px-5 py-3 text-sm hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 dark:hover:from-cyan-950/50 dark:hover:to-blue-950/50 transition-all duration-300 group"
+                            className="flex items-center gap-4 px-5 py-3 text-sm hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-950/50 dark:hover:to-orange-950/50 transition-all duration-300 group"
                           >
                             {category.image ? (
-                              <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900 dark:to-blue-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-cyan-400 transition-all duration-300 shadow-md">
+                              <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900 dark:to-orange-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300 shadow-md">
                                 <Image
                                   src={category.image}
                                   alt={category.name}
@@ -323,22 +323,22 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                                 />
                               </div>
                             ) : (
-                              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center flex-shrink-0 ring-2 ring-transparent group-hover:ring-cyan-400 transition-all duration-300 shadow-md">
+                              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300 shadow-md">
                                 <Grid3X3 className="w-6 h-6 text-white" />
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <span className="block font-bold text-neutral-800 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                              <span className="block font-bold text-neutral-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                                 {category.name}
                               </span>
                               {category._count?.products !== undefined && (
-                                <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">
+                                <span className="text-xs text-red-600 dark:text-red-400 font-medium">
                                   {category._count.products} productos disponibles
                                 </span>
                               )}
                             </div>
                             <motion.span
-                              className="text-cyan-500 opacity-0 group-hover:opacity-100"
+                              className="text-red-500 opacity-0 group-hover:opacity-100"
                               initial={{ x: -10 }}
                               whileHover={{ x: 0 }}
                             >
@@ -351,7 +351,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
 
                     <Link
                       href="/categorias"
-                      className="flex items-center justify-center gap-2 px-5 py-4 text-sm font-bold text-white bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 transition-all duration-300"
+                      className="flex items-center justify-center gap-2 px-5 py-4 text-sm font-bold text-white bg-gradient-to-r from-red-500 via-orange-600 to-amber-600 hover:from-red-600 hover:via-orange-700 hover:to-amber-700 transition-all duration-300"
                     >
                       <Star className="w-4 h-4" />
                       <span>Ver todas las categorías</span>
@@ -392,7 +392,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
             {settings.cartEnabled && (
               <motion.button
                 onClick={openCart}
-                className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-cyan-600 font-bold transition-all duration-300 shadow-xl shadow-white/30"
+                className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-red-600 font-bold transition-all duration-300 shadow-xl shadow-white/30"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -422,7 +422,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowSearch(false)}
-              className="fixed inset-0 bg-gradient-to-br from-cyan-900/80 via-blue-900/80 to-purple-900/80 backdrop-blur-md z-50"
+              className="fixed inset-0 bg-gradient-to-br from-red-900/80 via-orange-900/80 to-amber-900/80 backdrop-blur-md z-50"
             />
 
             <motion.div
@@ -436,13 +436,13 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                 <form onSubmit={handleSearch} className="relative">
                   {/* Search Input Container */}
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-sm" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 rounded-2xl blur-sm" />
                     <div className="relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden">
                       <div className="flex items-center">
                         {isSearching ? (
-                          <Loader2 className="absolute left-5 w-6 h-6 text-cyan-500 animate-spin" />
+                          <Loader2 className="absolute left-5 w-6 h-6 text-red-500 animate-spin" />
                         ) : (
-                          <Search className="absolute left-5 w-6 h-6 text-cyan-500" />
+                          <Search className="absolute left-5 w-6 h-6 text-red-500" />
                         )}
                         <input
                           ref={searchInputRef}
@@ -470,10 +470,10 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                         initial={{ opacity: 0, y: -15 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -15 }}
-                        className="mt-4 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-cyan-200 dark:border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-hidden max-h-[55vh] overflow-y-auto"
+                        className="mt-4 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-red-200 dark:border-red-500/30 shadow-2xl shadow-red-500/20 overflow-hidden max-h-[55vh] overflow-y-auto"
                       >
-                        <div className="px-5 py-3 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/50 dark:to-blue-950/50 border-b border-cyan-100 dark:border-cyan-500/20">
-                          <p className="text-sm font-semibold text-cyan-700 dark:text-cyan-400 flex items-center gap-2">
+                        <div className="px-5 py-3 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border-b border-red-100 dark:border-red-500/20">
+                          <p className="text-sm font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
                             <Sparkles className="w-4 h-4" />
                             {searchResults.length} productos encontrados
                           </p>
@@ -486,9 +486,9 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                             onClick={() => handleResultClick(product.slug)}
-                            className="w-full flex items-center gap-4 p-4 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 dark:hover:from-cyan-950/30 dark:hover:to-blue-950/30 transition-colors text-left border-b border-neutral-100 dark:border-neutral-800 last:border-0 group"
+                            className="w-full flex items-center gap-4 p-4 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-950/30 dark:hover:to-orange-950/30 transition-colors text-left border-b border-neutral-100 dark:border-neutral-800 last:border-0 group"
                           >
-                            <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900 dark:to-blue-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-cyan-400 transition-all duration-300">
+                            <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900 dark:to-orange-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300">
                               {product.images?.[0]?.url ? (
                                 <Image
                                   src={product.images[0].url}
@@ -498,13 +498,13 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <Package className="w-6 h-6 text-cyan-400" />
+                                  <Package className="w-6 h-6 text-red-400" />
                                 </div>
                               )}
                             </div>
 
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold text-neutral-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 truncate transition-colors">
+                              <p className="font-bold text-neutral-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 truncate transition-colors">
                                 {product.name}
                               </p>
                               <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-1">
@@ -513,7 +513,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                               </p>
                               {product.showPrice && (
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400">
+                                  <span className="text-sm font-bold text-red-600 dark:text-red-400">
                                     S/ {product.salePrice ? Number(product.salePrice).toFixed(2) : Number(product.price).toFixed(2)}
                                   </span>
                                   {product.salePrice && (
@@ -524,13 +524,13 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                                 </div>
                               )}
                             </div>
-                            <span className="text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                            <span className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                           </motion.button>
                         ))}
 
                         <button
                           type="submit"
-                          className="w-full p-4 text-center text-sm font-bold text-white bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 transition-all duration-300"
+                          className="w-full p-4 text-center text-sm font-bold text-white bg-gradient-to-r from-red-500 via-orange-600 to-amber-600 hover:from-red-600 hover:via-orange-700 hover:to-amber-700 transition-all duration-300"
                         >
                           Ver todos los resultados →
                         </button>
@@ -543,13 +543,13 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="mt-4 p-8 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-cyan-200 dark:border-cyan-500/30 text-center"
+                      className="mt-4 p-8 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-red-200 dark:border-red-500/30 text-center"
                     >
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/50 dark:to-blue-900/50 flex items-center justify-center">
-                        <Package className="w-8 h-8 text-cyan-500" />
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900/50 dark:to-orange-900/50 flex items-center justify-center">
+                        <Package className="w-8 h-8 text-red-500" />
                       </div>
                       <p className="text-neutral-500 dark:text-neutral-400">
-                        No encontramos productos para "<span className="font-semibold text-cyan-600 dark:text-cyan-400">{searchQuery}</span>"
+                        No encontramos productos para "<span className="font-semibold text-red-600 dark:text-red-400">{searchQuery}</span>"
                       </p>
                       <p className="text-sm text-neutral-400 mt-2">Intenta con otras palabras</p>
                     </motion.div>
@@ -578,7 +578,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                       </div>
 
                       <p className="mt-5 text-center text-sm text-white/60 flex items-center justify-center gap-2">
-                        <Sparkles className="w-4 h-4 text-cyan-400" />
+                        <Sparkles className="w-4 h-4 text-red-400" />
                         Escribe para buscar productos increíbles
                       </p>
                     </>

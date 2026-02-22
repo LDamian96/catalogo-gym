@@ -95,7 +95,7 @@ export function CategorySlider({ categories, className }: CategorySliderProps) {
               >
                 <div className={cn(
                   'relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden',
-                  'bg-gradient-to-br from-cyan-500 to-blue-600',
+                  'bg-gradient-to-br from-red-500 to-orange-600',
                   'transition-transform duration-300 group-hover:scale-105'
                 )}>
                   {category.image ? (

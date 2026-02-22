@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* ============================================
-   V0 DESIGN SYSTEM - Vercel Style
-   Paleta: Cyan/Blue | Modes: Light + Dark
+   BEAST NUTRITION DESIGN SYSTEM
+   Paleta: Red/Orange/Black | Aggressive Gym Style
    ============================================ */
 
 @layer base {
@@ -12,41 +12,41 @@
     /* Base Colors - Light Mode */
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-    --card: 210 40% 98%;
+    --card: 0 20% 98%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 192 91% 36%;
+    --primary: 0 84% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
+    --secondary: 0 20% 96%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 192 91% 36%;
+    --muted: 0 20% 96%;
+    --muted-foreground: 0 16% 47%;
+    --accent: 0 84% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 192 91% 36%;
+    --border: 0 20% 91%;
+    --input: 0 20% 91%;
+    --ring: 0 84% 50%;
     --radius: 0.75rem;
-    --chart-1: 192 91% 36%;
-    --chart-2: 199 89% 48%;
-    --chart-3: 217 91% 60%;
+    --chart-1: 0 84% 50%;
+    --chart-2: 25 95% 53%;
+    --chart-3: 38 92% 50%;
     --chart-4: 142 76% 46%;
     --chart-5: 24 95% 53%;
 
-    /* V0 Palette - Light (Cyan/Blue) */
-    --glow-color: rgba(34, 211, 238, 0.3);
+    /* Beast Palette - Light (Red/Orange) */
+    --glow-color: rgba(239, 68, 68, 0.3);
     --v0-bg: #fafafa;
     --v0-card: #ffffff;
     --v0-border: rgba(0, 0, 0, 0.08);
-    --v0-hover: rgba(34, 211, 238, 0.08);
-    --v0-accent: #0891b2;
-    --v0-accent-light: #22d3ee;
-    --v0-gradient-1: #06b6d4;
-    --v0-gradient-2: #0ea5e9;
-    --v0-gradient-3: #3b82f6;
+    --v0-hover: rgba(239, 68, 68, 0.08);
+    --v0-accent: #dc2626;
+    --v0-accent-light: #ef4444;
+    --v0-gradient-1: #dc2626;
+    --v0-gradient-2: #ea580c;
+    --v0-gradient-3: #f59e0b;
   }
 
   .dark {
@@ -57,36 +57,36 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
-    --primary: 192 95% 68%;
-    --primary-foreground: 222 47% 11%;
+    --primary: 0 90% 60%;
+    --primary-foreground: 0 0% 5%;
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 64%;
-    --accent: 192 95% 68%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 0 90% 60%;
+    --accent-foreground: 0 0% 5%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 192 95% 68%;
-    --chart-1: 192 95% 68%;
-    --chart-2: 199 89% 58%;
-    --chart-3: 217 91% 65%;
+    --ring: 0 90% 60%;
+    --chart-1: 0 90% 60%;
+    --chart-2: 25 95% 58%;
+    --chart-3: 38 92% 55%;
     --chart-4: 142 76% 56%;
     --chart-5: 24 95% 63%;
 
-    /* V0 Palette - Dark (Cyan/Blue) */
-    --glow-color: rgba(34, 211, 238, 0.25);
+    /* Beast Palette - Dark (Red/Orange) */
+    --glow-color: rgba(239, 68, 68, 0.25);
     --v0-bg: #000000;
     --v0-card: #0a0a0a;
     --v0-border: rgba(255, 255, 255, 0.08);
-    --v0-hover: rgba(34, 211, 238, 0.1);
-    --v0-accent: #22d3ee;
-    --v0-accent-light: #67e8f9;
-    --v0-gradient-1: #22d3ee;
-    --v0-gradient-2: #38bdf8;
-    --v0-gradient-3: #60a5fa;
+    --v0-hover: rgba(239, 68, 68, 0.1);
+    --v0-accent: #ef4444;
+    --v0-accent-light: #f87171;
+    --v0-gradient-1: #ef4444;
+    --v0-gradient-2: #f97316;
+    --v0-gradient-3: #fbbf24;
   }
 
   * {
@@ -103,9 +103,9 @@
     scroll-behavior: smooth;
   }
 
-  /* Custom selection - Cyan */
+  /* Custom selection - Red */
   ::selection {
-    background: rgba(34, 211, 238, 0.25);
+    background: rgba(239, 68, 68, 0.25);
     color: inherit;
   }
 
@@ -120,21 +120,21 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(34, 211, 238, 0.2);
+    background: rgba(239, 68, 68, 0.2);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(34, 211, 238, 0.4);
+    background: rgba(239, 68, 68, 0.4);
   }
 
   /* Scrollbar - Dark */
   .dark ::-webkit-scrollbar-thumb {
-    background: rgba(34, 211, 238, 0.15);
+    background: rgba(239, 68, 68, 0.15);
   }
 
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(34, 211, 238, 0.3);
+    background: rgba(239, 68, 68, 0.3);
   }
 }
 
@@ -165,7 +165,7 @@
     display: none;
   }
 
-  /* V0 Gradient Text - Cyan/Blue */
+  /* Beast Gradient Text - Red/Orange */
   .v0-gradient-text {
     background: linear-gradient(135deg, var(--v0-gradient-1) 0%, var(--v0-gradient-2) 50%, var(--v0-gradient-3) 100%);
     -webkit-background-clip: text;
@@ -174,94 +174,94 @@
   }
 
   .v0-gradient-text-soft {
-    background: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #60a5fa 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #fbbf24 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* V0 Backgrounds */
+  /* Beast Backgrounds */
   .v0-bg-gradient {
-    background: linear-gradient(135deg, rgba(34, 211, 238, 0.08) 0%, rgba(56, 189, 248, 0.05) 50%, rgba(96, 165, 250, 0.08) 100%);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(249, 115, 22, 0.05) 50%, rgba(251, 191, 36, 0.08) 100%);
   }
 
   .v0-bg-mesh {
     background-image:
-      radial-gradient(at 40% 20%, hsla(192, 91%, 60%, 0.08) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(199, 89%, 60%, 0.06) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsla(192, 91%, 60%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, hsla(217, 91%, 60%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(192, 91%, 60%, 0.08) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, hsla(0, 84%, 60%, 0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(25, 95%, 53%, 0.06) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(0, 84%, 60%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(38, 92%, 50%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(0, 84%, 60%, 0.08) 0px, transparent 50%);
   }
 
   .dark .v0-bg-mesh {
     background-image:
-      radial-gradient(at 40% 20%, hsla(192, 91%, 50%, 0.12) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(199, 89%, 50%, 0.08) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsla(192, 91%, 50%, 0.06) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, hsla(217, 91%, 50%, 0.06) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(192, 91%, 50%, 0.12) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, hsla(0, 84%, 50%, 0.12) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(25, 95%, 50%, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(0, 84%, 50%, 0.06) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(38, 92%, 50%, 0.06) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(0, 84%, 50%, 0.12) 0px, transparent 50%);
   }
 
-  /* V0 Dot Pattern */
+  /* Beast Dot Pattern */
   .v0-dot-pattern {
-    background-image: radial-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(239, 68, 68, 0.15) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
   .dark .v0-dot-pattern {
-    background-image: radial-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(239, 68, 68, 0.1) 1px, transparent 1px);
   }
 
-  /* V0 Grid Pattern */
+  /* Beast Grid Pattern */
   .v0-grid-pattern {
     background-image:
-      linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(239, 68, 68, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(239, 68, 68, 0.03) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
   .dark .v0-grid-pattern {
     background-image:
-      linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(239, 68, 68, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(239, 68, 68, 0.05) 1px, transparent 1px);
   }
 
-  /* V0 Glow Effects - Cyan */
+  /* Beast Glow Effects - Red */
   .v0-glow {
-    box-shadow: 0 0 30px -8px rgba(34, 211, 238, 0.4);
+    box-shadow: 0 0 30px -8px rgba(239, 68, 68, 0.4);
   }
 
   .v0-glow-sm {
-    box-shadow: 0 0 15px -5px rgba(34, 211, 238, 0.35);
+    box-shadow: 0 0 15px -5px rgba(239, 68, 68, 0.35);
   }
 
   .v0-glow-lg {
-    box-shadow: 0 0 50px -10px rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 50px -10px rgba(239, 68, 68, 0.5);
   }
 
-  .v0-glow-blue {
-    box-shadow: 0 0 30px -8px rgba(59, 130, 246, 0.4);
+  .v0-glow-orange {
+    box-shadow: 0 0 30px -8px rgba(249, 115, 22, 0.4);
   }
 
   .dark .v0-glow {
-    box-shadow: 0 0 30px -8px rgba(34, 211, 238, 0.35);
+    box-shadow: 0 0 30px -8px rgba(239, 68, 68, 0.35);
   }
 
   .dark .v0-glow-lg {
-    box-shadow: 0 0 50px -10px rgba(34, 211, 238, 0.45);
+    box-shadow: 0 0 50px -10px rgba(239, 68, 68, 0.45);
   }
 
-  /* V0 Border Gradient - Cyan/Blue */
+  /* Beast Border Gradient - Red/Orange */
   .v0-border-gradient {
     position: relative;
     background: linear-gradient(var(--v0-card), var(--v0-card)) padding-box,
-                linear-gradient(135deg, rgba(34, 211, 238, 0.5), rgba(59, 130, 246, 0.5)) border-box;
+                linear-gradient(135deg, rgba(239, 68, 68, 0.5), rgba(249, 115, 22, 0.5)) border-box;
     border: 1px solid transparent;
     border-radius: 1rem;
   }
 
-  /* V0 Card Styles */
+  /* Beast Card Styles */
   .v0-card {
     @apply bg-white dark:bg-[#0a0a0a] rounded-xl;
     @apply border border-black/[0.08] dark:border-white/[0.08];
@@ -269,12 +269,12 @@
 
   .v0-card-hover {
     @apply transition-all duration-500 ease-out;
-    @apply hover:border-cyan-500/40 dark:hover:border-cyan-400/40;
-    @apply hover:shadow-[0_8px_40px_-12px_rgba(34,211,238,0.25)];
+    @apply hover:border-red-500/40 dark:hover:border-red-400/40;
+    @apply hover:shadow-[0_8px_40px_-12px_rgba(239,68,68,0.25)];
   }
 
   .dark .v0-card-hover:hover {
-    @apply shadow-[0_8px_40px_-12px_rgba(34,211,238,0.2)];
+    @apply shadow-[0_8px_40px_-12px_rgba(239,68,68,0.2)];
   }
 
   /* V0 Glass Effect */
@@ -315,31 +315,31 @@
     transform: translateX(100%);
   }
 
-  /* V0 Focus Ring - Cyan */
+  /* Beast Focus Ring - Red */
   .v0-focus-ring:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px rgba(239, 68, 68, 0.5);
   }
 
-  /* V0 Badge Styles - Cyan */
+  /* Beast Badge Styles - Red */
   .v0-badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
-    @apply bg-cyan-100 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300;
-    @apply border border-cyan-200/50 dark:border-cyan-500/20;
+    @apply bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-300;
+    @apply border border-red-200/50 dark:border-red-500/20;
   }
 
-  .v0-badge-blue {
-    @apply bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300;
-    @apply border border-blue-200/50 dark:border-blue-500/20;
+  .v0-badge-orange {
+    @apply bg-orange-100 dark:bg-orange-500/15 text-orange-700 dark:text-orange-300;
+    @apply border border-orange-200/50 dark:border-orange-500/20;
   }
 
   .v0-badge-gradient {
-    @apply bg-gradient-to-r from-cyan-500/10 to-blue-500/10;
-    @apply text-cyan-700 dark:text-cyan-300;
-    @apply border border-cyan-300/30 dark:border-cyan-500/20;
+    @apply bg-gradient-to-r from-red-500/10 to-orange-500/10;
+    @apply text-red-700 dark:text-red-300;
+    @apply border border-red-300/30 dark:border-red-500/20;
   }
 
-  /* V0 Transition Timing */
+  /* Beast Transition Timing */
   .ease-v0 {
     transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
   }
@@ -348,9 +348,9 @@
     transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* V0 Text Gradient Underline */
+  /* Beast Text Gradient Underline */
   .v0-underline {
-    background-image: linear-gradient(90deg, #22d3ee, #3b82f6);
+    background-image: linear-gradient(90deg, #ef4444, #f97316);
     background-size: 100% 2px;
     background-position: 0 100%;
     background-repeat: no-repeat;
@@ -378,8 +378,8 @@
   }
 
   @keyframes v0-glow-pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
-    50% { box-shadow: 0 0 40px rgba(34, 211, 238, 0.4); }
+    0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); }
   }
 
   @keyframes v0-gradient-shift {
@@ -393,8 +393,8 @@
   }
 
   @keyframes v0-border-glow {
-    0%, 100% { border-color: rgba(34, 211, 238, 0.3); }
-    50% { border-color: rgba(34, 211, 238, 0.6); }
+    0%, 100% { border-color: rgba(239, 68, 68, 0.3); }
+    50% { border-color: rgba(239, 68, 68, 0.6); }
   }
 
   .animate-v0-float {
@@ -406,7 +406,7 @@
   }
 
   .animate-v0-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
     background-size: 200% 100%;
     animation: v0-shimmer 2.5s infinite;
   }

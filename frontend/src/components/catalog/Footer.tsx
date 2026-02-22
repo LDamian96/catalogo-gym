@@ -22,12 +22,12 @@ export function Footer({ settings, categories }: FooterProps) {
 
       {/* Decorative gradient orbs */}
       <motion.div
-        className="absolute -top-40 -left-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"
+        className="absolute -top-40 -left-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl"
         animate={{ scale: [1, 1.2, 1], x: [0, 30, 0] }}
         transition={{ duration: 10, repeat: Infinity }}
       />
       <motion.div
-        className="absolute -bottom-40 -right-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"
+        className="absolute -bottom-40 -right-40 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl"
         animate={{ scale: [1.2, 1, 1.2], y: [0, 30, 0] }}
         transition={{ duration: 12, repeat: Infinity }}
       />
@@ -49,7 +49,7 @@ export function Footer({ settings, categories }: FooterProps) {
             <Link href="/" className="flex items-center gap-3">
               {settings.logo ? (
                 <motion.div
-                  className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-cyan-500/30 shadow-lg shadow-cyan-500/20"
+                  className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-red-500/30 shadow-lg shadow-red-500/20"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                 >
                   <Image
@@ -61,7 +61,7 @@ export function Footer({ settings, categories }: FooterProps) {
                 </motion.div>
               ) : (
                 <motion.div
-                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30"
+                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg shadow-red-500/30"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                 >
                   <span className="text-white font-bold text-lg">
@@ -73,7 +73,7 @@ export function Footer({ settings, categories }: FooterProps) {
                 <span className="text-lg font-bold text-white block">
                   {settings.businessName || 'Catálogo'}
                 </span>
-                <span className="text-xs text-cyan-400 flex items-center gap-1">
+                <span className="text-xs text-red-400 flex items-center gap-1">
                   <Crown className="w-3 h-3" />
                   Premium Store
                 </span>
@@ -87,7 +87,7 @@ export function Footer({ settings, categories }: FooterProps) {
                   href={settings.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30"
+                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white shadow-lg shadow-orange-500/30"
                   whileHover={{ scale: 1.15, rotate: 10 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -135,7 +135,7 @@ export function Footer({ settings, categories }: FooterProps) {
             {settings.email && (
               <a
                 href={`mailto:${settings.email}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-all duration-300"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/20 border border-orange-500/30 rounded-xl text-orange-400 text-sm font-medium hover:bg-orange-500/30 transition-all duration-300"
               >
                 <Mail className="w-4 h-4" />
                 <span className="truncate max-w-[150px]">{settings.email}</span>
@@ -164,7 +164,7 @@ export function Footer({ settings, categories }: FooterProps) {
         <div className="hidden lg:block py-16">
           {/* Top Section with CTA */}
           <motion.div
-            className="mb-12 p-8 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-3xl border border-white/10"
+            className="mb-12 p-8 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 rounded-3xl border border-white/10"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -207,7 +207,7 @@ export function Footer({ settings, categories }: FooterProps) {
               <Link href="/" className="flex items-center gap-3 mb-5">
                 {settings.logo ? (
                   <motion.div
-                    className="relative w-14 h-14 rounded-xl overflow-hidden ring-2 ring-cyan-500/30 shadow-lg shadow-cyan-500/20"
+                    className="relative w-14 h-14 rounded-xl overflow-hidden ring-2 ring-red-500/30 shadow-lg shadow-red-500/20"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     <Image
@@ -219,7 +219,7 @@ export function Footer({ settings, categories }: FooterProps) {
                   </motion.div>
                 ) : (
                   <motion.div
-                    className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30"
+                    className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg shadow-red-500/30"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     <span className="text-white font-bold text-xl">
@@ -231,7 +231,7 @@ export function Footer({ settings, categories }: FooterProps) {
                   <span className="text-xl font-bold text-white block">
                     {settings.businessName || 'Catálogo'}
                   </span>
-                  <span className="text-xs text-cyan-400 flex items-center gap-1">
+                  <span className="text-xs text-red-400 flex items-center gap-1">
                     <Crown className="w-3 h-3" />
                     Premium Store
                   </span>
@@ -248,7 +248,7 @@ export function Footer({ settings, categories }: FooterProps) {
                     href={settings.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30"
+                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white shadow-lg shadow-orange-500/30"
                     whileHover={{ scale: 1.15, rotate: 10 }}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -290,7 +290,7 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
             >
               <h3 className="text-white font-bold mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </span>
                 Navegación
@@ -305,9 +305,9 @@ export function Footer({ settings, categories }: FooterProps) {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-white/60 hover:text-cyan-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                      className="text-white/60 hover:text-red-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                     >
-                      <span className="w-2 h-2 rounded-full bg-cyan-500/50 group-hover:bg-cyan-500 transition-colors duration-300" />
+                      <span className="w-2 h-2 rounded-full bg-red-500/50 group-hover:bg-red-500 transition-colors duration-300" />
                       {link.label}
                     </Link>
                   </li>
@@ -323,7 +323,7 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 0.5, delay: 0.2, ease: v0Ease }}
             >
               <h3 className="text-white font-bold mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-indigo-600 flex items-center justify-center">
                   <Star className="w-4 h-4 text-white" />
                 </span>
                 Categorías
@@ -333,9 +333,9 @@ export function Footer({ settings, categories }: FooterProps) {
                   <li key={category.id}>
                     <Link
                       href={`/categorias/${category.slug}`}
-                      className="text-white/60 hover:text-purple-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                      className="text-white/60 hover:text-amber-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                     >
-                      <span className="w-2 h-2 rounded-full bg-purple-500/50 group-hover:bg-purple-500 transition-colors duration-300" />
+                      <span className="w-2 h-2 rounded-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors duration-300" />
                       {category.name}
                     </Link>
                   </li>
@@ -343,9 +343,9 @@ export function Footer({ settings, categories }: FooterProps) {
                 <li>
                   <Link
                     href="/categorias"
-                    className="text-white/60 hover:text-purple-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                    className="text-white/60 hover:text-amber-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                   >
-                    <span className="w-2 h-2 rounded-full bg-purple-500/50 group-hover:bg-purple-500 transition-colors duration-300" />
+                    <span className="w-2 h-2 rounded-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors duration-300" />
                     Ver todas
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </Link>
@@ -390,10 +390,10 @@ export function Footer({ settings, categories }: FooterProps) {
                       href={`mailto:${settings.email}`}
                       className="flex items-center gap-3 group"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all duration-300">
                         <Mail className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-white/60 text-sm group-hover:text-blue-400 transition-colors truncate max-w-[180px]">
+                      <span className="text-white/60 text-sm group-hover:text-orange-400 transition-colors truncate max-w-[180px]">
                         {settings.email}
                       </span>
                     </a>
@@ -428,7 +428,7 @@ export function Footer({ settings, categories }: FooterProps) {
               <span>Hecho con</span>
               <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
               <span>en</span>
-              <span className="font-semibold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Perú</span>
+              <span className="font-semibold bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">Perú</span>
             </motion.div>
           </div>
         </div>

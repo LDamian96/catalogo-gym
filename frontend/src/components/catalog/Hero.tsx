@@ -43,13 +43,13 @@ export function Hero({ settings, products = [] }: HeroProps) {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-700 to-purple-800 dark:from-cyan-900 dark:via-blue-950 dark:to-purple-950"
+      className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-red-600 via-orange-600 to-amber-600 dark:from-red-900 dark:via-orange-950 dark:to-neutral-950"
     >
       {/* Animated Background - Colorful */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large gradient orbs */}
         <motion.div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-cyan-400/40 via-blue-500/30 to-purple-500/20 blur-3xl"
+          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-red-400/40 via-orange-500/30 to-amber-500/20 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             x: [0, 50, 0],
@@ -58,7 +58,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-blue-500/30 via-cyan-400/30 to-teal-400/20 blur-3xl"
+          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-orange-500/30 via-red-400/30 to-yellow-400/20 blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             x: [0, -30, 0],
@@ -67,7 +67,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 blur-3xl"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-red-500/10 via-transparent to-orange-500/10 blur-3xl"
           animate={{
             rotate: [0, 360],
           }}
@@ -78,7 +78,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
         <div
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
           style={{
-            backgroundImage: `linear-gradient(rgba(34,211,238,1) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,1) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(239,68,68,1) 1px, transparent 1px), linear-gradient(90deg, rgba(239,68,68,1) 1px, transparent 1px)`,
             backgroundSize: '60px 60px',
           }}
         />
@@ -87,7 +87,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"
+            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-red-400 to-orange-500"
             style={{
               left: `${15 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
@@ -117,31 +117,31 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
             {/* Left - Text Content */}
             <div className="text-center lg:text-left order-2 lg:order-1">
-              {/* Badge - Colorful */}
+              {/* Badge - Beast Style */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: v0Ease }}
               >
-                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full shadow-lg shadow-cyan-500/30">
-                  <Sparkles className="w-4 h-4" />
-                  Catálogo Digital
+                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-full shadow-lg shadow-red-500/30">
                   <Zap className="w-4 h-4" />
+                  BEAST NUTRITION
+                  <Sparkles className="w-4 h-4" />
                 </span>
               </motion.div>
 
-              {/* Title - Bold & Colorful */}
+              {/* Title - Bold & Aggressive */}
               <motion.h1
                 className="mt-8 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: v0Ease }}
               >
-                <span className="block text-neutral-900 dark:text-white drop-shadow-sm">
-                  {settings.businessName || 'Tu Tienda'}
+                <span className="block text-white drop-shadow-sm">
+                  {settings.businessName || 'BEAST'}
                 </span>
-                <span className="block mt-2 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-lg">
-                  Online
+                <span className="block mt-2 bg-gradient-to-r from-red-400 via-orange-400 to-amber-400 bg-clip-text text-transparent drop-shadow-lg">
+                  NUTRITION
                 </span>
               </motion.h1>
 
@@ -155,7 +155,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
                 {settings.description || 'Descubre nuestra increíble colección de productos. Calidad premium y los mejores precios.'}
               </motion.p>
 
-              {/* CTAs - Vibrant */}
+              {/* CTAs - Beast Mode */}
               <motion.div
                 className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
                 initial={{ opacity: 0, y: 20 }}
@@ -167,16 +167,16 @@ export function Hero({ settings, products = [] }: HeroProps) {
                   className={cn(
                     'group relative inline-flex items-center justify-center gap-3',
                     'px-8 py-4 rounded-2xl font-bold text-lg',
-                    'bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-[length:200%_auto]',
+                    'bg-gradient-to-r from-red-500 via-orange-600 to-red-500 bg-[length:200%_auto]',
                     'text-white',
-                    'shadow-xl shadow-cyan-500/40',
-                    'hover:shadow-2xl hover:shadow-cyan-500/50',
+                    'shadow-xl shadow-red-500/40',
+                    'hover:shadow-2xl hover:shadow-red-500/50',
                     'transition-all duration-500'
                   )}
                   whileHover={{ scale: 1.05, backgroundPosition: 'right center' }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span>Ver Productos</span>
+                  <span>Ver Suplementos</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.a>
 
@@ -189,13 +189,13 @@ export function Hero({ settings, products = [] }: HeroProps) {
                     'text-neutral-800 dark:text-white',
                     'border-2 border-neutral-200 dark:border-neutral-700',
                     'shadow-lg hover:shadow-xl',
-                    'hover:border-cyan-400 dark:hover:border-cyan-500',
+                    'hover:border-red-400 dark:hover:border-red-500',
                     'transition-all duration-300'
                   )}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Star className="w-5 h-5 text-amber-500" />
+                  <Zap className="w-5 h-5 text-orange-500" />
                   Categorías
                 </motion.a>
               </motion.div>
@@ -241,9 +241,9 @@ export function Hero({ settings, products = [] }: HeroProps) {
               transition={{ duration: 0.8, delay: 0.2, ease: v0Ease }}
             >
               <div className="relative aspect-square max-w-lg mx-auto">
-                {/* Colorful background shape */}
+                {/* Beast background shape */}
                 <motion.div
-                  className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 opacity-20 dark:opacity-30 blur-2xl"
+                  className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-red-400 via-orange-500 to-amber-600 opacity-20 dark:opacity-30 blur-2xl"
                   animate={{
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, 0],
@@ -253,12 +253,12 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
                 {/* Main card with product */}
                 <motion.div
-                  className="relative bg-white dark:bg-neutral-900 rounded-[2.5rem] p-4 shadow-2xl shadow-cyan-500/20 dark:shadow-cyan-500/10 border border-cyan-100 dark:border-cyan-500/20 overflow-hidden"
+                  className="relative bg-white dark:bg-neutral-900 rounded-[2.5rem] p-4 shadow-2xl shadow-red-500/20 dark:shadow-red-500/10 border border-red-100 dark:border-red-500/20 overflow-hidden"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   {/* Product Image Container */}
-                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/50 dark:to-blue-950/50">
+                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50">
                     <AnimatePresence mode="wait">
                       {currentProduct?.images?.[0]?.url ? (
                         <motion.div
@@ -292,9 +292,9 @@ export function Hero({ settings, products = [] }: HeroProps) {
                           priority
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600">
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-500 via-orange-600 to-amber-600">
                           <span className="text-8xl font-black text-white drop-shadow-lg">
-                            {(settings.businessName || 'T')[0]}
+                            🦁
                           </span>
                         </div>
                       )}
@@ -345,8 +345,8 @@ export function Hero({ settings, products = [] }: HeroProps) {
                           className={cn(
                             'h-2 rounded-full transition-all duration-300',
                             index === currentIndex
-                              ? 'w-6 bg-gradient-to-r from-cyan-500 to-blue-600'
-                              : 'w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-cyan-400'
+                              ? 'w-6 bg-gradient-to-r from-red-500 to-orange-600'
+                              : 'w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-red-400'
                           )}
                           whileHover={{ scale: 1.2 }}
                           whileTap={{ scale: 0.9 }}
@@ -367,34 +367,34 @@ export function Hero({ settings, products = [] }: HeroProps) {
                     </motion.div>
                   )}
 
-                  {/* Premium Badge */}
+                  {/* Beast Badge */}
                   <motion.div
-                    className="absolute -top-3 -right-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-500/40"
+                    className="absolute -top-3 -right-3 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-red-500/40"
                     animate={{ rotate: [-5, 5, -5], scale: [1, 1.05, 1] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                   >
-                    ⭐ Premium
+                    💪 BEAST
                   </motion.div>
                 </motion.div>
 
                 {/* Floating colored shapes */}
                 <motion.div
-                  className="absolute -right-6 top-1/4 w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-xl shadow-cyan-500/50"
+                  className="absolute -right-6 top-1/4 w-20 h-20 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 shadow-xl shadow-red-500/50"
                   animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                 />
                 <motion.div
-                  className="absolute -left-4 top-1/3 w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-xl shadow-purple-500/50"
+                  className="absolute -left-4 top-1/3 w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 shadow-xl shadow-orange-500/50"
                   animate={{ y: [0, 15, 0], rotate: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
                 />
                 <motion.div
-                  className="absolute right-1/4 -bottom-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-xl shadow-orange-500/50"
+                  className="absolute right-1/4 -bottom-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-xl shadow-amber-500/50"
                   animate={{ y: [0, 10, 0], rotate: [0, 5, 0] }}
                   transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
                 />
                 <motion.div
-                  className="absolute -left-8 bottom-1/4 w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-teal-500/50"
+                  className="absolute -left-8 bottom-1/4 w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 shadow-lg shadow-emerald-500/50"
                   animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
                   transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
                 />
@@ -404,7 +404,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
         </div>
       </motion.div>
 
-      {/* Scroll Indicator - Colorful */}
+      {/* Scroll Indicator - Beast Style */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         initial={{ opacity: 0, y: 10 }}
@@ -413,19 +413,19 @@ export function Hero({ settings, products = [] }: HeroProps) {
       >
         <motion.a
           href="#productos"
-          className="flex flex-col items-center gap-2 px-6 py-3 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-full shadow-lg border border-cyan-200 dark:border-cyan-800"
+          className="flex flex-col items-center gap-2 px-6 py-3 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-full shadow-lg border border-red-200 dark:border-red-800"
           animate={{ y: [0, 5, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           whileHover={{ scale: 1.05 }}
         >
-          <span className="text-sm font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-            Explorar Catálogo
+          <span className="text-sm font-semibold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+            Explorar Suplementos
           </span>
           <motion.div
             animate={{ y: [0, 3, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ArrowRight className="w-4 h-4 text-cyan-600 rotate-90" />
+            <ArrowRight className="w-4 h-4 text-red-600 rotate-90" />
           </motion.div>
         </motion.a>
       </motion.div>

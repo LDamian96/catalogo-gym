@@ -50,7 +50,7 @@ export function CategoryCard({ category, index = 0, variant = 'default' }: Categ
               />
             </motion.div>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-600" />
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-sky-600 to-orange-600" />
           )}
 
           {/* Overlay Gradient */}

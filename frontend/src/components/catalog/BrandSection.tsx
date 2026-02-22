@@ -31,7 +31,7 @@ export function BrandSection({ brands }: BrandSectionProps) {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-            Marcas que <span className="text-cyan-600">Confían</span> en Nosotros
+            Marcas que <span className="text-red-600">Confían</span> en Nosotros
           </h2>
           <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
             Trabajamos con las mejores marcas para ofrecerte productos de calidad

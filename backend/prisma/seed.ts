@@ -16,647 +16,935 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-function randomPrice(min: number, max: number): number {
-  return Math.round((Math.random() * (max - min) + min) * 100) / 100;
-}
-
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomElement<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function randomElements<T>(arr: T[], count: number): T[] {
-  const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-}
-
 // ============================================
-// IMAGE URLs (Unsplash)
+// IMÁGENES DE SUPLEMENTOS (Unsplash - funcionan)
 // ============================================
 
-const CATEGORY_IMAGES = {
-  zapatos: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80',
-  ropa: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=80',
-  suplementos: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
-  proteinas: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=800&q=80',
-  creatinas: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80',
-  preentreno: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
-  mochilas: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80',
-  comidaperuana: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&q=80',
-  panaderia: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80',
-  accesorios: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800&q=80',
-  tecnologia: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=800&q=80',
-  hogar: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=80',
-};
-
-const BRAND_IMAGES = {
-  nike: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
-  adidas: 'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=400&q=80',
-  puma: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&q=80',
-  reebok: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&q=80',
-  newbalance: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80',
-  optimum: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&q=80',
-  muscletech: 'https://images.unsplash.com/photo-1579722820903-4a0f22c3b9e0?w=400&q=80',
-  bsn: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80',
-  northface: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80',
-  jansport: 'https://images.unsplash.com/photo-1581605405669-fcdf81165afa?w=400&q=80',
-  generic: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80',
-};
-
-const PRODUCT_IMAGES = {
-  zapatillas: [
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80',
-    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=600&q=80',
-    'https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&q=80',
-    'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=600&q=80',
-    'https://images.unsplash.com/photo-1491553895911-0055uj8?w=600&q=80',
-  ],
-  ropa: [
-    'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80',
-    'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80',
-    'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80',
-    'https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?w=600&q=80',
-    'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80',
-  ],
-  suplementos: [
+const SUPPLEMENT_IMAGES = {
+  proteinas: [
     'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&q=80',
     'https://images.unsplash.com/photo-1579722820903-4a0f22c3b9e0?w=600&q=80',
+    'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=600&q=80',
+  ],
+  creatinas: [
+    'https://images.unsplash.com/photo-1619088978562-73fb98f4ec17?w=600&q=80',
     'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80',
-    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80',
   ],
-  mochilas: [
-    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80',
-    'https://images.unsplash.com/photo-1581605405669-fcdf81165afa?w=600&q=80',
-    'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=600&q=80',
-    'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=600&q=80',
+  preentrenos: [
+    'https://images.unsplash.com/photo-1546483875-ad9014c88eba?w=600&q=80',
+    'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80',
   ],
-  comida: [
-    'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&q=80',
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80',
-    'https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80',
-    'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80',
+  aminoacidos: [
+    'https://images.unsplash.com/photo-1612531385446-f7e6d131e1d0?w=600&q=80',
+    'https://images.unsplash.com/photo-1579722820903-4a0f22c3b9e0?w=600&q=80',
   ],
-  panaderia: [
-    'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80',
-    'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=600&q=80',
-    'https://images.unsplash.com/photo-1517433670267-30f41c09ec0e?w=600&q=80',
-    'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80',
+  quemadores: [
+    'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=80',
+    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&q=80',
+  ],
+  vitaminas: [
+    'https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=600&q=80',
+    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80',
+  ],
+  gainers: [
+    'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&q=80',
+    'https://images.unsplash.com/photo-1532384748853-8f54a8f476e2?w=600&q=80',
+  ],
+  accesorios: [
+    'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80',
+    'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80',
   ],
 };
 
+const CATEGORY_IMAGES = {
+  proteinas: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=800&q=80',
+  creatinas: 'https://images.unsplash.com/photo-1619088978562-73fb98f4ec17?w=800&q=80',
+  preentrenos: 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?w=800&q=80',
+  aminoacidos: 'https://images.unsplash.com/photo-1612531385446-f7e6d131e1d0?w=800&q=80',
+  quemadores: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=800&q=80',
+  vitaminas: 'https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=800&q=80',
+  gainers: 'https://images.unsplash.com/photo-1532384748853-8f54a8f476e2?w=800&q=80',
+  accesorios: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&q=80',
+};
+
 // ============================================
-// DATA DEFINITIONS
+// DATOS
 // ============================================
 
 const CATEGORIES_DATA = [
-  { name: 'Zapatos', description: 'Calzado deportivo y casual de las mejores marcas', image: CATEGORY_IMAGES.zapatos },
-  { name: 'Ropa Deportiva', description: 'Prendas cómodas para entrenar y hacer deporte', image: CATEGORY_IMAGES.ropa },
-  { name: 'Proteínas', description: 'Suplementos proteicos para aumentar masa muscular', image: CATEGORY_IMAGES.proteinas },
-  { name: 'Creatinas', description: 'Creatina monohidratada y otras fórmulas para fuerza', image: CATEGORY_IMAGES.creatinas },
-  { name: 'Pre-Entreno', description: 'Suplementos para maximizar tu rendimiento', image: CATEGORY_IMAGES.preentreno },
-  { name: 'Post-Entreno', description: 'Recuperación muscular después del ejercicio', image: CATEGORY_IMAGES.suplementos },
-  { name: 'Mochilas', description: 'Mochilas resistentes para el día a día', image: CATEGORY_IMAGES.mochilas },
-  { name: 'Comida Peruana', description: 'Los platos típicos más deliciosos del Perú', image: CATEGORY_IMAGES.comidaperuana },
-  { name: 'Panadería', description: 'Pan artesanal y productos horneados', image: CATEGORY_IMAGES.panaderia },
-  { name: 'Accesorios', description: 'Complementos para tu estilo deportivo', image: CATEGORY_IMAGES.accesorios },
-  { name: 'Tecnología', description: 'Gadgets y accesorios tecnológicos', image: CATEGORY_IMAGES.tecnologia },
-  { name: 'Hogar', description: 'Productos para el hogar', image: CATEGORY_IMAGES.hogar },
+  { name: 'Proteínas', slug: 'proteinas', description: 'Whey Protein, Isolate, Caseína y más para ganar masa muscular', image: CATEGORY_IMAGES.proteinas },
+  { name: 'Creatinas', slug: 'creatinas', description: 'Creatina monohidratada, HCL y fórmulas avanzadas para fuerza explosiva', image: CATEGORY_IMAGES.creatinas },
+  { name: 'Pre-Entrenos', slug: 'pre-entrenos', description: 'Máxima energía, pump y focus para entrenamientos intensos', image: CATEGORY_IMAGES.preentrenos },
+  { name: 'Aminoácidos', slug: 'aminoacidos', description: 'BCAA, EAA, Glutamina para recuperación y rendimiento', image: CATEGORY_IMAGES.aminoacidos },
+  { name: 'Quemadores', slug: 'quemadores', description: 'Termogénicos y fat burners para definición muscular', image: CATEGORY_IMAGES.quemadores },
+  { name: 'Vitaminas', slug: 'vitaminas', description: 'Multivitamínicos, Omega 3, ZMA para salud óptima', image: CATEGORY_IMAGES.vitaminas },
+  { name: 'Gainers', slug: 'gainers', description: 'Mass Gainers y fórmulas hipercalóricas para volumen', image: CATEGORY_IMAGES.gainers },
+  { name: 'Accesorios', slug: 'accesorios', description: 'Shakers, guantes, cinturones y equipamiento de gym', image: CATEGORY_IMAGES.accesorios },
 ];
 
 const BRANDS_DATA = [
-  { name: 'Nike', description: 'Just Do It', logo: BRAND_IMAGES.nike },
-  { name: 'Adidas', description: 'Impossible is Nothing', logo: BRAND_IMAGES.adidas },
-  { name: 'Puma', description: 'Forever Faster', logo: BRAND_IMAGES.puma },
-  { name: 'Reebok', description: 'Be More Human', logo: BRAND_IMAGES.reebok },
-  { name: 'New Balance', description: 'Fearlessly Independent', logo: BRAND_IMAGES.newbalance },
-  { name: 'Optimum Nutrition', description: 'True Strength', logo: BRAND_IMAGES.optimum },
-  { name: 'MuscleTech', description: 'Strength Redefined', logo: BRAND_IMAGES.muscletech },
-  { name: 'BSN', description: 'Finish First', logo: BRAND_IMAGES.bsn },
-  { name: 'The North Face', description: 'Never Stop Exploring', logo: BRAND_IMAGES.northface },
-  { name: 'JanSport', description: 'Built to Last', logo: BRAND_IMAGES.jansport },
-  { name: 'Under Armour', description: 'The Only Way Is Through', logo: BRAND_IMAGES.generic },
-  { name: 'Asics', description: 'Sound Mind Sound Body', logo: BRAND_IMAGES.generic },
-  { name: 'Dymatize', description: 'Nutrition Perfected', logo: BRAND_IMAGES.generic },
-  { name: 'MyProtein', description: 'Fuel Your Ambition', logo: BRAND_IMAGES.generic },
-  { name: 'Cellucor', description: 'Live Loud', logo: BRAND_IMAGES.generic },
+  { name: 'Optimum Nutrition', description: 'True Strength - La marca #1 en proteínas a nivel mundial' },
+  { name: 'MuscleTech', description: 'Strength Redefined - Innovación y ciencia en suplementos' },
+  { name: 'BSN', description: 'Finish First - Rendimiento de élite' },
+  { name: 'Dymatize', description: 'Nutrition Perfected - Proteínas de calidad premium' },
+  { name: 'Dragon Pharma', description: 'Suplementos de alta calidad para atletas serios' },
+  { name: 'Universal Nutrition', description: 'Since 1977 - Tradición en el mundo del fitness' },
+  { name: 'Cellucor', description: 'Live Loud - Creadores del legendario C4' },
+  { name: 'Rule One Proteins', description: 'R1 - Pureza y calidad garantizada' },
+  { name: 'Nutrex Research', description: 'Hardcore Supplements - Lipo-6 y más' },
+  { name: 'Scivation', description: 'Xtend - Los BCAAs más vendidos del mundo' },
+  { name: 'JNX Sports', description: 'The Shadow - Pre-entrenos de alta intensidad' },
+  { name: 'GAT Sport', description: 'Fuel Your Fire - Para atletas dedicados' },
+  { name: 'EHP Labs', description: 'OxyShred - Quemadores innovadores de Australia' },
+  { name: 'Mutant', description: 'Feed Your Mutation - Suplementos extremos' },
+  { name: 'AllMax Nutrition', description: 'Science Backed - Calidad canadiense' },
 ];
 
-const VARIANT_TYPES_DATA = [
-  { name: 'Talla', description: 'Tallas de ropa y calzado' },
-  { name: 'Color', description: 'Colores disponibles' },
-  { name: 'Material', description: 'Tipo de material' },
-  { name: 'Sabor', description: 'Sabores de suplementos' },
-  { name: 'Tamaño', description: 'Tamaño del producto' },
-  { name: 'Peso', description: 'Peso del producto' },
+// ============================================
+// PRODUCTOS POR PESO (cada peso = producto separado)
+// ============================================
+
+interface ProductTemplate {
+  baseName: string;
+  brand: string;
+  category: string;
+  presentations: { weight: string; price: number }[];
+  description: string;
+  flavors: string[];
+}
+
+const PRODUCTS: ProductTemplate[] = [
+  // ==================== PROTEÍNAS ====================
+  {
+    baseName: 'Gold Standard 100% Whey',
+    brand: 'Optimum Nutrition',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (907g)', price: 259.90 },
+      { weight: '5lb (2.27kg)', price: 459.90 },
+      { weight: '10lb (4.54kg)', price: 789.90 },
+    ],
+    description: 'La proteína whey más vendida del mundo. 24g de proteína, 5.5g BCAAs y 4g glutamina por servicio.',
+    flavors: ['Double Rich Chocolate', 'French Vanilla', 'Cookies & Cream', 'Strawberry Banana', 'Banana'],
+  },
+  {
+    baseName: 'Platinum Hydrowhey',
+    brand: 'Optimum Nutrition',
+    category: 'proteinas',
+    presentations: [
+      { weight: '3.5lb (1.59kg)', price: 349.90 },
+    ],
+    description: 'Proteína hidrolizada premium de ON. Absorción ultrarrápida post-entreno.',
+    flavors: ['Chocolate', 'Vanilla', 'Cookies & Cream'],
+  },
+  {
+    baseName: 'Gold Standard Casein',
+    brand: 'Optimum Nutrition',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (907g)', price: 279.90 },
+      { weight: '4lb (1.81kg)', price: 489.90 },
+    ],
+    description: 'Caseína micelar de liberación lenta. Ideal para antes de dormir.',
+    flavors: ['Chocolate', 'Vanilla', 'Cookies & Cream'],
+  },
+  {
+    baseName: 'Nitro-Tech Whey Gold',
+    brand: 'MuscleTech',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2.2lb (1kg)', price: 269.90 },
+      { weight: '5lb (2.27kg)', price: 479.90 },
+    ],
+    description: 'Whey protein con péptidos y creatina. 24g proteína por servicio.',
+    flavors: ['Double Rich Chocolate', 'French Vanilla Cream', 'Cookies & Cream', 'Strawberry'],
+  },
+  {
+    baseName: 'Nitro-Tech Ripped',
+    brand: 'MuscleTech',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (907g)', price: 279.90 },
+      { weight: '4lb (1.81kg)', price: 499.90 },
+    ],
+    description: 'Proteína + quemador de grasa. Para definición muscular.',
+    flavors: ['Chocolate Fudge Brownie', 'French Vanilla Swirl'],
+  },
+  {
+    baseName: 'ISO100 Hydrolyzed',
+    brand: 'Dymatize',
+    category: 'proteinas',
+    presentations: [
+      { weight: '1.4lb (640g)', price: 219.90 },
+      { weight: '3lb (1.36kg)', price: 319.90 },
+      { weight: '5lb (2.27kg)', price: 489.90 },
+    ],
+    description: '100% proteína aislada hidrolizada. 25g proteína, 0 azúcar, 0 lactosa.',
+    flavors: ['Gourmet Chocolate', 'Gourmet Vanilla', 'Cookies & Cream', 'Fudge Brownie', 'Strawberry'],
+  },
+  {
+    baseName: 'Syntha-6',
+    brand: 'BSN',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2.91lb (1.32kg)', price: 249.90 },
+      { weight: '5lb (2.27kg)', price: 419.90 },
+    ],
+    description: 'Ultra-premium protein matrix. Mezcla de 6 proteínas de liberación sostenida.',
+    flavors: ['Chocolate Milkshake', 'Vanilla Ice Cream', 'Cookies & Cream', 'Strawberry Milkshake'],
+  },
+  {
+    baseName: 'ISO Whey',
+    brand: 'Dragon Pharma',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (907g)', price: 299.90 },
+      { weight: '4lb (1.8kg)', price: 539.90 },
+    ],
+    description: 'Proteína isolada premium de Dragon Pharma. Cero grasa, cero azúcar.',
+    flavors: ['Chocolate', 'Vanilla', 'Cookies & Cream', 'Peanut Butter'],
+  },
+  {
+    baseName: 'R1 Protein',
+    brand: 'Rule One Proteins',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2.4lb (1.1kg)', price: 289.90 },
+      { weight: '5lb (2.27kg)', price: 519.90 },
+    ],
+    description: '25g de proteína isolada e hidrolizada. Sin rellenos innecesarios.',
+    flavors: ['Chocolate Fudge', 'Vanilla Creme', 'Cookies & Creme'],
+  },
+  {
+    baseName: 'Mutant Whey',
+    brand: 'Mutant',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (908g)', price: 219.90 },
+      { weight: '5lb (2.27kg)', price: 389.90 },
+    ],
+    description: '22g de proteína whey blend para construcción muscular.',
+    flavors: ['Triple Chocolate', 'Vanilla Ice Cream', 'Cookies & Cream'],
+  },
+  {
+    baseName: 'IsoFlex',
+    brand: 'AllMax Nutrition',
+    category: 'proteinas',
+    presentations: [
+      { weight: '2lb (907g)', price: 299.90 },
+      { weight: '5lb (2.27kg)', price: 529.90 },
+    ],
+    description: 'Proteína isolada pura al 90%. 27g proteína, sin grasa ni azúcar.',
+    flavors: ['Chocolate', 'Vanilla', 'Cookies & Cream', 'Peanut Butter Chocolate'],
+  },
+
+  // ==================== CREATINAS ====================
+  {
+    baseName: 'Creatina Monohidratada',
+    brand: 'Dragon Pharma',
+    category: 'creatinas',
+    presentations: [
+      { weight: '300g', price: 89.90 },
+      { weight: '500g', price: 129.90 },
+      { weight: '1kg', price: 219.90 },
+    ],
+    description: 'Creatina monohidratada micronizada 200 mesh. Pureza garantizada.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Micronized Creatine',
+    brand: 'Optimum Nutrition',
+    category: 'creatinas',
+    presentations: [
+      { weight: '300g', price: 99.90 },
+      { weight: '600g', price: 169.90 },
+      { weight: '1.2kg', price: 299.90 },
+    ],
+    description: 'Creatina monohidratada micronizada Creapure. 5g por servicio.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Cell-Tech',
+    brand: 'MuscleTech',
+    category: 'creatinas',
+    presentations: [
+      { weight: '3lb (1.36kg)', price: 159.90 },
+      { weight: '6lb (2.72kg)', price: 279.90 },
+    ],
+    description: 'Sistema de creatina con carbohidratos para máximo transporte muscular.',
+    flavors: ['Fruit Punch', 'Grape', 'Orange'],
+  },
+  {
+    baseName: 'Platinum Creatine',
+    brand: 'MuscleTech',
+    category: 'creatinas',
+    presentations: [
+      { weight: '400g', price: 79.90 },
+      { weight: '800g', price: 139.90 },
+    ],
+    description: 'Creatina monohidratada ultra-pura. 5g HPLC-tested por servicio.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Creatine Powder',
+    brand: 'Universal Nutrition',
+    category: 'creatinas',
+    presentations: [
+      { weight: '200g', price: 69.90 },
+      { weight: '500g', price: 119.90 },
+      { weight: '1kg', price: 199.90 },
+    ],
+    description: 'Creatina monohidratada clásica de Universal. Probada desde 1977.',
+    flavors: ['Sin Sabor'],
+  },
+
+  // ==================== PRE-ENTRENOS ====================
+  {
+    baseName: 'C4 Original',
+    brand: 'Cellucor',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (195g)', price: 139.90 },
+      { weight: '60 serv (390g)', price: 249.90 },
+    ],
+    description: 'El pre-entreno más vendido de América. Energía explosiva con CarnoSyn Beta-Alanine.',
+    flavors: ['Fruit Punch', 'Cherry Limeade', 'Pink Lemonade', 'Watermelon', 'Blue Raspberry'],
+  },
+  {
+    baseName: 'C4 Ultimate',
+    brand: 'Cellucor',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '20 serv (520g)', price: 189.90 },
+    ],
+    description: 'Versión premium de C4. Citrulina, Beta-Alanina y Cognizin para máximo rendimiento.',
+    flavors: ['Strawberry Watermelon', 'Icy Blue Razz', 'Sour Batch Bros'],
+  },
+  {
+    baseName: 'C4 Ripped',
+    brand: 'Cellucor',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (180g)', price: 149.90 },
+    ],
+    description: 'Pre-entreno con quemadores de grasa incluidos. Energía + definición.',
+    flavors: ['Cherry Limeade', 'Fruit Punch', 'Tropical Punch'],
+  },
+  {
+    baseName: 'The Shadow',
+    brand: 'JNX Sports',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (270g)', price: 169.90 },
+    ],
+    description: 'Pre-entreno hardcore de alta estimulación. Para usuarios experimentados.',
+    flavors: ['Fruit Punch', 'Blue Raspberry', 'Watermelon', 'Grape'],
+  },
+  {
+    baseName: 'Vapor X5 Next Gen',
+    brand: 'MuscleTech',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (232g)', price: 159.90 },
+      { weight: '60 serv (465g)', price: 279.90 },
+    ],
+    description: 'Pre-entreno con 5 complejos para energía, fuerza y pump.',
+    flavors: ['Blue Raspberry Fusion', 'Fruit Punch Blast', 'Icy Rocket Freeze'],
+  },
+  {
+    baseName: 'N.O.-Xplode',
+    brand: 'BSN',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (555g)', price: 149.90 },
+      { weight: '60 serv (1.11kg)', price: 269.90 },
+    ],
+    description: 'Pre-entreno legendario con cafeína, beta-alanina y creatina.',
+    flavors: ['Fruit Punch', 'Blue Razz', 'Watermelon', 'Grape'],
+  },
+  {
+    baseName: 'Venom',
+    brand: 'Dragon Pharma',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '40 serv (300g)', price: 159.90 },
+    ],
+    description: 'Pre-entreno potente de Dragon Pharma. Energía extrema y vasodilatación.',
+    flavors: ['Fruit Punch', 'Blue Ice', 'Mango', 'Watermelon'],
+  },
+  {
+    baseName: 'Nitraflex',
+    brand: 'GAT Sport',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '30 serv (300g)', price: 159.90 },
+    ],
+    description: 'Pre-entreno con potenciador de testosterona. Fuerza, energía y pump.',
+    flavors: ['Black Cherry', 'Blue Raspberry', 'Fruit Punch', 'Green Apple'],
+  },
+  {
+    baseName: 'Outlift',
+    brand: 'Nutrex Research',
+    category: 'pre-entrenos',
+    presentations: [
+      { weight: '20 serv (502g)', price: 169.90 },
+    ],
+    description: 'Pre-entreno clínicamente dosificado. 10 ingredientes activos.',
+    flavors: ['Wild Cherry Citrus', 'Blackberry Lemonade', 'Blue Raspberry'],
+  },
+
+  // ==================== AMINOÁCIDOS ====================
+  {
+    baseName: 'Xtend BCAA',
+    brand: 'Scivation',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '30 serv (416g)', price: 129.90 },
+      { weight: '90 serv (1.17kg)', price: 319.90 },
+    ],
+    description: 'Los BCAAs más vendidos del mundo. 7g BCAAs + electrolitos por servicio.',
+    flavors: ['Blue Raspberry', 'Watermelon', 'Mango', 'Lemon Lime', 'Grape'],
+  },
+  {
+    baseName: 'Amino Energy',
+    brand: 'Optimum Nutrition',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '30 serv (270g)', price: 119.90 },
+      { weight: '65 serv (585g)', price: 219.90 },
+    ],
+    description: 'Aminoácidos + cafeína natural. Energía limpia cualquier momento del día.',
+    flavors: ['Grape', 'Blue Raspberry', 'Watermelon', 'Green Apple', 'Fruit Fusion'],
+  },
+  {
+    baseName: 'BCAA 1000 Caps',
+    brand: 'Optimum Nutrition',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '200 caps', price: 79.90 },
+      { weight: '400 caps', price: 139.90 },
+    ],
+    description: 'BCAAs en cápsulas convenientes. 1g por cápsula.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Glutamine Powder',
+    brand: 'Optimum Nutrition',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '300g', price: 69.90 },
+      { weight: '600g', price: 119.90 },
+      { weight: '1kg', price: 179.90 },
+    ],
+    description: 'L-Glutamina pura micronizada para recuperación e inmunidad.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Amino X',
+    brand: 'BSN',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '30 serv (435g)', price: 109.90 },
+      { weight: '70 serv (1.01kg)', price: 219.90 },
+    ],
+    description: 'BCAAs efervescentes con 10g de aminoácidos por servicio.',
+    flavors: ['Blue Raspberry', 'Fruit Punch', 'Watermelon', 'Grape'],
+  },
+  {
+    baseName: 'BCAA 8:1:1',
+    brand: 'Dragon Pharma',
+    category: 'aminoacidos',
+    presentations: [
+      { weight: '300g', price: 99.90 },
+      { weight: '600g', price: 169.90 },
+    ],
+    description: 'BCAAs en proporción 8:1:1 para máxima síntesis proteica.',
+    flavors: ['Lemon', 'Grape', 'Fruit Punch', 'Watermelon'],
+  },
+
+  // ==================== QUEMADORES ====================
+  {
+    baseName: 'Lipo-6 Black',
+    brand: 'Nutrex Research',
+    category: 'quemadores',
+    presentations: [
+      { weight: '60 caps', price: 129.90 },
+    ],
+    description: 'Termogénico de alta potencia con liberación rápida. El quemador más vendido.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Lipo-6 Black Hers',
+    brand: 'Nutrex Research',
+    category: 'quemadores',
+    presentations: [
+      { weight: '60 caps', price: 119.90 },
+    ],
+    description: 'Quemador de grasa diseñado para mujeres. Fórmula femenina.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'OxyShred',
+    brand: 'EHP Labs',
+    category: 'quemadores',
+    presentations: [
+      { weight: '60 serv (276g)', price: 159.90 },
+    ],
+    description: 'Quemador de grasa australiano #1. Termogénico + energía + mood.',
+    flavors: ['Kiwi Strawberry', 'Passionfruit', 'Guava Paradise', 'Wild Melon'],
+  },
+  {
+    baseName: 'Hydroxycut Hardcore Elite',
+    brand: 'MuscleTech',
+    category: 'quemadores',
+    presentations: [
+      { weight: '100 caps', price: 119.90 },
+    ],
+    description: 'Potente termogénico con C. canephora robusta para pérdida de peso.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Super HD',
+    brand: 'Cellucor',
+    category: 'quemadores',
+    presentations: [
+      { weight: '60 caps', price: 109.90 },
+      { weight: '120 caps', price: 189.90 },
+    ],
+    description: 'Termogénico con nootropicos. Quema grasa + claridad mental.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Animal Cuts',
+    brand: 'Universal Nutrition',
+    category: 'quemadores',
+    presentations: [
+      { weight: '42 packs', price: 169.90 },
+    ],
+    description: 'Pack de definición completo: termogénico + diurético + metabolizador.',
+    flavors: ['Sin Sabor'],
+  },
+
+  // ==================== VITAMINAS ====================
+  {
+    baseName: 'Opti-Men',
+    brand: 'Optimum Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '90 tabs', price: 89.90 },
+      { weight: '150 tabs', price: 139.90 },
+      { weight: '240 tabs', price: 199.90 },
+    ],
+    description: 'Multivitamínico completo para hombres activos. 75+ ingredientes.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Opti-Women',
+    brand: 'Optimum Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '60 caps', price: 79.90 },
+      { weight: '120 caps', price: 139.90 },
+    ],
+    description: 'Multivitamínico diseñado para las necesidades de la mujer activa.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Fish Oil Omega 3',
+    brand: 'Optimum Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '100 softgels', price: 59.90 },
+      { weight: '200 softgels', price: 99.90 },
+    ],
+    description: 'Aceite de pescado purificado con EPA y DHA.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'ZMA',
+    brand: 'Optimum Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '90 caps', price: 49.90 },
+      { weight: '180 caps', price: 89.90 },
+    ],
+    description: 'Zinc, Magnesio y B6 para recuperación nocturna.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Animal Pak',
+    brand: 'Universal Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '15 packs', price: 69.90 },
+      { weight: '30 packs', price: 119.90 },
+      { weight: '44 packs', price: 159.90 },
+    ],
+    description: 'El pack de vitaminas legendario para culturistas desde 1983.',
+    flavors: ['Sin Sabor'],
+  },
+  {
+    baseName: 'Animal Flex',
+    brand: 'Universal Nutrition',
+    category: 'vitaminas',
+    presentations: [
+      { weight: '44 packs', price: 119.90 },
+    ],
+    description: 'Soporte completo para articulaciones y ligamentos.',
+    flavors: ['Sin Sabor'],
+  },
+
+  // ==================== GAINERS ====================
+  {
+    baseName: 'Serious Mass',
+    brand: 'Optimum Nutrition',
+    category: 'gainers',
+    presentations: [
+      { weight: '6lb (2.72kg)', price: 229.90 },
+      { weight: '12lb (5.44kg)', price: 399.90 },
+    ],
+    description: 'El gainer más vendido. 1250 calorías y 50g de proteína por servicio.',
+    flavors: ['Chocolate', 'Vanilla', 'Strawberry', 'Banana'],
+  },
+  {
+    baseName: 'Pro Gainer',
+    brand: 'Optimum Nutrition',
+    category: 'gainers',
+    presentations: [
+      { weight: '5.09lb (2.31kg)', price: 239.90 },
+      { weight: '10.19lb (4.62kg)', price: 429.90 },
+    ],
+    description: 'Gainer de alta proteína con 60g protein y carbohidratos complejos.',
+    flavors: ['Double Chocolate', 'Vanilla Custard', 'Strawberry Cream'],
+  },
+  {
+    baseName: 'Mass-Tech Extreme 2000',
+    brand: 'MuscleTech',
+    category: 'gainers',
+    presentations: [
+      { weight: '6lb (2.72kg)', price: 269.90 },
+      { weight: '22lb (9.98kg)', price: 699.90 },
+    ],
+    description: '2000 calorías, 80g proteína y 400g carbohidratos por servicio.',
+    flavors: ['Triple Chocolate Brownie', 'Vanilla Milkshake', 'Strawberry'],
+  },
+  {
+    baseName: 'True Mass 1200',
+    brand: 'BSN',
+    category: 'gainers',
+    presentations: [
+      { weight: '10.25lb (4.65kg)', price: 309.90 },
+    ],
+    description: 'Mass gainer premium con proteínas de múltiples fuentes.',
+    flavors: ['Chocolate Milkshake', 'Vanilla Ice Cream'],
+  },
+  {
+    baseName: 'Mutant Mass',
+    brand: 'Mutant',
+    category: 'gainers',
+    presentations: [
+      { weight: '5lb (2.27kg)', price: 229.90 },
+      { weight: '15lb (6.8kg)', price: 549.90 },
+    ],
+    description: 'Gainer extremo con 1100 calorías y 56g de proteína.',
+    flavors: ['Triple Chocolate', 'Cookies & Cream', 'Vanilla Ice Cream'],
+  },
+  {
+    baseName: 'Super Mass Gainer',
+    brand: 'Dymatize',
+    category: 'gainers',
+    presentations: [
+      { weight: '6lb (2.72kg)', price: 189.90 },
+      { weight: '12lb (5.44kg)', price: 349.90 },
+    ],
+    description: '1310 calorías con creatina, glutamina y BCAAs incluidos.',
+    flavors: ['Rich Chocolate', 'Gourmet Vanilla'],
+  },
+
+  // ==================== ACCESORIOS ====================
+  {
+    baseName: 'Shaker Classic',
+    brand: 'AllMax Nutrition',
+    category: 'accesorios',
+    presentations: [
+      { weight: '600ml', price: 29.90 },
+      { weight: '800ml', price: 39.90 },
+    ],
+    description: 'Shaker clásico con BlenderBall de acero inoxidable.',
+    flavors: ['Negro', 'Azul', 'Rojo'],
+  },
+  {
+    baseName: 'Shaker Pro',
+    brand: 'AllMax Nutrition',
+    category: 'accesorios',
+    presentations: [
+      { weight: '700ml', price: 44.90 },
+      { weight: '1L', price: 54.90 },
+    ],
+    description: 'Shaker premium con compartimento para suplementos.',
+    flavors: ['Negro', 'Blanco'],
+  },
+  {
+    baseName: 'Guantes Training',
+    brand: 'Universal Nutrition',
+    category: 'accesorios',
+    presentations: [
+      { weight: 'Talla S', price: 49.90 },
+      { weight: 'Talla M', price: 49.90 },
+      { weight: 'Talla L', price: 49.90 },
+      { weight: 'Talla XL', price: 49.90 },
+    ],
+    description: 'Guantes con grip antideslizante y muñequera con velcro.',
+    flavors: ['Negro', 'Negro/Rojo'],
+  },
+  {
+    baseName: 'Cinturón Powerlifting',
+    brand: 'Universal Nutrition',
+    category: 'accesorios',
+    presentations: [
+      { weight: 'Talla S', price: 89.90 },
+      { weight: 'Talla M', price: 89.90 },
+      { weight: 'Talla L', price: 89.90 },
+      { weight: 'Talla XL', price: 89.90 },
+    ],
+    description: 'Cinturón de cuero genuino de 10cm para levantamientos pesados.',
+    flavors: ['Negro'],
+  },
+  {
+    baseName: 'Straps Deadlift',
+    brand: 'GAT Sport',
+    category: 'accesorios',
+    presentations: [
+      { weight: 'Par', price: 34.90 },
+    ],
+    description: 'Straps de algodón reforzado para peso muerto y jalones.',
+    flavors: ['Negro', 'Rojo'],
+  },
 ];
-
-const VARIANT_VALUES = {
-  Talla: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45'],
-  Color: ['Negro', 'Blanco', 'Rojo', 'Azul', 'Verde', 'Gris', 'Naranja', 'Amarillo', 'Rosa', 'Morado'],
-  Material: ['Algodón', 'Poliéster', 'Nylon', 'Cuero', 'Sintético', 'Lona', 'Mesh'],
-  Sabor: ['Chocolate', 'Vainilla', 'Fresa', 'Cookies & Cream', 'Banana', 'Café', 'Sin Sabor', 'Frutas'],
-  Tamaño: ['Pequeño', 'Mediano', 'Grande', 'Extra Grande'],
-  Peso: ['250g', '500g', '1kg', '2kg', '2.5kg', '5kg'],
-};
-
-// Product templates by category
-const PRODUCT_TEMPLATES = {
-  zapatos: [
-    { name: 'Zapatillas Running', basePrice: 299.90, desc: 'Zapatillas para correr con amortiguación superior' },
-    { name: 'Zapatillas Training', basePrice: 249.90, desc: 'Zapatillas para entrenamiento en gimnasio' },
-    { name: 'Zapatillas Casual', basePrice: 199.90, desc: 'Zapatillas cómodas para el día a día' },
-    { name: 'Zapatillas Basketball', basePrice: 399.90, desc: 'Zapatillas de basketball con soporte de tobillo' },
-    { name: 'Zapatillas Skate', basePrice: 179.90, desc: 'Zapatillas resistentes para skateboarding' },
-    { name: 'Botas Hiking', basePrice: 449.90, desc: 'Botas impermeables para senderismo' },
-    { name: 'Sandalias Deportivas', basePrice: 99.90, desc: 'Sandalias cómodas para después del entrenamiento' },
-    { name: 'Zapatillas Tenis', basePrice: 349.90, desc: 'Zapatillas profesionales para tenis' },
-    { name: 'Zapatillas Fútbol', basePrice: 279.90, desc: 'Chimpunes para cancha sintética' },
-    { name: 'Slip-On Deportivo', basePrice: 129.90, desc: 'Zapatillas sin cordones fáciles de poner' },
-  ],
-  ropa: [
-    { name: 'Polo Deportivo', basePrice: 79.90, desc: 'Polo con tecnología dry-fit' },
-    { name: 'Camiseta Training', basePrice: 59.90, desc: 'Camiseta ligera para entrenar' },
-    { name: 'Short Deportivo', basePrice: 69.90, desc: 'Short cómodo con bolsillos' },
-    { name: 'Pantalón Jogger', basePrice: 129.90, desc: 'Pantalón jogger estilo urbano' },
-    { name: 'Casaca Cortaviento', basePrice: 199.90, desc: 'Casaca impermeable ligera' },
-    { name: 'Hoodie Classic', basePrice: 149.90, desc: 'Hoodie con capucha y bolsillo' },
-    { name: 'Leggins Compression', basePrice: 89.90, desc: 'Leggins de compresión para mejor rendimiento' },
-    { name: 'Top Deportivo', basePrice: 49.90, desc: 'Top para entrenamiento femenino' },
-    { name: 'Bividi Training', basePrice: 39.90, desc: 'Bividi transpirable para gimnasio' },
-    { name: 'Conjunto Deportivo', basePrice: 199.90, desc: 'Conjunto casaca y pantalón' },
-  ],
-  proteinas: [
-    { name: 'Whey Protein Gold Standard', basePrice: 249.90, desc: '100% Whey Protein Isolate' },
-    { name: 'Mass Gainer Premium', basePrice: 189.90, desc: 'Ganador de masa con proteína y carbohidratos' },
-    { name: 'Protein Bar Pack', basePrice: 89.90, desc: 'Pack de 12 barras proteicas' },
-    { name: 'Casein Protein', basePrice: 229.90, desc: 'Proteína de liberación lenta' },
-    { name: 'Vegan Protein', basePrice: 199.90, desc: 'Proteína vegana de guisante y arroz' },
-    { name: 'Hydro Whey', basePrice: 299.90, desc: 'Proteína hidrolizada de rápida absorción' },
-    { name: 'Beef Protein', basePrice: 219.90, desc: 'Proteína de carne bovina' },
-    { name: 'Egg Protein', basePrice: 179.90, desc: 'Proteína de clara de huevo' },
-  ],
-  creatinas: [
-    { name: 'Creatina Monohidratada', basePrice: 89.90, desc: 'Creatina pura micronizada' },
-    { name: 'Creatina HCL', basePrice: 129.90, desc: 'Creatina clorhidrato de alta absorción' },
-    { name: 'Creatina Kre-Alkalyn', basePrice: 149.90, desc: 'Creatina buffered sin carga' },
-    { name: 'Creatina + Glutamina', basePrice: 119.90, desc: 'Combo de creatina y glutamina' },
-    { name: 'Cell-Tech Creatina', basePrice: 169.90, desc: 'Fórmula avanzada de creatina' },
-  ],
-  preentreno: [
-    { name: 'Pre-Workout Extreme', basePrice: 149.90, desc: 'Máxima energía y focus' },
-    { name: 'C4 Original', basePrice: 129.90, desc: 'Pre-entreno clásico con beta-alanina' },
-    { name: 'Pump No-Stim', basePrice: 99.90, desc: 'Pre-entreno sin estimulantes' },
-    { name: 'Total War', basePrice: 159.90, desc: 'Pre-entreno de alta intensidad' },
-    { name: 'Amino Energy', basePrice: 89.90, desc: 'Energía con aminoácidos' },
-  ],
-  postentreno: [
-    { name: 'BCAA 2:1:1', basePrice: 79.90, desc: 'Aminoácidos ramificados para recuperación' },
-    { name: 'Glutamina Pura', basePrice: 69.90, desc: 'L-Glutamina para recuperación muscular' },
-    { name: 'Recovery Formula', basePrice: 119.90, desc: 'Fórmula completa post-entreno' },
-    { name: 'EAA Complete', basePrice: 99.90, desc: 'Aminoácidos esenciales completos' },
-    { name: 'ZMA Sleep', basePrice: 59.90, desc: 'Zinc y magnesio para recuperación nocturna' },
-  ],
-  mochilas: [
-    { name: 'Mochila Escolar', basePrice: 149.90, desc: 'Mochila resistente con compartimentos' },
-    { name: 'Mochila Laptop', basePrice: 199.90, desc: 'Mochila con compartimento acolchado para laptop' },
-    { name: 'Mochila Trekking', basePrice: 299.90, desc: 'Mochila de 40L para excursiones' },
-    { name: 'Morral Urbano', basePrice: 129.90, desc: 'Morral casual para el día a día' },
-    { name: 'Mochila Gym', basePrice: 99.90, desc: 'Mochila compacta para el gimnasio' },
-    { name: 'Mochila Viajera', basePrice: 349.90, desc: 'Mochila de viaje con múltiples compartimentos' },
-    { name: 'Bolso Deportivo', basePrice: 119.90, desc: 'Bolso con correa ajustable' },
-  ],
-  comidaperuana: [
-    { name: 'Ceviche de Pescado', basePrice: 35.90, desc: 'Ceviche fresco con camote y cancha' },
-    { name: 'Lomo Saltado', basePrice: 39.90, desc: 'Lomo fino con papas fritas y arroz' },
-    { name: 'Ají de Gallina', basePrice: 29.90, desc: 'Cremoso ají de gallina con papas' },
-    { name: 'Causa Limeña', basePrice: 24.90, desc: 'Causa rellena de pollo' },
-    { name: 'Arroz con Pollo', basePrice: 27.90, desc: 'Arroz verde con pollo y papas' },
-    { name: 'Tacu Tacu', basePrice: 32.90, desc: 'Tacu tacu con lomo o huevo frito' },
-    { name: 'Papa a la Huancaína', basePrice: 18.90, desc: 'Papas con salsa huancaína' },
-    { name: 'Anticuchos', basePrice: 22.90, desc: 'Anticuchos de corazón con papas' },
-    { name: 'Seco de Res', basePrice: 34.90, desc: 'Seco de res con frijoles y arroz' },
-    { name: 'Pollo a la Brasa', basePrice: 45.90, desc: 'Pollo a la brasa con papas y ensalada' },
-    { name: 'Chicharrón de Cerdo', basePrice: 28.90, desc: 'Chicharrón crocante con mote' },
-    { name: 'Rocoto Relleno', basePrice: 26.90, desc: 'Rocoto relleno de carne con pastel de papa' },
-  ],
-  panaderia: [
-    { name: 'Pan Francés (6 unid)', basePrice: 3.50, desc: 'Pan francés crujiente recién horneado' },
-    { name: 'Croissant de Mantequilla', basePrice: 4.90, desc: 'Croissant hojaldrado con mantequilla' },
-    { name: 'Pan de Molde Integral', basePrice: 8.90, desc: 'Pan de molde con harina integral' },
-    { name: 'Ciabatta Artesanal', basePrice: 6.90, desc: 'Pan ciabatta rústico' },
-    { name: 'Pan de Chocolate', basePrice: 3.90, desc: 'Pan dulce relleno de chocolate' },
-    { name: 'Empanada de Carne', basePrice: 5.90, desc: 'Empanada horneada de carne' },
-    { name: 'Pie de Manzana', basePrice: 12.90, desc: 'Pie de manzana tradicional' },
-    { name: 'Alfajor de Manjar', basePrice: 4.50, desc: 'Alfajor relleno de manjar blanco' },
-    { name: 'Queque de Vainilla', basePrice: 24.90, desc: 'Queque esponjoso de vainilla' },
-    { name: 'Torta de Chocolate', basePrice: 49.90, desc: 'Torta de chocolate para 12 personas' },
-    { name: 'Cachitos (4 unid)', basePrice: 7.90, desc: 'Cachitos de mantequilla' },
-    { name: 'Pan Campesino', basePrice: 9.90, desc: 'Pan rústico de masa madre' },
-  ],
-  accesorios: [
-    { name: 'Gorra Deportiva', basePrice: 49.90, desc: 'Gorra con visera curva' },
-    { name: 'Medias Pack x3', basePrice: 29.90, desc: 'Pack de 3 pares de medias deportivas' },
-    { name: 'Muñequera Sudor', basePrice: 19.90, desc: 'Muñequera absorbente de sudor' },
-    { name: 'Cintillo Deportivo', basePrice: 24.90, desc: 'Cintillo elástico antideslizante' },
-    { name: 'Guantes Gym', basePrice: 39.90, desc: 'Guantes con grip para pesas' },
-    { name: 'Botella Shaker', basePrice: 34.90, desc: 'Shaker de 700ml con mezclador' },
-    { name: 'Toalla Microfibra', basePrice: 29.90, desc: 'Toalla de secado rápido' },
-    { name: 'Bolsa de Tela', basePrice: 14.90, desc: 'Bolsa ecológica reutilizable' },
-  ],
-};
 
 // ============================================
 // MAIN SEED FUNCTION
 // ============================================
 
 async function main() {
-  console.log('🚀 Starting massive seed...\n');
+  console.log('💪 Starting BEAST NUTRITION seed (productos por peso)...\n');
 
-  // Clean existing data (optional - uncomment to reset)
-  // console.log('🗑️  Cleaning existing data...');
-  // await prisma.productVariantVariantValue.deleteMany();
-  // await prisma.productVariant.deleteMany();
-  // await prisma.productVariantValue.deleteMany();
-  // await prisma.productImage.deleteMany();
-  // await prisma.productStat.deleteMany();
-  // await prisma.product.deleteMany();
-  // await prisma.variantTypeValue.deleteMany();
-  // await prisma.variantType.deleteMany();
-  // await prisma.brand.deleteMany();
-  // await prisma.category.deleteMany();
+  // Clean existing data
+  console.log('🗑️  Cleaning existing data...');
+  await prisma.productVariantVariantValue.deleteMany();
+  await prisma.productVariant.deleteMany();
+  await prisma.productImage.deleteMany();
+  await prisma.productStat.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.variantTypeValue.deleteMany();
+  await prisma.variantType.deleteMany();
+  await prisma.brand.deleteMany();
+  await prisma.category.deleteMany();
 
-  // ============================================
-  // SETTINGS
-  // ============================================
+  // Settings
   console.log('⚙️  Creating settings...');
   await prisma.settings.upsert({
     where: { id: 'main' },
-    update: {},
-    create: {
-      id: 'main',
-      businessName: 'MegaCatálogo Perú',
+    update: {
+      businessName: 'BEAST NUTRITION',
       whatsapp: '+51999888777',
       currency: 'S/',
       cartEnabled: true,
-      welcomeMessage: '¡Hola! 👋 Gracias por visitar MegaCatálogo. ¿En qué puedo ayudarte?',
-      description: 'Tu tienda online con los mejores productos deportivos, suplementos y comida peruana',
-      seoTitle: 'MegaCatálogo Perú - Deportes, Suplementos y Más',
-      seoDescription: 'Encuentra zapatillas, ropa deportiva, suplementos, mochilas y comida peruana. Compra fácil por WhatsApp.',
+      welcomeMessage: '¡Qué tal BEAST! 💪 ¿Listo para llevar tu entrenamiento al siguiente nivel?',
+      description: 'Tu tienda de suplementos deportivos. Proteínas, creatinas, pre-entrenos y más.',
+      seoTitle: 'BEAST NUTRITION - Suplementos Deportivos | Proteínas, Creatinas, Pre-Entrenos',
+      seoDescription: 'Tienda de suplementos deportivos en Perú. Whey Protein, Creatina, Pre-entrenos y más.',
+    },
+    create: {
+      id: 'main',
+      businessName: 'BEAST NUTRITION',
+      whatsapp: '+51999888777',
+      currency: 'S/',
+      cartEnabled: true,
+      welcomeMessage: '¡Qué tal BEAST! 💪 ¿Listo para llevar tu entrenamiento al siguiente nivel?',
+      description: 'Tu tienda de suplementos deportivos.',
+      seoTitle: 'BEAST NUTRITION - Suplementos Deportivos',
+      seoDescription: 'Tienda de suplementos deportivos en Perú.',
     },
   });
 
-  // ============================================
-  // USERS
-  // ============================================
+  // Users
   console.log('👤 Creating users...');
   const hashedPassword = await bcrypt.hash('admin123', 12);
   await prisma.user.upsert({
-    where: { email: 'admin@catalogo.com' },
+    where: { email: 'admin@beastnutrition.com' },
     update: {},
     create: {
-      email: 'admin@catalogo.com',
+      email: 'admin@beastnutrition.com',
       password: hashedPassword,
-      name: 'Administrador',
+      name: 'Admin Beast',
       role: 'ADMIN',
     },
   });
 
-  const editorPassword = await bcrypt.hash('editor123', 12);
-  await prisma.user.upsert({
-    where: { email: 'editor@catalogo.com' },
-    update: {},
+  // Variant Type: Sabor
+  console.log('🏷️  Creating variant type (Sabor)...');
+  const saborType = await prisma.variantType.upsert({
+    where: { name: 'Sabor' },
+    update: { showAsFilter: true, showInLanding: false },
     create: {
-      email: 'editor@catalogo.com',
-      password: editorPassword,
-      name: 'Editor',
-      role: 'EDITOR',
+      name: 'Sabor',
+      description: 'Sabores disponibles',
+      order: 0,
+      isActive: true,
+      showAsFilter: true,
+      showInLanding: false,
     },
   });
 
-  // ============================================
-  // VARIANT TYPES
-  // ============================================
-  console.log('🏷️  Creating variant types...');
-  const variantTypes: Record<string, { id: string }> = {};
+  // Create all flavor values
+  const allFlavors = new Set<string>();
+  PRODUCTS.forEach(p => p.flavors.forEach(f => allFlavors.add(f)));
 
-  for (let i = 0; i < VARIANT_TYPES_DATA.length; i++) {
-    const vt = VARIANT_TYPES_DATA[i];
-    const created = await prisma.variantType.upsert({
-      where: { name: vt.name },
+  const flavorValueMap: Record<string, string> = {};
+  let flavorOrder = 0;
+  for (const flavor of allFlavors) {
+    const value = await prisma.variantTypeValue.upsert({
+      where: { variantTypeId_value: { variantTypeId: saborType.id, value: flavor } },
       update: {},
-      create: {
-        name: vt.name,
-        description: vt.description,
-        order: i,
-        isActive: true,
-      },
+      create: { variantTypeId: saborType.id, value: flavor, order: flavorOrder++, isActive: true },
     });
-    variantTypes[vt.name] = { id: created.id };
-
-    // Create variant type values
-    const values = VARIANT_VALUES[vt.name as keyof typeof VARIANT_VALUES] || [];
-    for (let j = 0; j < values.length; j++) {
-      await prisma.variantTypeValue.upsert({
-        where: {
-          variantTypeId_value: {
-            variantTypeId: created.id,
-            value: values[j],
-          },
-        },
-        update: {},
-        create: {
-          variantTypeId: created.id,
-          value: values[j],
-          order: j,
-          isActive: true,
-        },
-      });
-    }
+    flavorValueMap[flavor] = value.id;
   }
-  console.log(`   ✅ Created ${VARIANT_TYPES_DATA.length} variant types with values`);
+  console.log(`   ✅ Created ${allFlavors.size} flavor values`);
 
-  // ============================================
-  // BRANDS
-  // ============================================
+  // Brands
   console.log('🏪 Creating brands...');
-  const brands: { id: string; name: string }[] = [];
-
+  const brandsMap: Record<string, string> = {};
   for (let i = 0; i < BRANDS_DATA.length; i++) {
     const b = BRANDS_DATA[i];
     const created = await prisma.brand.upsert({
       where: { slug: generateSlug(b.name) },
       update: {},
-      create: {
-        name: b.name,
-        slug: generateSlug(b.name),
-        description: b.description,
-        logo: b.logo,
-        order: i,
-        isActive: true,
-      },
+      create: { name: b.name, slug: generateSlug(b.name), description: b.description, order: i, isActive: true },
     });
-    brands.push({ id: created.id, name: created.name });
+    brandsMap[b.name] = created.id;
   }
-  console.log(`   ✅ Created ${brands.length} brands`);
+  console.log(`   ✅ Created ${BRANDS_DATA.length} brands`);
 
-  // ============================================
-  // CATEGORIES
-  // ============================================
+  // Categories
   console.log('📁 Creating categories...');
-  const categories: { id: string; name: string; slug: string }[] = [];
-
+  const categoriesMap: Record<string, string> = {};
   for (let i = 0; i < CATEGORIES_DATA.length; i++) {
     const c = CATEGORIES_DATA[i];
-    const slug = generateSlug(c.name);
     const created = await prisma.category.upsert({
-      where: { slug },
+      where: { slug: c.slug },
       update: { description: c.description, image: c.image },
       create: {
-        name: c.name,
-        slug,
-        description: c.description,
-        image: c.image,
-        order: i,
-        isActive: true,
-        seoTitle: `${c.name} - MegaCatálogo`,
-        seoDescription: c.description,
+        name: c.name, slug: c.slug, description: c.description, image: c.image,
+        order: i, isActive: true, seoTitle: `${c.name} - BEAST NUTRITION`, seoDescription: c.description,
       },
     });
-    categories.push({ id: created.id, name: created.name, slug: created.slug });
+    categoriesMap[c.slug] = created.id;
   }
-  console.log(`   ✅ Created ${categories.length} categories`);
+  console.log(`   ✅ Created ${CATEGORIES_DATA.length} categories`);
 
-  // ============================================
-  // PRODUCTS (200 products)
-  // ============================================
-  console.log('📦 Creating 200 products...');
-
-  const createdProducts: { id: string; categorySlug: string }[] = [];
+  // Products
+  console.log('📦 Creating products (one per weight)...');
   let productCount = 0;
+  let variantCount = 0;
 
-  // Map category slugs to template keys
-  const categoryTemplateMap: Record<string, string> = {
-    'zapatos': 'zapatos',
-    'ropa-deportiva': 'ropa',
-    'proteinas': 'proteinas',
-    'creatinas': 'creatinas',
-    'pre-entreno': 'preentreno',
-    'post-entreno': 'postentreno',
-    'mochilas': 'mochilas',
-    'comida-peruana': 'comidaperuana',
-    'panaderia': 'panaderia',
-    'accesorios': 'accesorios',
-  };
+  for (const template of PRODUCTS) {
+    const categoryId = categoriesMap[template.category];
+    const brandId = brandsMap[template.brand] || null;
+    const images = SUPPLEMENT_IMAGES[template.category as keyof typeof SUPPLEMENT_IMAGES] || SUPPLEMENT_IMAGES.proteinas;
 
-  // Distribute products across categories
-  const productsPerCategory = Math.ceil(200 / categories.length);
+    for (const presentation of template.presentations) {
+      const hasDiscount = Math.random() > 0.75;
+      const isFeatured = Math.random() > 0.85;
 
-  for (const category of categories) {
-    const templateKey = categoryTemplateMap[category.slug] || 'accesorios';
-    const templates = PRODUCT_TEMPLATES[templateKey as keyof typeof PRODUCT_TEMPLATES] || PRODUCT_TEMPLATES.accesorios;
-
-    for (let i = 0; i < productsPerCategory && productCount < 200; i++) {
-      const template = templates[i % templates.length];
-      const variation = Math.floor(i / templates.length) + 1;
-      const productName = variation > 1 ? `${template.name} ${['Pro', 'Elite', 'Plus', 'Max', 'Ultra'][variation % 5]}` : template.name;
-
-      // Random attributes
-      const hasBrand = Math.random() > 0.3; // 70% have brand
-      const hasDiscount = Math.random() > 0.6; // 40% have discount
-      const isFeatured = Math.random() > 0.85; // 15% featured
-
-      // Get appropriate brand for category
-      let brandId: string | null = null;
-      if (hasBrand) {
-        if (['zapatos', 'ropa-deportiva', 'accesorios'].includes(category.slug)) {
-          const sportBrands = brands.filter(b => ['Nike', 'Adidas', 'Puma', 'Reebok', 'New Balance', 'Under Armour', 'Asics'].includes(b.name));
-          brandId = randomElement(sportBrands)?.id || null;
-        } else if (['proteinas', 'creatinas', 'pre-entreno', 'post-entreno'].includes(category.slug)) {
-          const suppBrands = brands.filter(b => ['Optimum Nutrition', 'MuscleTech', 'BSN', 'Dymatize', 'MyProtein', 'Cellucor'].includes(b.name));
-          brandId = randomElement(suppBrands)?.id || null;
-        } else if (['mochilas'].includes(category.slug)) {
-          const bagBrands = brands.filter(b => ['The North Face', 'JanSport', 'Nike', 'Adidas'].includes(b.name));
-          brandId = randomElement(bagBrands)?.id || null;
-        }
-      }
-
-      const price = template.basePrice * (0.8 + Math.random() * 0.4); // ±20%
-      const salePrice = hasDiscount ? price * (0.7 + Math.random() * 0.2) : null; // 10-30% off
-      const discountPercent = salePrice ? Math.round((1 - salePrice / price) * 100) : null;
-
+      const productName = `${template.baseName} ${presentation.weight}`;
       const slug = generateSlug(`${productName}-${productCount}`);
-
-      // Get image for category
-      const imageCategory = ['proteinas', 'creatinas', 'pre-entreno', 'post-entreno'].includes(category.slug)
-        ? 'suplementos'
-        : ['comida-peruana'].includes(category.slug)
-          ? 'comida'
-          : ['zapatos'].includes(category.slug)
-            ? 'zapatillas'
-            : categoryTemplateMap[category.slug] || 'ropa';
-      const images = PRODUCT_IMAGES[imageCategory as keyof typeof PRODUCT_IMAGES] || PRODUCT_IMAGES.ropa;
-      const imageUrl = randomElement(images);
+      const price = presentation.price;
+      const salePrice = hasDiscount ? Math.round(price * (0.85 + Math.random() * 0.1) * 100) / 100 : null;
+      const discountPercent = salePrice ? Math.round((1 - salePrice / price) * 100) : null;
+      const imageUrl = images[productCount % images.length];
 
       try {
         const product = await prisma.product.create({
           data: {
             name: productName,
             slug,
-            description: template.desc,
+            description: template.description,
             price: Math.round(price * 100) / 100,
-            salePrice: salePrice ? Math.round(salePrice * 100) / 100 : null,
+            salePrice,
             discountPercent,
             showPrice: true,
-            stock: randomInt(0, 100),
-            showStock: Math.random() > 0.5,
+            stock: randomInt(5, 50),
+            showStock: true,
             isActive: true,
             isFeatured,
-            order: i,
-            categoryId: category.id,
+            order: productCount,
+            categoryId,
             brandId,
+            seoTitle: `${productName} - ${template.brand} | BEAST NUTRITION`,
+            seoDescription: template.description,
           },
         });
 
-        // Add product image
         await prisma.productImage.create({
-          data: {
-            productId: product.id,
-            url: imageUrl,
-            publicId: `seed-${product.id}`,
-            order: 0,
-          },
+          data: { productId: product.id, url: imageUrl, publicId: `seed-${product.id}`, order: 0 },
         });
 
-        createdProducts.push({ id: product.id, categorySlug: category.slug });
-        productCount++;
+        // Variants by flavor
+        for (let i = 0; i < template.flavors.length; i++) {
+          const flavor = template.flavors[i];
+          const flavorValueId = flavorValueMap[flavor];
+          if (!flavorValueId) continue;
 
-        if (productCount % 50 === 0) {
-          console.log(`   📦 ${productCount} products created...`);
-        }
-      } catch (e) {
-        // Skip if slug collision
-        continue;
-      }
-    }
-  }
-  console.log(`   ✅ Created ${productCount} products`);
-
-  // ============================================
-  // PRODUCT VARIANTS (500 variants)
-  // ============================================
-  console.log('🎨 Creating 500 product variants...');
-
-  let variantCount = 0;
-  const variantsPerProduct = Math.ceil(500 / createdProducts.length);
-
-  for (const product of createdProducts) {
-    if (variantCount >= 500) break;
-
-    // Determine which variant types to use based on category
-    let variantTypesToUse: { typeId: string; typeName: string; values: string[] }[] = [];
-
-    if (['zapatos'].includes(product.categorySlug)) {
-      variantTypesToUse = [
-        { typeId: variantTypes['Talla'].id, typeName: 'Talla', values: ['38', '39', '40', '41', '42', '43', '44'] },
-        { typeId: variantTypes['Color'].id, typeName: 'Color', values: ['Negro', 'Blanco', 'Gris', 'Azul'] },
-      ];
-    } else if (['ropa-deportiva'].includes(product.categorySlug)) {
-      variantTypesToUse = [
-        { typeId: variantTypes['Talla'].id, typeName: 'Talla', values: ['S', 'M', 'L', 'XL', 'XXL'] },
-        { typeId: variantTypes['Color'].id, typeName: 'Color', values: ['Negro', 'Blanco', 'Rojo', 'Azul', 'Gris'] },
-      ];
-    } else if (['proteinas', 'creatinas', 'pre-entreno', 'post-entreno'].includes(product.categorySlug)) {
-      variantTypesToUse = [
-        { typeId: variantTypes['Sabor'].id, typeName: 'Sabor', values: ['Chocolate', 'Vainilla', 'Fresa', 'Cookies & Cream'] },
-        { typeId: variantTypes['Peso'].id, typeName: 'Peso', values: ['1kg', '2kg', '2.5kg'] },
-      ];
-    } else if (['mochilas'].includes(product.categorySlug)) {
-      variantTypesToUse = [
-        { typeId: variantTypes['Color'].id, typeName: 'Color', values: ['Negro', 'Azul', 'Gris', 'Verde'] },
-        { typeId: variantTypes['Tamaño'].id, typeName: 'Tamaño', values: ['Mediano', 'Grande'] },
-      ];
-    } else if (['accesorios'].includes(product.categorySlug)) {
-      variantTypesToUse = [
-        { typeId: variantTypes['Color'].id, typeName: 'Color', values: ['Negro', 'Blanco', 'Rojo'] },
-      ];
-    }
-
-    // Skip categories without variants (food, bakery)
-    if (variantTypesToUse.length === 0) continue;
-
-    // Create combinations
-    const numVariants = Math.min(variantsPerProduct, 500 - variantCount);
-
-    for (let v = 0; v < numVariants; v++) {
-      try {
-        const variant = await prisma.productVariant.create({
-          data: {
-            productId: product.id,
-            stock: randomInt(0, 50),
-            isActive: true,
-            order: v,
-          },
-        });
-
-        // Add variant values
-        for (const vt of variantTypesToUse) {
-          const value = randomElement(vt.values);
-          await prisma.productVariantVariantValue.create({
+          const variant = await prisma.productVariant.create({
             data: {
-              productVariantId: variant.id,
-              variantTypeId: vt.typeId,
-              value,
+              productId: product.id,
+              sku: `${slug}-${generateSlug(flavor)}`.toUpperCase().slice(0, 50),
+              price: null,
+              stock: randomInt(3, 20),
+              isActive: true,
+              order: i,
             },
           });
-        }
 
-        variantCount++;
-      } catch (e) {
-        continue;
+          await prisma.productVariantVariantValue.create({
+            data: { productVariantId: variant.id, variantTypeId: saborType.id, value: flavor },
+          });
+          variantCount++;
+        }
+        productCount++;
+      } catch (error) {
+        console.error(`Error creating ${productName}:`, error);
       }
     }
-
-    if (variantCount % 100 === 0) {
-      console.log(`   🎨 ${variantCount} variants created...`);
-    }
   }
-  console.log(`   ✅ Created ${variantCount} product variants`);
 
-  // ============================================
-  // SUMMARY
-  // ============================================
-  console.log('\n====================================');
-  console.log('       SEED COMPLETED!');
-  console.log('====================================\n');
-  console.log('Credenciales de acceso:');
-  console.log('------------------------');
-  console.log('Admin:');
-  console.log('  Email: admin@catalogo.com');
-  console.log('  Password: admin123');
-  console.log('');
-  console.log('Editor:');
-  console.log('  Email: editor@catalogo.com');
-  console.log('  Password: editor123');
-  console.log('');
-  console.log('Datos creados:');
-  console.log('------------------------');
-  console.log(`  - ${VARIANT_TYPES_DATA.length} Tipos de Variante`);
-  console.log(`  - ${brands.length} Marcas con imágenes`);
-  console.log(`  - ${categories.length} Categorías con imágenes`);
-  console.log(`  - ${productCount} Productos con imágenes`);
-  console.log(`  - ${variantCount} Sub-productos (variantes)`);
-  console.log('');
+  console.log(`   ✅ Created ${productCount} products`);
+  console.log(`   ✅ Created ${variantCount} flavor variants`);
+
+  console.log(`
+====================================
+   💪 BEAST NUTRITION READY! 💪
+====================================
+
+Email: admin@beastnutrition.com
+Password: admin123
+
+- ${BRANDS_DATA.length} Marcas
+- ${CATEGORIES_DATA.length} Categorías
+- ${productCount} Productos (por peso)
+- ${variantCount} Variantes (por sabor)
+
+✅ Cada peso es un producto visible
+✅ Sabores como variantes internas
+`);
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });

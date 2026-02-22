@@ -63,8 +63,8 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center">
-                  <ShoppingBag className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
                   <h2 className="font-semibold text-[#0a0a0f] dark:text-white">
@@ -140,7 +140,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                               {item.variant.values}
                             </p>
                           )}
-                          <p className="text-sm font-semibold text-cyan-600 dark:text-cyan-400 mt-1">
+                          <p className="text-sm font-semibold text-red-600 dark:text-red-400 mt-1">
                             {currency} {item.price.toFixed(2)}
                           </p>
 

@@ -78,19 +78,25 @@ export function SearchBar({
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
+  // Compact variant uses different colors for light/dark mode
+  const isCompact = variant === 'compact';
+
   return (
     <div className={cn('relative w-full max-w-2xl', className)}>
       <form onSubmit={handleSubmit}>
         <motion.div
           className={cn(
             'relative flex items-center overflow-hidden',
-            'bg-white/10 backdrop-blur-md',
-            'border border-white/20',
             'transition-all duration-300',
+            // Default/Hero variants: always dark background with white text
+            !isCompact && 'bg-white/10 backdrop-blur-md border border-white/20',
+            // Compact variant: adapts to light/dark mode
+            isCompact && 'bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700',
             variant === 'hero' && 'rounded-2xl h-16',
             variant === 'default' && 'rounded-xl h-12',
             variant === 'compact' && 'rounded-lg h-10',
-            isFocused && 'ring-2 ring-cyan-500/50 border-cyan-500/50 bg-white/20'
+            isFocused && !isCompact && 'ring-2 ring-red-500/50 border-red-500/50 bg-white/20',
+            isFocused && isCompact && 'ring-2 ring-red-500/50 border-red-500 dark:border-red-500'
           )}
           animate={isFocused ? { scale: 1.02 } : { scale: 1 }}
           transition={{ duration: 0.2 }}
@@ -106,12 +112,13 @@ export function SearchBar({
           >
             {isSearching ? (
               <Loader2 className={cn(
-                'text-white/60 animate-spin',
+                'animate-spin',
+                isCompact ? 'text-neutral-400 dark:text-neutral-500' : 'text-white/60',
                 variant === 'hero' ? 'w-6 h-6' : 'w-5 h-5'
               )} />
             ) : (
               <Search className={cn(
-                'text-white/60',
+                isCompact ? 'text-neutral-400 dark:text-neutral-500' : 'text-white/60',
                 variant === 'hero' ? 'w-6 h-6' : 'w-5 h-5'
               )} />
             )}
@@ -128,7 +135,10 @@ export function SearchBar({
             placeholder={placeholder}
             className={cn(
               'flex-1 bg-transparent border-none outline-none',
-              'text-white placeholder:text-white/40',
+              // Default/Hero: white text on dark background
+              !isCompact && 'text-white placeholder:text-white/40',
+              // Compact: dark text on light background, light text on dark background
+              isCompact && 'text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
               variant === 'hero' && 'text-lg',
               variant === 'default' && 'text-base',
               variant === 'compact' && 'text-sm'
@@ -141,12 +151,20 @@ export function SearchBar({
               <motion.button
                 type="button"
                 onClick={clearSearch}
-                className="p-2 hover:bg-white/10 rounded-full mr-2"
+                className={cn(
+                  'p-2 rounded-full mr-2',
+                  isCompact
+                    ? 'hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                    : 'hover:bg-white/10'
+                )}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.5 }}
               >
-                <X className="w-4 h-4 text-white/60" />
+                <X className={cn(
+                  'w-4 h-4',
+                  isCompact ? 'text-neutral-500 dark:text-neutral-400' : 'text-white/60'
+                )} />
               </motion.button>
             )}
           </AnimatePresence>
@@ -156,7 +174,7 @@ export function SearchBar({
             type="submit"
             className={cn(
               'flex items-center justify-center',
-              'bg-gradient-to-r from-cyan-600 to-blue-600',
+              'bg-gradient-to-r from-red-600 to-orange-600',
               'text-white font-medium',
               'transition-all duration-300',
               variant === 'hero' && 'h-12 px-6 rounded-xl mr-2',
@@ -182,8 +200,16 @@ export function SearchBar({
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="bg-[#0a0a0f]/95 backdrop-blur-md rounded-xl border border-white/10 p-4 shadow-2xl">
-              <div className="flex items-center gap-2 text-white/50 text-sm mb-3">
+            <div className={cn(
+              'rounded-xl p-4 shadow-2xl',
+              isCompact
+                ? 'bg-white dark:bg-[#0a0a0f]/95 backdrop-blur-md border border-neutral-200 dark:border-white/10'
+                : 'bg-[#0a0a0f]/95 backdrop-blur-md border border-white/10'
+            )}>
+              <div className={cn(
+                'flex items-center gap-2 text-sm mb-3',
+                isCompact ? 'text-neutral-500 dark:text-white/50' : 'text-white/50'
+              )}>
                 <TrendingUp className="w-4 h-4" />
                 <span>Búsquedas populares</span>
               </div>
@@ -195,10 +221,11 @@ export function SearchBar({
                     onClick={() => handleQuickSearch(term)}
                     className={cn(
                       'px-4 py-2 rounded-full',
-                      'bg-white/10 hover:bg-cyan-600/50',
-                      'text-white/80 hover:text-white',
                       'text-sm font-medium',
-                      'transition-all duration-200'
+                      'transition-all duration-200',
+                      isCompact
+                        ? 'bg-neutral-100 dark:bg-white/10 hover:bg-red-100 dark:hover:bg-red-600/50 text-neutral-700 dark:text-white/80 hover:text-red-600 dark:hover:text-white'
+                        : 'bg-white/10 hover:bg-red-600/50 text-white/80 hover:text-white'
                     )}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

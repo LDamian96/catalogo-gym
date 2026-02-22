@@ -14,30 +14,30 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
         outline:
-          "border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-neutral-700 dark:text-neutral-200 hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:border-cyan-500/40 dark:hover:border-cyan-500/40",
+          "border border-black/[0.08] dark:border-white/[0.08] bg-transparent text-neutral-700 dark:text-neutral-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-500/40 dark:hover:border-red-500/40",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
         ghost:
-          "text-neutral-700 dark:text-neutral-200 hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:text-cyan-600 dark:hover:text-cyan-400",
+          "text-neutral-700 dark:text-neutral-200 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400",
         link:
-          "text-cyan-600 dark:text-cyan-400 underline-offset-4 hover:underline",
+          "text-red-600 dark:text-red-400 underline-offset-4 hover:underline",
         // V0 Style Variants - Cyan/Blue
         "v0-primary":
-          "bg-white dark:bg-white text-black hover:bg-neutral-100 dark:hover:bg-neutral-100 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] active:scale-[0.98]",
+          "bg-white dark:bg-white text-black hover:bg-neutral-100 dark:hover:bg-neutral-100 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)] active:scale-[0.98]",
         "v0-secondary":
-          "bg-transparent text-neutral-800 dark:text-white border border-black/[0.08] dark:border-white/[0.1] hover:border-cyan-500/50 hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]",
+          "bg-transparent text-neutral-800 dark:text-white border border-black/[0.08] dark:border-white/[0.1] hover:border-red-500/50 hover:bg-red-500/5 dark:hover:bg-red-500/10 hover:shadow-[0_0_15px_rgba(239,68,68,0.15)]",
         "v0-ghost":
-          "bg-transparent text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10",
+          "bg-transparent text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-red-500/5 dark:hover:bg-red-500/10",
         "v0-gradient":
-          "bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-500 text-white hover:from-cyan-600 hover:via-sky-600 hover:to-blue-600 hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] active:scale-[0.98]",
+          "bg-gradient-to-r from-red-500 via-sky-500 to-orange-500 text-white hover:from-red-600 hover:via-sky-600 hover:to-orange-600 hover:shadow-[0_0_25px_rgba(239,68,68,0.4)] active:scale-[0.98]",
         "v0-outline-gradient":
-          "relative bg-transparent text-neutral-800 dark:text-white overflow-hidden before:absolute before:inset-0 before:rounded-lg before:p-[1px] before:bg-gradient-to-r before:from-cyan-500 before:via-sky-500 before:to-blue-500 before:-z-10 hover:before:opacity-100 before:opacity-60 before:transition-opacity hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]",
+          "relative bg-transparent text-neutral-800 dark:text-white overflow-hidden before:absolute before:inset-0 before:rounded-lg before:p-[1px] before:bg-gradient-to-r before:from-red-500 before:via-sky-500 before:to-orange-500 before:-z-10 hover:before:opacity-100 before:opacity-60 before:transition-opacity hover:shadow-[0_0_15px_rgba(239,68,68,0.2)]",
         "v0-soft":
-          "bg-cyan-100 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-500/25 border border-cyan-200/50 dark:border-cyan-500/20",
-        "v0-soft-blue":
-          "bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-500/25 border border-blue-200/50 dark:border-blue-500/20",
+          "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-500/25 border border-red-200/50 dark:border-red-500/20",
+        "v0-soft-orange":
+          "bg-orange-100 dark:bg-orange-500/15 text-orange-700 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-500/25 border border-orange-200/50 dark:border-orange-500/20",
         "v0-glass":
-          "bg-white/10 dark:bg-white/5 backdrop-blur-xl text-neutral-800 dark:text-white border border-white/20 dark:border-white/[0.08] hover:bg-white/20 dark:hover:bg-white/10 hover:border-cyan-500/30",
+          "bg-white/10 dark:bg-white/5 backdrop-blur-xl text-neutral-800 dark:text-white border border-white/20 dark:border-white/[0.08] hover:bg-white/20 dark:hover:bg-white/10 hover:border-red-500/30",
       },
       size: {
         default: "h-10 px-4 py-2",

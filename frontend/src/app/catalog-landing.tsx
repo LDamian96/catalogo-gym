@@ -117,9 +117,9 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
 
       {/* Brands Marquee Section - Colorful */}
       {brands.length > 0 && (
-        <section className="py-12 lg:py-16 relative overflow-hidden bg-gradient-to-b from-white via-cyan-50/30 to-white dark:from-[#0a0a0f] dark:via-cyan-950/20 dark:to-[#0a0a0f]">
+        <section className="py-12 lg:py-16 relative overflow-hidden bg-gradient-to-b from-white via-red-50/30 to-white dark:from-[#0a0a0f] dark:via-red-950/20 dark:to-[#0a0a0f]">
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 relative">
             <motion.div
@@ -130,7 +130,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
               className="text-center"
             >
               <motion.span
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white text-sm font-bold shadow-lg shadow-cyan-500/30"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-orange-600 rounded-full text-white text-sm font-bold shadow-lg shadow-red-500/30"
                 whileHover={{ scale: 1.05 }}
               >
                 <Crown className="w-4 h-4" />
@@ -163,7 +163,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                   <Link
                     key={`brand-${brand.id}-${index}`}
                     href={`/productos?marca=${brand.slug}`}
-                    className="flex-shrink-0 px-6 py-4 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-cyan-100 dark:border-cyan-500/20 hover:border-cyan-400 dark:hover:border-cyan-500 hover:shadow-xl hover:shadow-cyan-500/20 hover:-translate-y-2 transition-all duration-300 group"
+                    className="flex-shrink-0 px-6 py-4 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-red-100 dark:border-red-500/20 hover:border-red-400 dark:hover:border-red-500 hover:shadow-xl hover:shadow-red-500/20 hover:-translate-y-2 transition-all duration-300 group"
                   >
                     {brand.logo ? (
                       <div className="relative w-28 h-12">
@@ -175,7 +175,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                         />
                       </div>
                     ) : (
-                      <span className="text-base font-bold text-neutral-600 dark:text-neutral-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-blue-600 whitespace-nowrap transition-all duration-300">
+                      <span className="text-base font-bold text-neutral-600 dark:text-neutral-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-red-600 group-hover:to-orange-600 whitespace-nowrap transition-all duration-300">
                         {brand.name}
                       </span>
                     )}
@@ -200,9 +200,9 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                   transition={{ duration: 0.5, ease: v0Ease }}
                   viewport={{ once: true }}
                   whileHover={{ scale: 1.02, y: -5 }}
-                  className="relative h-56 lg:h-64 rounded-3xl overflow-hidden group cursor-pointer shadow-xl shadow-cyan-500/20"
+                  className="relative h-56 lg:h-64 rounded-3xl overflow-hidden group cursor-pointer shadow-xl shadow-red-500/20"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-600 to-amber-600" />
                   {featuredOnly[0]?.images?.[0]?.url && (
                     <motion.div
                       className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-all duration-700"
@@ -230,7 +230,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                       <p className="text-white/80 text-sm mb-4">Los mejores productos seleccionados para ti</p>
                       <Link
                         href="/productos?destacados=true"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-cyan-600 rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-white/30 transition-all duration-300"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-red-600 rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-white/30 transition-all duration-300"
                       >
                         Explorar
                         <ArrowRight className="w-4 h-4" />
@@ -300,7 +300,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                     !featuredOnly.length || !productsOnSale.length ? '' : 'md:col-span-2 lg:col-span-1'
                   }`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-600 to-red-600" />
                   {featuredProducts[0]?.images?.[0]?.url && (
                     <motion.div
                       className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-all duration-700"
@@ -352,10 +352,10 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                     className="block relative h-36 lg:h-44 rounded-2xl overflow-hidden group shadow-lg hover:shadow-2xl transition-all duration-500"
                   >
                     <div className={`absolute inset-0 ${
-                      index === 0 ? 'bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600' :
-                      index === 1 ? 'bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-600' :
+                      index === 0 ? 'bg-gradient-to-br from-red-400 via-red-500 to-orange-600' :
+                      index === 1 ? 'bg-gradient-to-br from-amber-400 via-amber-500 to-indigo-600' :
                       index === 2 ? 'bg-gradient-to-br from-amber-400 via-orange-500 to-red-500' :
-                      'bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600'
+                      'bg-gradient-to-br from-emerald-400 via-teal-500 to-red-600'
                     }`} />
                     {category.image && (
                       <motion.div
@@ -390,16 +390,16 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
 
       {/* Featured Products Section - Colorful */}
       {featuredOnly.length > 0 && (
-        <section className="py-20 lg:py-28 relative overflow-hidden bg-gradient-to-b from-neutral-50 via-white to-cyan-50/30 dark:from-neutral-950 dark:via-[#0a0a0f] dark:to-cyan-950/20">
+        <section className="py-20 lg:py-28 relative overflow-hidden bg-gradient-to-b from-neutral-50 via-white to-red-50/30 dark:from-neutral-950 dark:via-[#0a0a0f] dark:to-red-950/20">
           {/* Decorative background */}
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
-              className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 dark:bg-cyan-500/20 rounded-full blur-3xl"
+              className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.2, 1], x: [0, 30, 0] }}
               transition={{ duration: 10, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-3xl"
+              className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-3xl"
               animate={{ scale: [1.2, 1, 1.2], y: [0, 30, 0] }}
               transition={{ duration: 12, repeat: Infinity }}
             />
@@ -415,7 +415,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
             >
               <div className="text-center sm:text-left">
                 <motion.span
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full text-sm font-bold shadow-lg shadow-cyan-500/30 mb-4"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-red-500/30 mb-4"
                   animate={{ scale: [1, 1.02, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
@@ -424,13 +424,13 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                   <Sparkles className="w-4 h-4" />
                 </motion.span>
                 <h2 className="text-3xl lg:text-5xl font-black text-neutral-900 dark:text-white tracking-tight">
-                  Productos <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">Destacados</span>
+                  Productos <span className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">Destacados</span>
                 </h2>
               </div>
               <motion.div whileHover={{ x: 5, scale: 1.05 }}>
                 <Link
                   href="/productos?destacados=true"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-300"
                 >
                   Ver todos
                   <ArrowRight className="w-4 h-4" />
@@ -538,7 +538,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
 
       {/* Call to Action Section - Colorful */}
       <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-700 to-purple-800" />
+        <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-700 to-amber-800" />
 
         {/* Animated decorations */}
         <motion.div
@@ -547,7 +547,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
           transition={{ duration: 10, repeat: Infinity }}
         />
         <motion.div
-          className="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl"
+          className="absolute -bottom-20 -right-20 w-80 h-80 bg-amber-400/20 rounded-full blur-3xl"
           animate={{ scale: [1.5, 1, 1.5] }}
           transition={{ duration: 12, repeat: Infinity }}
         />
@@ -577,7 +577,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/productos"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-cyan-600 rounded-2xl text-lg font-bold shadow-2xl shadow-black/30 hover:shadow-white/30 transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-white text-red-600 rounded-2xl text-lg font-bold shadow-2xl shadow-black/30 hover:shadow-white/30 transition-all duration-300"
                 >
                   <ShoppingBag className="w-5 h-5" />
                   Ver Catálogo Completo
