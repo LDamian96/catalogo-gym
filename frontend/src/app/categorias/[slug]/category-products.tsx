@@ -230,9 +230,9 @@ export function CategoryProducts({
   const motivation = categoryMotivation[category.slug] || defaultMotivation;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
+    <div className="min-h-screen bg-white dark:bg-[#000000]">
       {/* Header with Category Info - BEAST MODE */}
-      <div className="relative bg-[#0a0a0f] overflow-hidden">
+      <div className="relative bg-[#000000] overflow-hidden">
         {/* Animated Background Pattern */}
         <div className="absolute inset-0">
           <div className={cn(
@@ -257,7 +257,7 @@ export function CategoryProducts({
 
         {/* Diagonal cut overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#000000] to-transparent" />
 
         {/* Content */}
         <div className="relative max-w-7xl mx-auto px-4 py-10 md:py-16">
@@ -378,7 +378,7 @@ export function CategoryProducts({
       </div>
 
       {/* Search & Filters Bar */}
-      <div className="sticky top-0 z-30 bg-white dark:bg-[#0a0a0f] border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
+      <div className="sticky top-0 z-30 bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {/* Search */}
@@ -398,7 +398,7 @@ export function CategoryProducts({
                     'bg-neutral-100 dark:bg-neutral-800',
                     'border border-neutral-200 dark:border-neutral-700',
                     'text-neutral-700 dark:text-neutral-300 text-sm',
-                    'focus:outline-none focus:ring-2 focus:ring-red-500/50'
+                    'focus:outline-none focus:ring-2 focus:ring-cyan-500/50'
                   )}
                 >
                   <option value="">Ordenar por</option>
@@ -419,7 +419,7 @@ export function CategoryProducts({
                   'bg-neutral-100 dark:bg-neutral-800',
                   'border border-neutral-200 dark:border-neutral-700',
                   'text-neutral-700 dark:text-neutral-300 text-sm',
-                  hasActiveFilters && 'border-red-500 text-red-600 dark:text-red-400'
+                  hasActiveFilters && 'border-cyan-500 text-cyan-600 dark:text-cyan-400'
                 )}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -427,7 +427,7 @@ export function CategoryProducts({
                 <SlidersHorizontal className="w-4 h-4" />
                 Filtros
                 {hasActiveFilters && (
-                  <span className="w-2 h-2 rounded-full bg-red-500" />
+                  <span className="w-2 h-2 rounded-full bg-cyan-500" />
                 )}
               </motion.button>
 
@@ -487,13 +487,13 @@ export function CategoryProducts({
                         className={cn(
                           'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                           currentSort === option.value
-                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                         )}
                       >
                         {option.label}
                         {currentSort === option.value && (
-                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500" />
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
                         )}
                       </button>
                     ))}
@@ -513,7 +513,7 @@ export function CategoryProducts({
                       <span className="flex items-center gap-2">
                         {variantType.name}
                         {selectedVariants[variantType.id]?.length > 0 && (
-                          <span className="px-1.5 py-0.5 text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full normal-case font-medium">
+                          <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
                             {selectedVariants[variantType.id].length}
                           </span>
                         )}
@@ -542,7 +542,7 @@ export function CategoryProducts({
                                   className={cn(
                                     'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
                                     isSelected
-                                      ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40 font-medium'
+                                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
                                       : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
                                   )}
                                 >
@@ -571,7 +571,7 @@ export function CategoryProducts({
                         className={cn(
                           'block px-3 py-2 rounded-lg text-sm transition-colors',
                           cat.slug === category.slug
-                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
                         )}
                       >
@@ -599,7 +599,7 @@ export function CategoryProducts({
                         placeholder="S/ 0"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
                       />
                     </div>
                     <div className="flex-1">
@@ -609,20 +609,20 @@ export function CategoryProducts({
                         placeholder="S/ 999"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all"
+                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
                       />
                     </div>
                   </div>
                   <button
                     onClick={applyPriceFilter}
-                    className="w-full py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-500/10 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors"
+                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
                   >
                     Aplicar precio
                   </button>
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="w-full py-2 text-xs text-neutral-500 hover:text-red-600 transition-colors"
+                      className="w-full py-2 text-xs text-neutral-500 hover:text-cyan-600 transition-colors"
                     >
                       Limpiar filtros
                     </button>
@@ -689,7 +689,7 @@ export function CategoryProducts({
                               className={cn(
                                 'w-10 h-10 rounded-lg font-medium transition-colors',
                                 p === pagination.page
-                                  ? 'bg-red-600 text-white'
+                                  ? 'bg-cyan-600 text-white'
                                   : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                               )}
                             >
@@ -724,7 +724,7 @@ export function CategoryProducts({
                 <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
                   <Grid3X3 className="w-10 h-10 text-neutral-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#0a0a0f] dark:text-white mb-2">
+                <h3 className="text-xl font-semibold text-[#000000] dark:text-white mb-2">
                   No hay productos
                 </h3>
                 <p className="text-slate-500 dark:text-neutral-400 mb-6">
@@ -733,7 +733,7 @@ export function CategoryProducts({
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
+                    className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-medium hover:bg-cyan-700 transition-colors"
                   >
                     Limpiar filtros
                   </button>
@@ -756,7 +756,7 @@ export function CategoryProducts({
               onClick={() => setShowFilters(false)}
             />
             <motion.div
-              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#0a0a0f] z-50 lg:hidden shadow-2xl"
+              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#000000] z-50 lg:hidden shadow-2xl"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -782,7 +782,7 @@ export function CategoryProducts({
                         className={cn(
                           'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                           currentSort === option.value
-                            ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
                             : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         )}
                       >
@@ -799,12 +799,12 @@ export function CategoryProducts({
                           ...prev,
                           [`mobile_${variantType.id}`]: !prev[`mobile_${variantType.id}`]
                         }))}
-                        className="w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider mb-3 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                        className="w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider mb-3 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
                       >
                         <span className="flex items-center gap-2">
                           {variantType.name}
                           {selectedVariants[variantType.id]?.length > 0 && (
-                            <span className="px-1.5 py-0.5 text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full normal-case font-medium">
+                            <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
                               {selectedVariants[variantType.id].length}
                             </span>
                           )}
@@ -833,7 +833,7 @@ export function CategoryProducts({
                                     className={cn(
                                       'px-3 py-1.5 rounded-lg text-sm transition-colors',
                                       isSelected
-                                        ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
+                                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                                         : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
                                     )}
                                   >
@@ -863,7 +863,7 @@ export function CategoryProducts({
                           className={cn(
                             'block px-4 py-2 rounded-lg text-sm transition-colors',
                             cat.slug === category.slug
-                              ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 font-medium'
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
                               : 'text-neutral-600 dark:text-neutral-400'
                           )}
                         >
@@ -906,7 +906,7 @@ export function CategoryProducts({
                       applyPriceFilter();
                       setShowFilters(false);
                     }}
-                    className="w-full py-3 text-sm font-medium text-white bg-red-600 rounded-lg"
+                    className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
                   >
                     Aplicar filtros
                   </button>

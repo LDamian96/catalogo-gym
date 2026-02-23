@@ -58,7 +58,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-[#0a0a0f] shadow-2xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-[#000000] shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-800">
@@ -67,7 +67,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                   <ShoppingBag className="w-5 h-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-[#0a0a0f] dark:text-white">
+                  <h2 className="font-semibold text-[#000000] dark:text-white">
                     Mi Carrito
                   </h2>
                   <p className="text-sm text-neutral-500">
@@ -94,7 +94,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                   <div className="w-24 h-24 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
                     <ShoppingBag className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
                   </div>
-                  <h3 className="text-lg font-medium text-[#0a0a0f] dark:text-white mb-2">
+                  <h3 className="text-lg font-medium text-[#000000] dark:text-white mb-2">
                     Tu carrito está vacío
                   </h3>
                   <p className="text-neutral-500 text-sm">
@@ -132,7 +132,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-[#0a0a0f] dark:text-white truncate">
+                          <h4 className="font-medium text-[#000000] dark:text-white truncate">
                             {item.name}
                           </h4>
                           {item.variant && (
@@ -152,7 +152,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                             >
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="w-8 text-center text-sm font-medium text-[#0a0a0f] dark:text-white">
+                            <span className="w-8 text-center text-sm font-medium text-[#000000] dark:text-white">
                               {item.quantity}
                             </span>
                             <button
@@ -210,7 +210,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                 {/* Total */}
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-600 dark:text-slate-400">Total</span>
-                  <span className="text-2xl font-bold text-[#0a0a0f] dark:text-white">
+                  <span className="text-2xl font-bold text-[#000000] dark:text-white">
                     {currency} {totalPrice.toFixed(2)}
                   </span>
                 </div>

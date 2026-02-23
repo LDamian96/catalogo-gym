@@ -60,7 +60,7 @@ export function MobileBottomNav() {
                   className={cn(
                     'w-5 h-5 transition-colors duration-200',
                     isActive
-                      ? 'text-red-600 dark:text-red-400'
+                      ? 'text-cyan-600 dark:text-white'
                       : 'text-neutral-400 dark:text-neutral-500'
                   )}
                   strokeWidth={isActive ? 2 : 1.5}
@@ -68,7 +68,7 @@ export function MobileBottomNav() {
 
                 {/* Cart Badge */}
                 {showBadge && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-gradient-to-r from-red-500 to-orange-500 text-white">
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 dark:bg-white dark:text-neutral-900 text-white">
                     {cartItemCount > 9 ? '9+' : cartItemCount}
                   </span>
                 )}
@@ -79,7 +79,7 @@ export function MobileBottomNav() {
                 className={cn(
                   'mt-1 text-[10px] font-medium transition-colors duration-200',
                   isActive
-                    ? 'text-red-600 dark:text-red-400'
+                    ? 'text-cyan-600 dark:text-white'
                     : 'text-neutral-400 dark:text-neutral-500'
                 )}
               >
@@ -90,7 +90,7 @@ export function MobileBottomNav() {
               <AnimatePresence>
                 {isActive && (
                   <motion.div
-                    className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-gradient-to-r from-red-500 to-orange-500"
+                    className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 dark:bg-white"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}

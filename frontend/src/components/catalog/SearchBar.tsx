@@ -203,8 +203,8 @@ export function SearchBar({
             <div className={cn(
               'rounded-xl p-4 shadow-2xl',
               isCompact
-                ? 'bg-white dark:bg-[#0a0a0f]/95 backdrop-blur-md border border-neutral-200 dark:border-white/10'
-                : 'bg-[#0a0a0f]/95 backdrop-blur-md border border-white/10'
+                ? 'bg-white dark:bg-[#000000]/95 backdrop-blur-md border border-neutral-200 dark:border-white/10'
+                : 'bg-[#000000]/95 backdrop-blur-md border border-white/10'
             )}>
               <div className={cn(
                 'flex items-center gap-2 text-sm mb-3',

@@ -5,8 +5,8 @@ import { useState, useEffect, useCallback } from 'react';
 type Theme = 'light' | 'dark' | 'system';
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>('system');
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setThemeState] = useState<Theme>('dark');
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
 
   // Get system preference
   const getSystemTheme = useCallback((): 'light' | 'dark' => {
@@ -25,7 +25,7 @@ export function useTheme() {
     }
   }, []);
 
-  // Initialize theme from localStorage
+  // Initialize theme from localStorage (default to dark)
   useEffect(() => {
     const stored = localStorage.getItem('theme') as Theme | null;
     if (stored) {
@@ -33,8 +33,8 @@ export function useTheme() {
       const resolved = stored === 'system' ? getSystemTheme() : stored;
       applyTheme(resolved);
     } else {
-      const systemTheme = getSystemTheme();
-      applyTheme(systemTheme);
+      // Default to dark mode
+      applyTheme('dark');
     }
   }, [getSystemTheme, applyTheme]);
 

@@ -20,14 +20,14 @@ export function Footer({ settings, categories }: FooterProps) {
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-950 to-black dark:from-neutral-950 dark:via-black dark:to-black" />
 
-      {/* Decorative gradient orbs */}
+      {/* Decorative gradient orbs - subtle in dark mode */}
       <motion.div
-        className="absolute -top-40 -left-40 w-80 h-80 bg-red-500/20 rounded-full blur-3xl"
+        className="absolute -top-40 -left-40 w-80 h-80 bg-cyan-500/10 dark:bg-white/5 rounded-full blur-3xl"
         animate={{ scale: [1, 1.2, 1], x: [0, 30, 0] }}
         transition={{ duration: 10, repeat: Infinity }}
       />
       <motion.div
-        className="absolute -bottom-40 -right-40 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl"
+        className="absolute -bottom-40 -right-40 w-80 h-80 bg-blue-500/10 dark:bg-white/5 rounded-full blur-3xl"
         animate={{ scale: [1.2, 1, 1.2], y: [0, 30, 0] }}
         transition={{ duration: 12, repeat: Infinity }}
       />
@@ -42,121 +42,77 @@ export function Footer({ settings, categories }: FooterProps) {
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* MOBILE FOOTER */}
-        <div className="lg:hidden py-8 pb-28">
+        {/* MOBILE FOOTER - Compact */}
+        <div className="lg:hidden py-4 pb-24">
           {/* Logo and Social */}
-          <div className="flex items-center justify-between mb-6">
-            <Link href="/" className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-4">
+            <Link href="/" className="flex items-center gap-2">
               {settings.logo ? (
-                <motion.div
-                  className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-red-500/30 shadow-lg shadow-red-500/20"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
+                <div className="relative w-9 h-9 rounded-lg overflow-hidden">
                   <Image
                     src={settings.logo}
                     alt={settings.businessName || 'Logo'}
                     fill
                     className="object-contain"
                   />
-                </motion.div>
+                </div>
               ) : (
-                <motion.div
-                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg shadow-red-500/30"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <span className="text-white font-bold text-lg">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 dark:bg-white/10 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
                     {(settings.businessName || 'C')[0]}
                   </span>
-                </motion.div>
+                </div>
               )}
-              <div>
-                <span className="text-lg font-bold text-white block">
-                  {settings.businessName || 'Catálogo'}
-                </span>
-                <span className="text-xs text-red-400 flex items-center gap-1">
-                  <Crown className="w-3 h-3" />
-                  Premium Store
-                </span>
-              </div>
+              <span className="text-sm font-bold text-white">
+                {settings.businessName || 'Catálogo'}
+              </span>
             </Link>
 
-            {/* Social Links - Colorful */}
-            <div className="flex items-center gap-2">
+            {/* Social Links - Compact */}
+            <div className="flex items-center gap-1.5">
               {settings.facebook && (
-                <motion.a
+                <a
                   href={settings.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white shadow-lg shadow-orange-500/30"
-                  whileHover={{ scale: 1.15, rotate: 10 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/70"
                 >
-                  <Facebook className="w-5 h-5" />
-                </motion.a>
+                  <Facebook className="w-4 h-4" />
+                </a>
               )}
               {settings.instagram && (
-                <motion.a
+                <a
                   href={settings.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/30"
-                  whileHover={{ scale: 1.15, rotate: -10 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/70"
                 >
-                  <Instagram className="w-5 h-5" />
-                </motion.a>
+                  <Instagram className="w-4 h-4" />
+                </a>
               )}
               {settings.whatsapp && (
-                <motion.a
+                <a
                   href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30"
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                </motion.a>
+                  <MessageCircle className="w-4 h-4" />
+                </a>
               )}
             </div>
           </div>
 
-          {/* Contact info - Colorful pills */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {settings.whatsapp && (
-              <a
-                href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-all duration-300"
-              >
-                <Phone className="w-4 h-4" />
-                {settings.whatsapp}
-              </a>
-            )}
-            {settings.email && (
-              <a
-                href={`mailto:${settings.email}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/20 border border-orange-500/30 rounded-xl text-orange-400 text-sm font-medium hover:bg-orange-500/30 transition-all duration-300"
-              >
-                <Mail className="w-4 h-4" />
-                <span className="truncate max-w-[150px]">{settings.email}</span>
-              </a>
-            )}
-          </div>
-
           {/* Copyright - Mobile */}
-          <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-            <p className="text-white/50 text-xs">
+          <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+            <p className="text-white/40 text-[10px]">
               © {currentYear} {settings.businessName || 'Catálogo'}
             </p>
-            <motion.div
-              className="flex items-center gap-1 text-white/50 text-xs"
-              animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <div className="flex items-center gap-1 text-white/40 text-[10px]">
               <span>Hecho con</span>
-              <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
+              <Heart className="w-2.5 h-2.5 text-rose-500 fill-rose-500" />
               <span>en Perú</span>
-            </motion.div>
+            </div>
           </div>
         </div>
 
@@ -164,7 +120,7 @@ export function Footer({ settings, categories }: FooterProps) {
         <div className="hidden lg:block py-16">
           {/* Top Section with CTA */}
           <motion.div
-            className="mb-12 p-8 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 rounded-3xl border border-white/10"
+            className="mb-12 p-8 bg-gradient-to-r from-cyan-500/10 via-sky-500/10 to-blue-500/10 dark:from-white/5 dark:via-white/5 dark:to-white/5 rounded-3xl border border-white/10"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -207,7 +163,7 @@ export function Footer({ settings, categories }: FooterProps) {
               <Link href="/" className="flex items-center gap-3 mb-5">
                 {settings.logo ? (
                   <motion.div
-                    className="relative w-14 h-14 rounded-xl overflow-hidden ring-2 ring-red-500/30 shadow-lg shadow-red-500/20"
+                    className="relative w-14 h-14 rounded-xl overflow-hidden ring-2 ring-cyan-500/30 dark:ring-white/10 shadow-lg shadow-cyan-500/20 dark:shadow-none"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     <Image
@@ -219,7 +175,7 @@ export function Footer({ settings, categories }: FooterProps) {
                   </motion.div>
                 ) : (
                   <motion.div
-                    className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center shadow-lg shadow-red-500/30"
+                    className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 dark:bg-white/10 flex items-center justify-center shadow-lg shadow-cyan-500/30 dark:shadow-none"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     <span className="text-white font-bold text-xl">
@@ -231,7 +187,7 @@ export function Footer({ settings, categories }: FooterProps) {
                   <span className="text-xl font-bold text-white block">
                     {settings.businessName || 'Catálogo'}
                   </span>
-                  <span className="text-xs text-red-400 flex items-center gap-1">
+                  <span className="text-xs text-white/80 flex items-center gap-1">
                     <Crown className="w-3 h-3" />
                     Premium Store
                   </span>
@@ -248,7 +204,7 @@ export function Footer({ settings, categories }: FooterProps) {
                     href={settings.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white shadow-lg shadow-orange-500/30"
+                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 dark:bg-white/10 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30 dark:shadow-none"
                     whileHover={{ scale: 1.15, rotate: 10 }}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -260,7 +216,7 @@ export function Footer({ settings, categories }: FooterProps) {
                     href={settings.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/30"
+                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 dark:bg-white/10 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 dark:shadow-none"
                     whileHover={{ scale: 1.15, rotate: -10 }}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -272,7 +228,7 @@ export function Footer({ settings, categories }: FooterProps) {
                     href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30"
+                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 dark:bg-white/10 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 dark:shadow-none"
                     whileHover={{ scale: 1.15, y: -5 }}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -290,7 +246,7 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
             >
               <h3 className="text-white font-bold mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 dark:bg-white/10 flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </span>
                 Navegación
@@ -305,9 +261,9 @@ export function Footer({ settings, categories }: FooterProps) {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-white/60 hover:text-red-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                      className="text-white/60 hover:text-white text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                     >
-                      <span className="w-2 h-2 rounded-full bg-red-500/50 group-hover:bg-red-500 transition-colors duration-300" />
+                      <span className="w-2 h-2 rounded-full bg-white/30 group-hover:bg-white transition-colors duration-300" />
                       {link.label}
                     </Link>
                   </li>
@@ -323,7 +279,7 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 0.5, delay: 0.2, ease: v0Ease }}
             >
               <h3 className="text-white font-bold mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-indigo-600 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 dark:bg-white/10 flex items-center justify-center">
                   <Star className="w-4 h-4 text-white" />
                 </span>
                 Categorías
@@ -333,9 +289,9 @@ export function Footer({ settings, categories }: FooterProps) {
                   <li key={category.id}>
                     <Link
                       href={`/categorias/${category.slug}`}
-                      className="text-white/60 hover:text-amber-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                      className="text-white/60 hover:text-white text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                     >
-                      <span className="w-2 h-2 rounded-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors duration-300" />
+                      <span className="w-2 h-2 rounded-full bg-white/30 group-hover:bg-white transition-colors duration-300" />
                       {category.name}
                     </Link>
                   </li>
@@ -343,9 +299,9 @@ export function Footer({ settings, categories }: FooterProps) {
                 <li>
                   <Link
                     href="/categorias"
-                    className="text-white/60 hover:text-amber-400 text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
+                    className="text-white/60 hover:text-white text-sm transition-all duration-300 inline-flex items-center gap-2 group hover:translate-x-1"
                   >
-                    <span className="w-2 h-2 rounded-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors duration-300" />
+                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover:bg-white transition-colors duration-300" />
                     Ver todas
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </Link>
@@ -361,7 +317,7 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 0.5, delay: 0.3, ease: v0Ease }}
             >
               <h3 className="text-white font-bold mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 dark:bg-white/10 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </span>
                 Contacto
@@ -375,10 +331,10 @@ export function Footer({ settings, categories }: FooterProps) {
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 group"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 dark:bg-white/10 flex items-center justify-center shadow-lg shadow-emerald-500/20 dark:shadow-none group-hover:shadow-emerald-500/40 dark:group-hover:shadow-none transition-all duration-300">
                         <Phone className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-white/60 text-sm group-hover:text-emerald-400 transition-colors">
+                      <span className="text-white/60 text-sm group-hover:text-white transition-colors">
                         {settings.whatsapp}
                       </span>
                     </a>
@@ -390,10 +346,10 @@ export function Footer({ settings, categories }: FooterProps) {
                       href={`mailto:${settings.email}`}
                       className="flex items-center gap-3 group"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all duration-300">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 dark:bg-white/10 flex items-center justify-center shadow-lg shadow-cyan-500/20 dark:shadow-none group-hover:shadow-cyan-500/40 dark:group-hover:shadow-none transition-all duration-300">
                         <Mail className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-white/60 text-sm group-hover:text-orange-400 transition-colors truncate max-w-[180px]">
+                      <span className="text-white/60 text-sm group-hover:text-white transition-colors truncate max-w-[180px]">
                         {settings.email}
                       </span>
                     </a>
@@ -401,7 +357,7 @@ export function Footer({ settings, categories }: FooterProps) {
                 )}
                 {settings.address && (
                   <li className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 dark:bg-white/10 flex items-center justify-center flex-shrink-0 shadow-lg shadow-sky-500/20 dark:shadow-none">
                       <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <span className="text-white/60 text-sm pt-2">
@@ -426,9 +382,9 @@ export function Footer({ settings, categories }: FooterProps) {
               transition={{ duration: 2, repeat: Infinity }}
             >
               <span>Hecho con</span>
-              <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+              <Heart className="w-4 h-4 text-white fill-white" />
               <span>en</span>
-              <span className="font-semibold bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">Perú</span>
+              <span className="font-semibold text-white">Perú</span>
             </motion.div>
           </div>
         </div>

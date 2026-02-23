@@ -43,13 +43,13 @@ export function Hero({ settings, products = [] }: HeroProps) {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-red-600 via-orange-600 to-amber-600 dark:from-red-900 dark:via-orange-950 dark:to-neutral-950"
+      className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-cyan-600 via-sky-600 to-blue-600 dark:from-[#0A0A0F] dark:via-[#0A0A0F] dark:to-[#0A0A0F]"
     >
       {/* Animated Background - Colorful */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large gradient orbs */}
         <motion.div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-red-400/40 via-orange-500/30 to-amber-500/20 blur-3xl"
+          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-cyan-400/40 via-sky-500/30 to-blue-500/20 dark:from-cyan-500/5 dark:via-sky-500/3 dark:to-transparent blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             x: [0, 50, 0],
@@ -58,7 +58,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-orange-500/30 via-red-400/30 to-yellow-400/20 blur-3xl"
+          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-sky-500/30 via-cyan-400/30 to-blue-400/20 dark:from-sky-500/3 dark:via-cyan-500/3 dark:to-transparent blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             x: [0, -30, 0],
@@ -67,7 +67,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-red-500/10 via-transparent to-orange-500/10 blur-3xl"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5 blur-3xl"
           animate={{
             rotate: [0, 360],
           }}
@@ -78,7 +78,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
         <div
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
           style={{
-            backgroundImage: `linear-gradient(rgba(239,68,68,1) 1px, transparent 1px), linear-gradient(90deg, rgba(239,68,68,1) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
             backgroundSize: '60px 60px',
           }}
         />
@@ -87,7 +87,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-red-400 to-orange-500"
+            className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 dark:from-white/20 dark:to-white/10"
             style={{
               left: `${15 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
@@ -109,11 +109,11 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 flex-1 flex items-center justify-center pt-24 pb-16"
+        className="relative z-10 flex-1 flex items-center justify-center pt-20 pb-12 md:pt-24 md:pb-16"
         style={{ y, opacity }}
       >
-        <div className="max-w-6xl mx-auto px-6 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
 
             {/* Left - Text Content */}
             <div className="text-center lg:text-left order-2 lg:order-1">
@@ -123,16 +123,16 @@ export function Hero({ settings, products = [] }: HeroProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: v0Ease }}
               >
-                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-full shadow-lg shadow-red-500/30">
-                  <Zap className="w-4 h-4" />
+                <span className="inline-flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-semibold bg-black/30 dark:bg-white/10 text-white rounded-full backdrop-blur-sm">
+                  <Zap className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   BEAST NUTRITION
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </span>
               </motion.div>
 
               {/* Title - Bold & Aggressive */}
               <motion.h1
-                className="mt-8 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight"
+                className="mt-6 md:mt-8 text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black tracking-tight"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: v0Ease }}
@@ -140,14 +140,14 @@ export function Hero({ settings, products = [] }: HeroProps) {
                 <span className="block text-white drop-shadow-sm">
                   {settings.businessName || 'BEAST'}
                 </span>
-                <span className="block mt-2 bg-gradient-to-r from-red-400 via-orange-400 to-amber-400 bg-clip-text text-transparent drop-shadow-lg">
+                <span className="block mt-1 md:mt-2 text-white/90 dark:text-white/60">
                   NUTRITION
                 </span>
               </motion.h1>
 
               {/* Description */}
               <motion.p
-                className="mt-6 text-lg md:text-xl text-neutral-600 dark:text-neutral-300 max-w-lg mx-auto lg:mx-0 leading-relaxed"
+                className="mt-4 md:mt-6 text-base md:text-xl text-white/80 dark:text-white/50 max-w-lg mx-auto lg:mx-0 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: v0Ease }}
@@ -157,7 +157,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
               {/* CTAs - Beast Mode */}
               <motion.div
-                className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="mt-6 md:mt-10 flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3, ease: v0Ease }}
@@ -165,37 +165,37 @@ export function Hero({ settings, products = [] }: HeroProps) {
                 <motion.a
                   href="#productos"
                   className={cn(
-                    'group relative inline-flex items-center justify-center gap-3',
-                    'px-8 py-4 rounded-2xl font-bold text-lg',
-                    'bg-gradient-to-r from-red-500 via-orange-600 to-red-500 bg-[length:200%_auto]',
-                    'text-white',
-                    'shadow-xl shadow-red-500/40',
-                    'hover:shadow-2xl hover:shadow-red-500/50',
+                    'group relative inline-flex items-center justify-center gap-2 md:gap-3',
+                    'px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-bold text-base md:text-lg',
+                    'bg-white dark:bg-white',
+                    'text-cyan-600 dark:text-neutral-900',
+                    'shadow-xl dark:shadow-white/10',
+                    'hover:shadow-2xl',
                     'transition-all duration-500'
                   )}
                   whileHover={{ scale: 1.05, backgroundPosition: 'right center' }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <span>Ver Suplementos</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.a>
 
                 <motion.a
                   href="/categorias"
                   className={cn(
                     'inline-flex items-center justify-center gap-2',
-                    'px-8 py-4 rounded-2xl font-bold text-lg',
-                    'bg-white dark:bg-neutral-800',
+                    'px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-bold text-base md:text-lg',
+                    'bg-white dark:bg-[#1A1A1F]',
                     'text-neutral-800 dark:text-white',
-                    'border-2 border-neutral-200 dark:border-neutral-700',
+                    'border-2 border-neutral-200 dark:border-white/10',
                     'shadow-lg hover:shadow-xl',
-                    'hover:border-red-400 dark:hover:border-red-500',
+                    'hover:border-cyan-400 dark:hover:border-white/20',
                     'transition-all duration-300'
                   )}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Zap className="w-5 h-5 text-orange-500" />
+                  <Zap className="w-4 h-4 md:w-5 md:h-5 text-cyan-500 dark:text-white/60" />
                   Categorías
                 </motion.a>
               </motion.div>
@@ -203,7 +203,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
               {/* Contact Info - With colors */}
               {(settings.phone || settings.address || settings.businessHours) && (
                 <motion.div
-                  className="mt-10 flex flex-wrap gap-4 justify-center lg:justify-start"
+                  className="mt-6 md:mt-10 flex flex-wrap gap-2 md:gap-4 justify-center lg:justify-start"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.5, ease: v0Ease }}
@@ -211,21 +211,21 @@ export function Hero({ settings, products = [] }: HeroProps) {
                   {settings.phone && (
                     <a
                       href={`tel:${settings.phone}`}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-full text-sm font-medium hover:bg-emerald-200 dark:hover:bg-emerald-500/30 transition-colors"
+                      className="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-emerald-100 dark:bg-white/5 text-emerald-700 dark:text-white/60 rounded-full text-xs md:text-sm font-medium hover:bg-emerald-200 dark:hover:bg-white/10 transition-colors"
                     >
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       <span>{settings.phone}</span>
                     </a>
                   )}
                   {settings.address && (
-                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium">
-                      <MapPin className="w-4 h-4" />
-                      <span className="max-w-[180px] truncate">{settings.address}</span>
+                    <div className="hidden sm:flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-blue-100 dark:bg-white/5 text-blue-700 dark:text-white/60 rounded-full text-xs md:text-sm font-medium">
+                      <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                      <span className="max-w-[150px] md:max-w-[180px] truncate">{settings.address}</span>
                     </div>
                   )}
                   {settings.businessHours && (
-                    <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-sm font-medium">
-                      <Clock className="w-4 h-4" />
+                    <div className="flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-amber-100 dark:bg-white/5 text-amber-700 dark:text-white/60 rounded-full text-xs md:text-sm font-medium">
+                      <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       <span>{settings.businessHours}</span>
                     </div>
                   )}
@@ -236,14 +236,14 @@ export function Hero({ settings, products = [] }: HeroProps) {
             {/* Right - Product Showcase Card */}
             <motion.div
               className="relative order-1 lg:order-2"
-              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: v0Ease }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: v0Ease }}
             >
-              <div className="relative aspect-square max-w-lg mx-auto">
+              <div className="relative aspect-square max-w-[280px] md:max-w-lg mx-auto">
                 {/* Beast background shape */}
                 <motion.div
-                  className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-red-400 via-orange-500 to-amber-600 opacity-20 dark:opacity-30 blur-2xl"
+                  className="absolute inset-0 rounded-2xl md:rounded-[3rem] bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 opacity-30 dark:from-white/5 dark:via-white/3 dark:to-transparent dark:opacity-100 blur-xl md:blur-2xl"
                   animate={{
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, 0],
@@ -253,12 +253,12 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
                 {/* Main card with product */}
                 <motion.div
-                  className="relative bg-white dark:bg-neutral-900 rounded-[2.5rem] p-4 shadow-2xl shadow-red-500/20 dark:shadow-red-500/10 border border-red-100 dark:border-red-500/20 overflow-hidden"
-                  animate={{ y: [0, -10, 0] }}
+                  className="relative bg-white dark:bg-[#1A1A1F] rounded-2xl md:rounded-[2.5rem] p-3 md:p-4 shadow-2xl shadow-cyan-500/20 dark:shadow-black/50 border border-cyan-100 dark:border-white/10 overflow-hidden"
+                  animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   {/* Product Image Container */}
-                  <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50">
+                  <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-neutral-900 dark:to-neutral-800">
                     <AnimatePresence mode="wait">
                       {currentProduct?.images?.[0]?.url ? (
                         <motion.div
@@ -292,7 +292,7 @@ export function Hero({ settings, products = [] }: HeroProps) {
                           priority
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-500 via-orange-600 to-amber-600">
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-600 dark:from-neutral-800 dark:via-neutral-900 dark:to-black">
                           <span className="text-8xl font-black text-white drop-shadow-lg">
                             🦁
                           </span>
@@ -303,28 +303,28 @@ export function Hero({ settings, products = [] }: HeroProps) {
                     {/* Product Info Overlay */}
                     {currentProduct && (
                       <motion.div
-                        className="absolute bottom-0 left-0 right-0 p-4"
+                        className="absolute bottom-0 left-0 right-0 p-3 md:p-4"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                       >
                         <Link href={`/productos/${currentProduct.slug}`}>
                           {/* Category */}
-                          <span className="inline-block px-3 py-1 mb-2 text-xs font-bold text-white bg-white/20 backdrop-blur-sm rounded-full">
+                          <span className="inline-block px-2 py-0.5 md:px-3 md:py-1 mb-1.5 md:mb-2 text-[10px] md:text-xs font-bold text-white bg-white/20 backdrop-blur-sm rounded-full">
                             {currentProduct.category?.name}
                           </span>
                           {/* Product Name */}
-                          <h3 className="text-lg font-bold text-white line-clamp-1 drop-shadow-lg mb-1">
+                          <h3 className="text-sm md:text-lg font-bold text-white line-clamp-1 drop-shadow-lg mb-0.5 md:mb-1">
                             {currentProduct.name}
                           </h3>
                           {/* Price */}
                           {currentProduct.showPrice && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xl font-black text-white drop-shadow-lg">
+                            <div className="flex items-center gap-1.5 md:gap-2">
+                              <span className="text-base md:text-xl font-black text-white drop-shadow-lg">
                                 S/ {salePrice ? salePrice.toFixed(2) : price.toFixed(2)}
                               </span>
                               {salePrice && (
-                                <span className="text-sm text-white/70 line-through">
+                                <span className="text-xs md:text-sm text-white/70 line-through">
                                   S/ {price.toFixed(2)}
                                 </span>
                               )}
@@ -337,16 +337,16 @@ export function Hero({ settings, products = [] }: HeroProps) {
 
                   {/* Progress Dots */}
                   {products.length > 1 && (
-                    <div className="flex justify-center gap-2 mt-3">
+                    <div className="flex justify-center gap-1.5 md:gap-2 mt-2 md:mt-3">
                       {products.slice(0, 6).map((_, index) => (
                         <motion.button
                           key={index}
                           onClick={() => setCurrentIndex(index)}
                           className={cn(
-                            'h-2 rounded-full transition-all duration-300',
+                            'h-1.5 md:h-2 rounded-full transition-all duration-300',
                             index === currentIndex
-                              ? 'w-6 bg-gradient-to-r from-red-500 to-orange-600'
-                              : 'w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-red-400'
+                              ? 'w-4 md:w-6 bg-gradient-to-r from-cyan-500 to-blue-600 dark:bg-white'
+                              : 'w-1.5 md:w-2 bg-neutral-300 dark:bg-white/20 hover:bg-cyan-400 dark:hover:bg-white/40'
                           )}
                           whileHover={{ scale: 1.2 }}
                           whileTap={{ scale: 0.9 }}
@@ -358,18 +358,18 @@ export function Hero({ settings, products = [] }: HeroProps) {
                   {/* Sale Badge */}
                   {salePrice && (
                     <motion.div
-                      className="absolute top-2 left-2 px-3 py-1.5 bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-500/40 flex items-center gap-1"
+                      className="absolute top-1.5 left-1.5 md:top-2 md:left-2 px-2 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 dark:bg-white text-white dark:text-neutral-900 rounded-lg md:rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-cyan-500/40 dark:shadow-white/20 flex items-center gap-1"
                       animate={{ scale: [1, 1.05, 1] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
-                      <Tag className="w-3 h-3" />
+                      <Tag className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       -{discount}%
                     </motion.div>
                   )}
 
                   {/* Beast Badge */}
                   <motion.div
-                    className="absolute -top-3 -right-3 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-red-500/40"
+                    className="absolute -top-2 -right-2 md:-top-3 md:-right-3 px-3 py-1.5 md:px-4 md:py-2 bg-gradient-to-r from-cyan-500 to-blue-600 dark:bg-white text-white dark:text-neutral-900 rounded-full text-xs md:text-sm font-bold shadow-lg shadow-cyan-500/40 dark:shadow-white/20"
                     animate={{ rotate: [-5, 5, -5], scale: [1, 1.05, 1] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                   >
@@ -377,24 +377,24 @@ export function Hero({ settings, products = [] }: HeroProps) {
                   </motion.div>
                 </motion.div>
 
-                {/* Floating colored shapes */}
+                {/* Floating colored shapes - Hidden on mobile, very subtle in dark mode */}
                 <motion.div
-                  className="absolute -right-6 top-1/4 w-20 h-20 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 shadow-xl shadow-red-500/50"
+                  className="hidden md:block absolute -right-6 top-1/4 w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 dark:bg-white/5 shadow-xl shadow-cyan-500/50 dark:shadow-none"
                   animate={{ y: [0, -15, 0], rotate: [0, 10, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                 />
                 <motion.div
-                  className="absolute -left-4 top-1/3 w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 shadow-xl shadow-orange-500/50"
+                  className="hidden md:block absolute -left-4 top-1/3 w-14 h-14 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 dark:bg-white/5 shadow-xl shadow-sky-500/50 dark:shadow-none"
                   animate={{ y: [0, 15, 0], rotate: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
                 />
                 <motion.div
-                  className="absolute right-1/4 -bottom-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-xl shadow-amber-500/50"
+                  className="hidden md:block absolute right-1/4 -bottom-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 dark:bg-white/5 shadow-xl shadow-blue-500/50 dark:shadow-none"
                   animate={{ y: [0, 10, 0], rotate: [0, 5, 0] }}
                   transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
                 />
                 <motion.div
-                  className="absolute -left-8 bottom-1/4 w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 shadow-lg shadow-emerald-500/50"
+                  className="hidden md:block absolute -left-8 bottom-1/4 w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 dark:bg-white/5 shadow-lg shadow-teal-500/50 dark:shadow-none"
                   animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
                   transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
                 />
@@ -404,34 +404,34 @@ export function Hero({ settings, products = [] }: HeroProps) {
         </div>
       </motion.div>
 
-      {/* Scroll Indicator - Beast Style */}
+      {/* Scroll Indicator - Beast Style - Hidden on mobile */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.6, ease: v0Ease }}
       >
         <motion.a
           href="#productos"
-          className="flex flex-col items-center gap-2 px-6 py-3 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-full shadow-lg border border-red-200 dark:border-red-800"
+          className="flex flex-col items-center gap-2 px-6 py-3 bg-white/80 dark:bg-[#1A1A1F]/90 backdrop-blur-sm rounded-full shadow-lg border border-cyan-200 dark:border-white/10"
           animate={{ y: [0, 5, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           whileHover={{ scale: 1.05 }}
         >
-          <span className="text-sm font-semibold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+          <span className="text-sm font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-white dark:to-white/80 bg-clip-text text-transparent">
             Explorar Suplementos
           </span>
           <motion.div
             animate={{ y: [0, 3, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ArrowRight className="w-4 h-4 text-red-600 rotate-90" />
+            <ArrowRight className="w-4 h-4 text-cyan-600 dark:text-white rotate-90" />
           </motion.div>
         </motion.a>
       </motion.div>
 
       {/* Bottom gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-[#0a0a0f] to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-[#000000] to-transparent pointer-events-none" />
     </section>
   );
 }

@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Search, ShoppingCart, ChevronDown, Grid3X3, Home, Package, Zap, X, Loader2, Sparkles, Star, Crown } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Search, ShoppingCart, ChevronDown, Grid3X3, Home, Package, X, Loader2, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import { v0Ease, dropdownVariants } from '@/lib/animations';
@@ -29,6 +30,16 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const { items, openCart } = useCart();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
 
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -108,6 +119,8 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    // Check initial scroll position on mount
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -117,92 +130,85 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
   return (
     <motion.header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isTransparent
           ? 'bg-transparent'
-          : 'bg-gradient-to-r from-red-600/95 via-orange-600/95 to-amber-600/95 dark:from-red-900/95 dark:via-orange-900/95 dark:to-amber-900/95 backdrop-blur-xl shadow-lg shadow-red-500/20'
+          : 'bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/10'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: v0Ease }}
     >
-      {/* Animated bottom border */}
-      <motion.div
-        className={cn(
-          'absolute bottom-0 left-0 right-0 h-[2px] transition-opacity duration-500',
-          isTransparent ? 'opacity-0' : 'opacity-100'
-        )}
-        style={{
-          background: 'linear-gradient(90deg, transparent, #22d3ee, #3b82f6, #a855f7, transparent)',
-        }}
-        animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Mobile Header */}
-        <div className="flex lg:hidden items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5 group">
+        <div className="flex lg:hidden items-center justify-between h-14">
+          <Link href="/" className="flex items-center gap-2.5">
             {settings.logo ? (
-              <motion.div
-                className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white/30 shadow-lg shadow-red-500/30"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <div className="relative w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10">
                 <Image
                   src={settings.logo}
                   alt={settings.businessName || 'Logo'}
                   fill
                   className="object-contain"
                 />
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                className="w-10 h-10 rounded-xl bg-white shadow-lg shadow-white/30 flex items-center justify-center"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-red-600 to-amber-600 font-bold text-lg">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">
                   {(settings.businessName || 'C')[0]}
                 </span>
-              </motion.div>
+              </div>
             )}
-            <div className="flex flex-col">
-              <span className="font-bold text-white truncate max-w-[120px] drop-shadow-md">
-                {settings.businessName || 'Catálogo'}
-              </span>
-              <span className="text-[10px] text-white/70 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                Online
-              </span>
-            </div>
+            <span className={cn(
+              "font-bold truncate max-w-[120px]",
+              isTransparent ? "text-white" : "text-neutral-900 dark:text-white/90"
+            )}>
+              {settings.businessName || 'Catálogo'}
+            </span>
           </Link>
 
           <div className="flex items-center gap-2">
+            {mounted && (
+              <motion.button
+                onClick={toggleTheme}
+                className={cn(
+                  "p-2.5 rounded-xl transition-colors",
+                  isTransparent
+                    ? "bg-black/20 text-white"
+                    : "bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-white"
+                )}
+                whileTap={{ scale: 0.95 }}
+              >
+                {resolvedTheme === 'dark' ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </motion.button>
+            )}
             <motion.button
               onClick={() => setShowSearch(true)}
-              className="p-2.5 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all duration-300 shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className={cn(
+                "p-2.5 rounded-xl transition-colors",
+                isTransparent
+                  ? "bg-black/20 text-white"
+                  : "bg-[#1A1A1F] dark:bg-[#1A1A1F] text-white"
+              )}
+              whileTap={{ scale: 0.95 }}
             >
               <Search className="w-5 h-5" />
             </motion.button>
             {settings.cartEnabled && (
               <motion.button
                 onClick={openCart}
-                className="relative p-2.5 rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all duration-300 shadow-lg"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                className="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 text-white"
+                whileTap={{ scale: 0.95 }}
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartItemCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg shadow-orange-500/50 ring-2 ring-white"
-                  >
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-cyan-500 dark:text-neutral-900 text-[10px] font-bold rounded-full flex items-center justify-center">
                     {cartItemCount > 9 ? '9+' : cartItemCount}
-                  </motion.span>
+                  </span>
                 )}
               </motion.button>
             )}
@@ -210,51 +216,43 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden lg:flex items-center justify-between h-18 py-3">
-          <Link href="/" className="flex items-center gap-4 group">
+        <div className="hidden lg:flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-3">
             {settings.logo ? (
-              <motion.div
-                className="relative w-12 h-12 rounded-xl overflow-hidden ring-2 ring-white/40 shadow-xl shadow-red-500/30"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10">
                 <Image
                   src={settings.logo}
                   alt={settings.businessName || 'Logo'}
                   fill
                   className="object-contain"
                 />
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                className="w-12 h-12 rounded-xl bg-white shadow-xl shadow-white/30 flex items-center justify-center"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <span className="text-transparent bg-clip-text bg-gradient-to-br from-red-600 to-amber-600 font-black text-xl">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 flex items-center justify-center">
+                <span className="text-white font-bold text-xl">
                   {(settings.businessName || 'C')[0]}
-                </span>
-              </motion.div>
-            )}
-            {settings.businessName && (
-              <div className="flex flex-col">
-                <span className="font-bold text-lg text-white drop-shadow-lg">
-                  {settings.businessName}
-                </span>
-                <span className="text-xs text-white/80 flex items-center gap-1">
-                  <Crown className="w-3 h-3 text-amber-400" />
-                  Catálogo Premium
                 </span>
               </div>
             )}
+            <span className={cn(
+              "font-bold text-lg",
+              isTransparent ? "text-white" : "text-neutral-900 dark:text-white/90"
+            )}>
+              {settings.businessName || 'Catálogo'}
+            </span>
           </Link>
 
-          <nav className="flex items-center gap-0.5">
+          <nav className="flex items-center gap-1">
             <Link
               href="/"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-all duration-300"
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                isTransparent
+                  ? "text-white/90 hover:text-white hover:bg-white/10"
+                  : "text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
+              )}
             >
-              <Home className="w-3.5 h-3.5" />
+              <Home className="w-4 h-4" />
               Inicio
             </Link>
 
@@ -265,12 +263,17 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
             >
               <Link
                 href="/categorias"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-all duration-300"
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                  isTransparent
+                    ? "text-white/90 hover:text-white hover:bg-white/10"
+                    : "text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
+                )}
               >
-                <Grid3X3 className="w-3.5 h-3.5" />
+                <Grid3X3 className="w-4 h-4" />
                 Categorías
                 <ChevronDown className={cn(
-                  'w-3.5 h-3.5 transition-transform duration-300',
+                  'w-4 h-4 transition-transform duration-200',
                   showCategories && 'rotate-180'
                 )} />
               </Link>
@@ -282,85 +285,47 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className="absolute top-full left-0 mt-3 w-96 bg-gradient-to-br from-white to-red-50 dark:from-neutral-900 dark:to-red-950 rounded-2xl border-2 border-red-200 dark:border-red-500/30 overflow-hidden shadow-2xl shadow-red-500/30"
+                    className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#1A1A1F] rounded-xl border border-neutral-200 dark:border-white/10 shadow-xl overflow-hidden"
                   >
-                    {/* Header con gradiente */}
-                    <div className="px-5 py-4 bg-gradient-to-r from-red-500 via-orange-600 to-amber-600">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-white/20 rounded-lg">
-                          <Zap className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-white">
-                            Explorar Categorías
-                          </p>
-                          <p className="text-xs text-white/70">
-                            Encuentra lo que buscas
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="py-3 max-h-[50vh] overflow-y-auto">
-                      {categories.filter(c => c.level === 0 || !c.parentId).slice(0, 8).map((category, index) => (
-                        <motion.div
+                    <div className="py-2 max-h-[60vh] overflow-y-auto">
+                      {categories.filter(c => c.level === 0 || !c.parentId).slice(0, 8).map((category) => (
+                        <Link
                           key={category.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05, duration: 0.3, ease: v0Ease }}
+                          href={`/categorias/${category.slug}`}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors"
                         >
-                          <Link
-                            href={`/categorias/${category.slug}`}
-                            className="flex items-center gap-4 px-5 py-3 text-sm hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-950/50 dark:hover:to-orange-950/50 transition-all duration-300 group"
-                          >
-                            {category.image ? (
-                              <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900 dark:to-orange-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300 shadow-md">
-                                <Image
-                                  src={category.image}
-                                  alt={category.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300 shadow-md">
-                                <Grid3X3 className="w-6 h-6 text-white" />
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <span className="block font-bold text-neutral-800 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                                {category.name}
-                              </span>
-                              {category._count?.products !== undefined && (
-                                <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                                  {category._count.products} productos disponibles
-                                </span>
-                              )}
+                          {category.image ? (
+                            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 dark:bg-white/10 flex-shrink-0">
+                              <Image
+                                src={category.image}
+                                alt={category.name}
+                                fill
+                                className="object-cover"
+                              />
                             </div>
-                            <motion.span
-                              className="text-red-500 opacity-0 group-hover:opacity-100"
-                              initial={{ x: -10 }}
-                              whileHover={{ x: 0 }}
-                            >
-                              →
-                            </motion.span>
-                          </Link>
-                        </motion.div>
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
+                              <Grid3X3 className="w-5 h-5 text-white" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <span className="block font-medium text-neutral-900 dark:text-white text-sm">
+                              {category.name}
+                            </span>
+                            {category._count?.products !== undefined && (
+                              <span className="text-xs text-neutral-500 dark:text-white/50">
+                                {category._count.products} productos
+                              </span>
+                            )}
+                          </div>
+                        </Link>
                       ))}
                     </div>
-
                     <Link
                       href="/categorias"
-                      className="flex items-center justify-center gap-2 px-5 py-4 text-sm font-bold text-white bg-gradient-to-r from-red-500 via-orange-600 to-amber-600 hover:from-red-600 hover:via-orange-700 hover:to-amber-700 transition-all duration-300"
+                      className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-cyan-500 dark:text-white hover:bg-cyan-50 dark:hover:bg-white/5 border-t border-neutral-100 dark:border-white/10 transition-colors"
                     >
-                      <Star className="w-4 h-4" />
-                      <span>Ver todas las categorías</span>
-                      <motion.span
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                      >
-                        →
-                      </motion.span>
+                      Ver todas las categorías
                     </Link>
                   </motion.div>
                 )}
@@ -369,43 +334,64 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
 
             <Link
               href="/productos"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-all duration-300"
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                isTransparent
+                  ? "text-white/90 hover:text-white hover:bg-white/10"
+                  : "text-neutral-600 dark:text-white/70 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10"
+              )}
             >
-              <Package className="w-3.5 h-3.5" />
+              <Package className="w-4 h-4" />
               Productos
             </Link>
           </nav>
 
           <div className="flex items-center gap-3">
-            {/* Search Button */}
+            {mounted && (
+              <motion.button
+                onClick={toggleTheme}
+                className={cn(
+                  "p-2.5 rounded-xl transition-colors",
+                  isTransparent
+                    ? "bg-black/20 text-white hover:bg-black/30"
+                    : "bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-white hover:bg-neutral-200 dark:hover:bg-white/20"
+                )}
+                whileTap={{ scale: 0.95 }}
+                title={resolvedTheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+              >
+                {resolvedTheme === 'dark' ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </motion.button>
+            )}
             <motion.button
               onClick={() => setShowSearch(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-medium transition-all duration-300 shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors",
+                isTransparent
+                  ? "bg-black/20 text-white hover:bg-black/30"
+                  : "bg-[#1A1A1F] text-white hover:bg-[#252530]"
+              )}
+              whileTap={{ scale: 0.98 }}
             >
               <Search className="w-4 h-4" />
-              <span className="text-sm">Buscar</span>
+              Buscar
             </motion.button>
 
-            {/* Cart Button */}
             {settings.cartEnabled && (
               <motion.button
                 onClick={openCart}
-                className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-red-600 font-bold transition-all duration-300 shadow-xl shadow-white/30"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="relative flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 text-white text-sm font-medium"
+                whileTap={{ scale: 0.98 }}
               >
-                <ShoppingCart className="w-5 h-5" />
-                <span className="text-sm">Carrito</span>
+                <ShoppingCart className="w-4 h-4" />
+                Carrito
                 {cartItemCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg shadow-orange-500/50 ring-2 ring-white"
-                  >
+                  <span className="ml-1 px-1.5 py-0.5 bg-white text-cyan-500 dark:text-neutral-900 text-xs font-bold rounded-full min-w-[20px] text-center">
                     {cartItemCount > 9 ? '9+' : cartItemCount}
-                  </motion.span>
+                  </span>
                 )}
               </motion.button>
             )}
@@ -413,7 +399,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
         </div>
       </div>
 
-      {/* Search Modal - Vibrant */}
+      {/* Search Modal */}
       <AnimatePresence>
         {showSearch && (
           <>
@@ -422,44 +408,40 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowSearch(false)}
-              className="fixed inset-0 bg-gradient-to-br from-red-900/80 via-orange-900/80 to-amber-900/80 backdrop-blur-md z-50"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
             />
 
             <motion.div
-              initial={{ opacity: 0, y: -30, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -30, scale: 0.9 }}
-              transition={{ duration: 0.3, ease: v0Ease }}
-              className="fixed top-0 left-0 right-0 z-50 p-4 pt-24 lg:pt-28"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-0 left-0 right-0 z-50 p-4 pt-20"
             >
-              <div className="max-w-2xl mx-auto">
-                <form onSubmit={handleSearch} className="relative">
-                  {/* Search Input Container */}
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500 rounded-2xl blur-sm" />
-                    <div className="relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden">
-                      <div className="flex items-center">
-                        {isSearching ? (
-                          <Loader2 className="absolute left-5 w-6 h-6 text-red-500 animate-spin" />
-                        ) : (
-                          <Search className="absolute left-5 w-6 h-6 text-red-500" />
-                        )}
-                        <input
-                          ref={searchInputRef}
-                          type="text"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="¿Qué estás buscando hoy?"
-                          className="w-full pl-14 pr-14 py-5 bg-transparent text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none text-lg font-medium"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowSearch(false)}
-                          className="absolute right-4 p-2 rounded-xl text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
-                      </div>
+              <div className="max-w-xl mx-auto">
+                <form onSubmit={handleSearch}>
+                  <div className="relative bg-white dark:bg-[#1A1A1F] rounded-2xl overflow-hidden shadow-2xl border border-neutral-200 dark:border-white/10">
+                    <div className="flex items-center">
+                      {isSearching ? (
+                        <Loader2 className="absolute left-4 w-5 h-5 text-neutral-400 animate-spin" />
+                      ) : (
+                        <Search className="absolute left-4 w-5 h-5 text-neutral-400" />
+                      )}
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Buscar productos..."
+                        className="w-full pl-12 pr-12 py-4 bg-transparent text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSearch(false)}
+                        className="absolute right-3 p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
 
@@ -467,28 +449,24 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                   <AnimatePresence>
                     {searchResults.length > 0 && (
                       <motion.div
-                        initial={{ opacity: 0, y: -15 }}
+                        initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -15 }}
-                        className="mt-4 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-red-200 dark:border-red-500/30 shadow-2xl shadow-red-500/20 overflow-hidden max-h-[55vh] overflow-y-auto"
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mt-3 bg-white dark:bg-[#1A1A1F] rounded-2xl border border-neutral-200 dark:border-white/10 shadow-xl overflow-hidden max-h-[50vh] overflow-y-auto"
                       >
-                        <div className="px-5 py-3 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/50 dark:to-orange-950/50 border-b border-red-100 dark:border-red-500/20">
-                          <p className="text-sm font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
-                            <Sparkles className="w-4 h-4" />
-                            {searchResults.length} productos encontrados
+                        <div className="px-4 py-2 border-b border-neutral-100 dark:border-white/10">
+                          <p className="text-sm text-neutral-500 dark:text-white/50">
+                            {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''}
                           </p>
                         </div>
-                        {searchResults.map((product, index) => (
-                          <motion.button
+                        {searchResults.map((product) => (
+                          <button
                             key={product.id}
                             type="button"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
                             onClick={() => handleResultClick(product.slug)}
-                            className="w-full flex items-center gap-4 p-4 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-950/30 dark:hover:to-orange-950/30 transition-colors text-left border-b border-neutral-100 dark:border-neutral-800 last:border-0 group"
+                            className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors text-left border-b border-neutral-100 dark:border-white/5 last:border-0"
                           >
-                            <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900 dark:to-orange-900 flex-shrink-0 ring-2 ring-transparent group-hover:ring-red-400 transition-all duration-300">
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 dark:bg-white/10 flex-shrink-0">
                               {product.images?.[0]?.url ? (
                                 <Image
                                   src={product.images[0].url}
@@ -498,41 +476,30 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <Package className="w-6 h-6 text-red-400" />
+                                  <Package className="w-5 h-5 text-neutral-400" />
                                 </div>
                               )}
                             </div>
-
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold text-neutral-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 truncate transition-colors">
+                              <p className="font-medium text-neutral-900 dark:text-white truncate text-sm">
                                 {product.name}
                               </p>
-                              <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-1">
-                                <Grid3X3 className="w-3 h-3" />
+                              <p className="text-xs text-neutral-500 dark:text-white/50">
                                 {product.category?.name}
                               </p>
                               {product.showPrice && (
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-sm font-bold text-red-600 dark:text-red-400">
-                                    S/ {product.salePrice ? Number(product.salePrice).toFixed(2) : Number(product.price).toFixed(2)}
-                                  </span>
-                                  {product.salePrice && (
-                                    <span className="text-xs text-neutral-400 line-through">
-                                      S/ {Number(product.price).toFixed(2)}
-                                    </span>
-                                  )}
-                                </div>
+                                <p className="text-sm font-bold text-cyan-500 dark:text-white mt-0.5">
+                                  S/ {product.salePrice ? Number(product.salePrice).toFixed(2) : Number(product.price).toFixed(2)}
+                                </p>
                               )}
                             </div>
-                            <span className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                          </motion.button>
+                          </button>
                         ))}
-
                         <button
                           type="submit"
-                          className="w-full p-4 text-center text-sm font-bold text-white bg-gradient-to-r from-red-500 via-orange-600 to-amber-600 hover:from-red-600 hover:via-orange-700 hover:to-amber-700 transition-all duration-300"
+                          className="w-full p-3 text-center text-sm font-medium text-cyan-500 dark:text-white hover:bg-cyan-50 dark:hover:bg-white/5 transition-colors"
                         >
-                          Ver todos los resultados →
+                          Ver todos los resultados
                         </button>
                       </motion.div>
                     )}
@@ -543,45 +510,13 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="mt-4 p-8 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-red-200 dark:border-red-500/30 text-center"
+                      className="mt-3 p-6 bg-white dark:bg-[#1A1A1F] rounded-2xl border border-neutral-200 dark:border-white/10 text-center"
                     >
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900/50 dark:to-orange-900/50 flex items-center justify-center">
-                        <Package className="w-8 h-8 text-red-500" />
-                      </div>
-                      <p className="text-neutral-500 dark:text-neutral-400">
-                        No encontramos productos para "<span className="font-semibold text-red-600 dark:text-red-400">{searchQuery}</span>"
+                      <Package className="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-white/20" />
+                      <p className="text-neutral-500 dark:text-white/50 text-sm">
+                        No se encontraron productos
                       </p>
-                      <p className="text-sm text-neutral-400 mt-2">Intenta con otras palabras</p>
                     </motion.div>
-                  )}
-
-                  {/* Suggestions */}
-                  {!searchQuery && (
-                    <>
-                      <div className="mt-5 flex flex-wrap gap-2 justify-center">
-                        <span className="text-sm text-white/70">Populares:</span>
-                        {['Ofertas', 'Nuevo', 'Popular', 'Destacados'].map((hint) => (
-                          <motion.button
-                            key={hint}
-                            type="button"
-                            onClick={() => {
-                              setSearchQuery(hint);
-                              searchInputRef.current?.focus();
-                            }}
-                            className="px-4 py-2 text-sm font-medium bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-300 shadow-lg"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            {hint}
-                          </motion.button>
-                        ))}
-                      </div>
-
-                      <p className="mt-5 text-center text-sm text-white/60 flex items-center justify-center gap-2">
-                        <Sparkles className="w-4 h-4 text-red-400" />
-                        Escribe para buscar productos increíbles
-                      </p>
-                    </>
                   )}
                 </form>
               </div>

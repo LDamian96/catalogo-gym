@@ -175,7 +175,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
+    <div className="min-h-screen bg-white dark:bg-[#000000]">
       {/* Navbar */}
       <Navbar settings={settings} categories={categories} />
 
@@ -188,13 +188,13 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, ease: v0Ease }}
           >
-            <Link href="/" className="text-neutral-400 hover:text-red-500 transition-colors">
+            <Link href="/" className="text-neutral-400 hover:text-cyan-500 transition-colors">
               Inicio
             </Link>
             <ChevronRight className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />
             <Link
               href={`/categorias/${product.category.slug}`}
-              className="text-neutral-400 hover:text-red-500 transition-colors"
+              className="text-neutral-400 hover:text-cyan-500 transition-colors"
             >
               {product.category.name}
             </Link>
@@ -218,7 +218,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
             transition={{ duration: 0.5, ease: v0Ease }}
           >
             {/* Main Image - V0 Style */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-100 dark:bg-[#12121a] border border-black/[0.06] dark:border-white/[0.06]">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-100 dark:bg-[#0a0a0a] border border-black/[0.06] dark:border-white/[0.06]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedImage}
@@ -253,7 +253,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2, duration: 0.4, ease: v0Ease }}
                 >
-                  <span className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg text-white text-xs font-semibold shadow-lg shadow-red-500/25">
+                  <span className="px-3 py-1.5 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-lg text-white text-xs font-semibold shadow-lg shadow-orange-500/25">
                     -{discount}%
                   </span>
                 </motion.div>
@@ -266,8 +266,8 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                   className={cn(
                     'w-10 h-10 rounded-xl flex items-center justify-center transition-all backdrop-blur-sm border',
                     isLiked
-                      ? 'bg-red-500 text-white border-red-500'
-                      : 'bg-white/90 dark:bg-[#12121a]/90 text-neutral-500 dark:text-neutral-400 border-black/[0.06] dark:border-white/[0.1] hover:border-red-500/50 hover:text-red-500'
+                      ? 'bg-cyan-500 text-white border-cyan-500'
+                      : 'bg-white/90 dark:bg-[#0a0a0a]/90 text-neutral-500 dark:text-neutral-400 border-black/[0.06] dark:border-white/[0.1] hover:border-cyan-500/50 hover:text-cyan-500'
                   )}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -275,7 +275,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                 </motion.button>
                 <motion.button
                   onClick={handleShare}
-                  className="w-10 h-10 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-red-500/50 hover:text-red-500 transition-all"
+                  className="w-10 h-10 rounded-xl bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-cyan-500/50 hover:text-cyan-500 transition-all"
                   whileTap={{ scale: 0.95 }}
                 >
                   <Share2 className="w-4 h-4" />
@@ -287,13 +287,13 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                 <>
                   <button
                     onClick={() => setSelectedImage(prev => (prev > 0 ? prev - 1 : images.length - 1))}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-red-500/50 transition-all"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-cyan-500/50 transition-all"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setSelectedImage(prev => (prev < images.length - 1 ? prev + 1 : 0))}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-red-500/50 transition-all"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-sm flex items-center justify-center text-neutral-500 dark:text-neutral-400 border border-black/[0.06] dark:border-white/[0.1] hover:border-cyan-500/50 transition-all"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -310,7 +310,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                       className={cn(
                         'w-2 h-2 rounded-full transition-all',
                         selectedImage === index
-                          ? 'bg-red-500 w-6'
+                          ? 'bg-cyan-500 w-6'
                           : 'bg-white/50 hover:bg-white/80'
                       )}
                     />
@@ -329,8 +329,8 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                     className={cn(
                       'relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all',
                       selectedImage === index
-                        ? 'border-red-500'
-                        : 'border-transparent hover:border-red-500/30'
+                        ? 'border-cyan-500'
+                        : 'border-transparent hover:border-cyan-500/30'
                     )}
                   >
                     <Image
@@ -348,7 +348,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
             {/* Color Selector - BELOW IMAGE - V0 Style */}
             {hasVariantImages && variantImageValues.length > 0 && (
               <motion.div
-                className="p-4 rounded-2xl bg-neutral-50 dark:bg-[#12121a] border border-black/[0.06] dark:border-white/[0.06]"
+                className="p-4 rounded-2xl bg-neutral-50 dark:bg-[#0a0a0a] border border-black/[0.06] dark:border-white/[0.06]"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.4, ease: v0Ease }}
@@ -358,7 +358,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                     {product.imageVariantType?.name || 'Color'}
                   </h3>
                   {selectedVariantValue && (
-                    <span className="text-sm text-red-600 dark:text-red-400 font-medium">
+                    <span className="text-sm text-cyan-600 dark:text-cyan-400 font-medium">
                       {selectedVariantValue}
                     </span>
                   )}
@@ -376,8 +376,8 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                         className={cn(
                           'relative rounded-xl border-2 transition-all overflow-hidden',
                           isSelected
-                            ? 'border-red-500 ring-2 ring-red-500/20'
-                            : 'border-neutral-200 dark:border-neutral-700 hover:border-red-400'
+                            ? 'border-cyan-500 ring-2 ring-cyan-500/20'
+                            : 'border-neutral-200 dark:border-neutral-700 hover:border-cyan-400'
                         )}
                       >
                         {firstImage ? (
@@ -390,8 +390,8 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                               sizes="48px"
                             />
                             {isSelected && (
-                              <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
-                                <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center">
+                              <div className="absolute inset-0 bg-cyan-500/20 flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
                                   <Check className="w-2.5 h-2.5 text-white" />
                                 </div>
                               </div>
@@ -401,7 +401,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                           <div className={cn(
                             'px-4 py-2 text-sm font-medium',
                             isSelected
-                              ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300'
                               : 'text-neutral-600 dark:text-neutral-400'
                           )}>
                             {value}
@@ -424,7 +424,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
           >
             {/* Category & Brand - V0 Style */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wider">
+              <span className="text-xs font-medium text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
                 {product.category.name}
               </span>
               {product.brand && (
@@ -445,13 +445,13 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
               <div className="flex items-baseline gap-3">
                 {salePrice ? (
                   <>
-                    <span className="text-3xl font-semibold text-neutral-900 dark:text-white">
+                    <span className="text-3xl font-semibold bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 dark:from-red-500 dark:via-orange-500 dark:to-amber-500 bg-clip-text text-transparent">
                       S/ {displayPrice.toFixed(2)}
                     </span>
-                    <span className="text-lg text-neutral-400 line-through">
+                    <span className="text-lg text-slate-400 line-through">
                       S/ {price.toFixed(2)}
                     </span>
-                    <span className="px-2 py-0.5 bg-red-500/10 text-red-600 dark:text-red-400 rounded-md text-xs font-medium">
+                    <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-md text-xs font-medium">
                       -{discount}%
                     </span>
                   </>
@@ -572,7 +572,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                             {variantType.name}
                           </h3>
                           {selectedValue && (
-                            <span className="text-sm text-red-600 dark:text-red-400 font-medium">
+                            <span className="text-sm text-cyan-600 dark:text-cyan-400 font-medium">
                               {selectedValue}
                             </span>
                           )}
@@ -596,9 +596,9 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                                 className={cn(
                                   'relative px-4 py-2.5 rounded-xl border transition-all min-w-[50px]',
                                   isSelected
-                                    ? 'border-red-500 bg-red-500/10 text-red-700 dark:text-red-300'
+                                    ? 'border-cyan-500 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300'
                                     : isAvailable
-                                      ? 'border-neutral-200 dark:border-neutral-700 hover:border-red-400 text-neutral-700 dark:text-neutral-300'
+                                      ? 'border-neutral-200 dark:border-neutral-700 hover:border-cyan-400 text-neutral-700 dark:text-neutral-300'
                                       : 'border-neutral-100 dark:border-neutral-800 text-neutral-300 dark:text-neutral-600 cursor-not-allowed opacity-50'
                                 )}
                               >
@@ -609,7 +609,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                                   </span>
                                 )}
                                 {isSelected && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center">
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
                                     <Check className="w-2.5 h-2.5 text-white" />
                                   </div>
                                 )}
