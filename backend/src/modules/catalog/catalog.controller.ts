@@ -73,6 +73,20 @@ export class CatalogController {
     return this.catalogService.searchProducts(query);
   }
 
+  @Get('brands/:slug')
+  @ApiOperation({
+    summary: 'Get brand by slug with products',
+    description: 'Returns brand details with paginated products and filters',
+  })
+  @ApiParam({ name: 'slug', description: 'Brand slug', example: 'dragon-pharma' })
+  @ApiQuery({ type: CatalogCategoryQueryDtoClass })
+  async getProductsByBrand(
+    @Param('slug') slug: string,
+    @Query(new ZodValidationPipe(catalogCategoryQuerySchema)) query: CatalogCategoryQueryDto,
+  ) {
+    return this.catalogService.getProductsByBrand(slug, query);
+  }
+
   @Get('filters')
   @ApiOperation({
     summary: 'Get available filters',

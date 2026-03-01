@@ -563,6 +563,98 @@ export class CatalogService {
   }
 
   /**
+   * GET /catalog/brands/:slug - Productos por marca (SEO)
+   */
+  async getProductsByBrand(slug: string, query: CatalogCategoryQueryDto) {
+    const { page, limit, sortBy, sortOrder, minPrice, maxPrice } = query;
+
+    const brand = await this.prisma.brand.findFirst({
+      where: { slug, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        description: true,
+        seoTitle: true,
+        seoDescription: true,
+        seoKeywords: true,
+      },
+    });
+
+    if (!brand) {
+      throw new NotFoundException('Marca no encontrada');
+    }
+
+    const where: Prisma.ProductWhereInput = {
+      brandId: brand.id,
+      isActive: true,
+    };
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price.gte = minPrice;
+      if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
+
+    const orderBy: Prisma.ProductOrderByWithRelationInput = {};
+    orderBy[sortBy] = sortOrder;
+
+    const total = await this.prisma.product.count({ where });
+
+    const products = await this.prisma.product.findMany({
+      where,
+      orderBy,
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        category: { select: { id: true, name: true, slug: true } },
+        brand: { select: { id: true, name: true, slug: true, logo: true } },
+        images: { orderBy: { order: 'asc' }, take: 1 },
+        _count: { select: { variants: { where: { isActive: true } } } },
+      },
+    });
+
+    // Categories available for this brand
+    const categoriesInBrand = await this.prisma.category.findMany({
+      where: {
+        isActive: true,
+        products: { some: { brandId: brand.id, isActive: true } },
+      },
+      select: { id: true, name: true, slug: true, _count: { select: { products: { where: { brandId: brand.id, isActive: true } } } } },
+      orderBy: { name: 'asc' },
+    });
+
+    const priceRange = await this.prisma.product.aggregate({
+      where: { brandId: brand.id, isActive: true },
+      _min: { price: true },
+      _max: { price: true },
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      brand,
+      products,
+      filters: {
+        categories: categoriesInBrand,
+        priceRange: {
+          min: priceRange._min.price ? Number(priceRange._min.price) : 0,
+          max: priceRange._max.price ? Number(priceRange._max.price) : 0,
+        },
+      },
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
+
+  /**
    * POST /catalog/track - Tracking de eventos
    */
   async trackEvent(dto: TrackEventDto) {

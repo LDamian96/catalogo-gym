@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { getCatalogHome } from '@/lib/api/catalog';
 import { CatalogLanding } from './catalog-landing';
-import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
+import { OrganizationJsonLd, WebSiteJsonLd, LocalBusinessJsonLd } from '@/components/seo';
 import { CatalogWrapper } from '@/components/catalog';
 
 export const revalidate = 60; // ISR: Revalidate every 60 seconds
@@ -69,6 +69,7 @@ export default async function HomePage() {
         <>
           <OrganizationJsonLd settings={catalogData.settings} />
           <WebSiteJsonLd settings={catalogData.settings} />
+          <LocalBusinessJsonLd settings={catalogData.settings} />
         </>
       )}
       <Suspense fallback={<CatalogSkeleton />}>

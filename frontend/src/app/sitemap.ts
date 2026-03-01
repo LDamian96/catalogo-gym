@@ -13,6 +13,10 @@ interface Product {
   updatedAt?: string;
 }
 
+interface Brand {
+  slug: string;
+}
+
 async function getCategories(): Promise<Category[]> {
   try {
     const res = await fetch(`${API_URL}/catalog`, {
@@ -54,10 +58,25 @@ async function getAllProducts(): Promise<Product[]> {
   }
 }
 
+async function getBrands(): Promise<Brand[]> {
+  try {
+    const res = await fetch(`${API_URL}/catalog`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const brands = data.data?.brands || data.brands || [];
+    return brands;
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, products] = await Promise.all([
+  const [categories, products, brands] = await Promise.all([
     getCategories(),
     getAllProducts(),
+    getBrands(),
   ]);
 
   const now = new Date().toISOString();
@@ -100,5 +119,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...categoryPages, ...productPages];
+  // Páginas de marcas
+  const brandPages: MetadataRoute.Sitemap = brands.map((brand) => ({
+    url: `${SITE_URL}/marcas/${brand.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...categoryPages, ...brandPages, ...productPages];
 }

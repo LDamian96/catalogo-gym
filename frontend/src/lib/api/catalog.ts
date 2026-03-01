@@ -73,7 +73,21 @@ export interface CatalogBrand {
   name: string;
   slug: string;
   logo: string | null;
+  description?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string | null;
   _count: { products: number };
+}
+
+export interface CatalogBrandPage {
+  brand: CatalogBrand;
+  products: CatalogProduct[];
+  filters: {
+    categories: { id: string; name: string; slug: string; _count: { products: number } }[];
+    priceRange: { min: number; max: number };
+  };
+  meta: PaginationMeta & { hasNextPage: boolean; hasPreviousPage: boolean };
 }
 
 export interface ProductImage {
@@ -263,6 +277,21 @@ export async function trackEvent(event: {
   metadata?: Record<string, unknown>;
 }): Promise<void> {
   await catalogApi.post('/catalog/track', event);
+}
+
+export async function getCatalogBrand(
+  slug: string,
+  params?: {
+    page?: number;
+    limit?: number;
+    sortBy?: 'order' | 'price' | 'name' | 'createdAt';
+    sortOrder?: 'asc' | 'desc';
+    minPrice?: number;
+    maxPrice?: number;
+  }
+): Promise<CatalogBrandPage> {
+  const { data } = await catalogApi.get<CatalogBrandPage>(`/catalog/brands/${slug}`, { params });
+  return data;
 }
 
 export async function getCatalogFilters(): Promise<CatalogFilters> {
