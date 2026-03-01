@@ -31,6 +31,7 @@ export class SettingsService {
           whatsapp: '+51999999999',
           currency: 'S/',
           cartEnabled: true,
+          variantsEnabled: true,
         },
       });
     }

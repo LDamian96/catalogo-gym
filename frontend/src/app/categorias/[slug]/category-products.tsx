@@ -23,9 +23,10 @@ import {
   Shield,
   Dumbbell,
   Heart,
+  Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav } from '@/components/catalog';
+import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav, Navbar } from '@/components/catalog';
 import type {
   CatalogSettings,
   CatalogCategory,
@@ -169,6 +170,7 @@ export function CategoryProducts({
   const [viewMode, setViewMode] = useState<'grid' | 'large'>('grid');
   const [minPrice, setMinPrice] = useState(currentMinPrice || '');
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice || '');
+  const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brandId') || '');
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
   const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({});
 
@@ -230,9 +232,149 @@ export function CategoryProducts({
   const motivation = categoryMotivation[category.slug] || defaultMotivation;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#000000]">
-      {/* Header with Category Info - BEAST MODE */}
-      <div className="relative bg-[#000000] overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-blue-50 to-cyan-50 dark:bg-[#000000] dark:from-[#000000] dark:via-[#000000] dark:to-[#000000] pb-24 lg:pb-0 lg:bg-white lg:from-white lg:via-white lg:to-white">
+      {/* Navbar */}
+      <Navbar settings={settings} categories={categories} />
+
+      {/* Mobile Native UI */}
+      <div className="lg:hidden">
+        {/* Hero section - cyan/teal gradient matching BETA.pen */}
+        <div className="relative overflow-hidden rounded-b-[26px] bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-700 shadow-[0_8px_24px_rgba(14,165,233,0.15)]">
+          {/* pt-20 = navbar height (56px) + extra spacing so content sits below navbar */}
+          <div className="relative px-3.5 pt-20 pb-4 flex flex-col gap-3">
+            {/* Top row: back button + cart */}
+            <div className="flex items-center justify-between">
+              <Link
+                href="/categorias"
+                className="inline-flex items-center gap-1.5 text-white/80 active:scale-95 transition-transform"
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <span className="text-[13px] font-medium">Categorías</span>
+              </Link>
+            </div>
+
+            {/* Title block */}
+            <div className="flex flex-col gap-1">
+              <h1 className="text-[26px] font-extrabold text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-heading, inherit)' }}>
+                {category.name}
+              </h1>
+              <p className="text-[13px] text-sky-200 font-medium">
+                {category.description || motivation.tagline.split('. ').map(s => s.charAt(0) + s.slice(1).toLowerCase()).join('. ')}
+              </p>
+            </div>
+
+            {/* Search bar - white translucent */}
+            <div className="flex items-center gap-2 h-[42px] px-3 rounded-xl bg-white/90">
+              <Search className="w-4 h-4 text-cyan-600 flex-shrink-0" />
+              <Link
+                href="/"
+                className="text-[12px] text-slate-500 font-medium truncate"
+              >
+                Buscar en {category.name.toLowerCase()}...
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Controls section */}
+        <div className="px-3.5 pt-3 pb-2 space-y-2.5">
+          {/* Filter Chips: Todos + Brands + Variants */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5 -mx-3.5 px-3.5">
+            {/* "Todos" chip - teal filled when selected */}
+            <button
+              onClick={() => {
+                setSelectedBrand('');
+                updateFilters({ brandId: undefined });
+              }}
+              className={cn(
+                'flex-shrink-0 px-3.5 py-[7px] rounded-full text-[12px] transition-all active:scale-95',
+                !selectedBrand
+                  ? 'bg-cyan-600 text-white font-bold'
+                  : 'bg-white text-slate-500 font-semibold border border-slate-200'
+              )}
+            >
+              Todos
+            </button>
+            {/* Brand chips - white with border, teal when selected */}
+            {filters.brands.map((brand) => (
+              <button
+                key={brand.id}
+                onClick={() => {
+                  const newBrand = selectedBrand === brand.id ? '' : brand.id;
+                  setSelectedBrand(newBrand);
+                  updateFilters({ brandId: newBrand || undefined });
+                }}
+                className={cn(
+                  'flex-shrink-0 px-3.5 py-[7px] rounded-full text-[12px] transition-all active:scale-95',
+                  selectedBrand === brand.id
+                    ? 'bg-cyan-600 text-white font-bold'
+                    : 'bg-white text-slate-500 font-semibold border border-slate-200'
+                )}
+              >
+                {brand.name}
+              </button>
+            ))}
+            {/* Variant chips */}
+            {variantFilters.flatMap((variantType) =>
+              variantType.values.slice(0, 4).map((val) => {
+                const isSelected = selectedVariants[variantType.id]?.includes(val.value);
+                return (
+                  <button
+                    key={val.id}
+                    onClick={() => handleVariantToggle(variantType.id, val.value)}
+                    className={cn(
+                      'flex-shrink-0 px-3.5 py-[7px] rounded-full text-[12px] transition-all active:scale-95',
+                      isSelected
+                        ? 'bg-cyan-600 text-white font-bold'
+                        : 'bg-white text-slate-500 font-semibold border border-slate-200'
+                    )}
+                  >
+                    {val.value}
+                  </button>
+                );
+              })
+            )}
+          </div>
+
+          {/* Results + Sort + Filters row */}
+          <div className="flex items-center justify-between">
+            <p className="text-[12px] text-slate-500 font-semibold">
+              {pagination.total} resultados
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <select
+                  value={currentSort || ''}
+                  onChange={(e) => updateFilters({ sort: e.target.value || undefined })}
+                  className="appearance-none pl-3 pr-7 py-1.5 rounded-[10px] bg-white border border-slate-200 text-[11px] font-semibold text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-300/50"
+                >
+                  <option value="">Ordenar</option>
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ArrowUpDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400 pointer-events-none" />
+              </div>
+              <button
+                onClick={() => setShowFilters(true)}
+                className={cn(
+                  'w-[34px] h-[34px] rounded-[10px] flex items-center justify-center border transition-all active:scale-95',
+                  hasActiveFilters
+                    ? 'bg-cyan-600 text-white border-transparent shadow-md'
+                    : 'bg-white border-slate-200 text-slate-400'
+                )}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header with Category Info - BEAST MODE (Desktop only) */}
+      <div className="hidden lg:block relative bg-[#000000] overflow-hidden">
         {/* Animated Background Pattern */}
         <div className="absolute inset-0">
           <div className={cn(
@@ -377,8 +519,8 @@ export function CategoryProducts({
         </div>
       </div>
 
-      {/* Search & Filters Bar */}
-      <div className="sticky top-0 z-30 bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
+      {/* Search & Filters Bar - Desktop only */}
+      <div className="hidden lg:block lg:sticky lg:top-0 z-30 bg-gradient-to-r from-cyan-50/80 via-white to-white dark:bg-[#000000] border-b border-cyan-100 dark:border-neutral-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {/* Search */}
@@ -462,7 +604,7 @@ export function CategoryProducts({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-3.5 lg:px-4 py-2.5 lg:py-6">
         <div className="flex gap-8">
           {/* Sidebar Categories (Desktop) */}
           <motion.aside
@@ -638,7 +780,7 @@ export function CategoryProducts({
               <>
                 <motion.div
                   className={cn(
-                    'grid gap-3 md:gap-4',
+                    'grid gap-2.5 lg:gap-4',
                     viewMode === 'grid'
                       ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
                       : 'grid-cols-2 md:grid-cols-2 lg:grid-cols-3'
@@ -648,95 +790,124 @@ export function CategoryProducts({
                   animate="animate"
                 >
                   {products.map((product, index) => (
-                    <motion.div key={product.id} variants={staggerItem}>
+                    <motion.div
+                      key={product.id}
+                      variants={staggerItem}
+                      className="min-w-0"
+                    >
                       <ProductCard product={product} index={index} />
                     </motion.div>
                   ))}
                 </motion.div>
 
-                {/* Pagination */}
+                {/* Pagination - Mobile: Load More button, Desktop: page numbers */}
                 {pagination.totalPages > 1 && (
-                  <motion.div
-                    className="flex items-center justify-center gap-2 mt-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <button
-                      onClick={() => updateFilters({ page: String(pagination.page - 1) })}
-                      disabled={pagination.page <= 1}
-                      className={cn(
-                        'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                        pagination.page <= 1
-                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
-                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                      )}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Anterior
-                    </button>
+                  <>
+                    {/* Mobile: Load More */}
+                    {pagination.page < pagination.totalPages && (
+                      <motion.div
+                        className="lg:hidden flex flex-col items-center gap-2 mt-6 mb-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, type: 'spring', stiffness: 300, damping: 30 }}
+                      >
+                        <button
+                          onClick={() => updateFilters({ page: String(pagination.page + 1) })}
+                          className="w-full py-3.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[14px] font-bold active:scale-[0.98] transition-transform shadow-lg"
+                        >
+                          Cargar más productos
+                        </button>
+                        <span className="text-[11px] text-neutral-400">
+                          Página {pagination.page} de {pagination.totalPages}
+                        </span>
+                      </motion.div>
+                    )}
 
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-                        .filter(p => p === 1 || p === pagination.totalPages || Math.abs(p - pagination.page) <= 1)
-                        .map((p, idx, arr) => (
-                          <span key={p}>
-                            {idx > 0 && arr[idx - 1] !== p - 1 && (
-                              <span className="px-2 text-neutral-400">...</span>
-                            )}
-                            <button
-                              onClick={() => updateFilters({ page: String(p) })}
-                              className={cn(
-                                'w-10 h-10 rounded-lg font-medium transition-colors',
-                                p === pagination.page
-                                  ? 'bg-cyan-600 text-white'
-                                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                    {/* Desktop: Page numbers */}
+                    <motion.div
+                      className="hidden lg:flex items-center justify-center gap-2 mt-12"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <button
+                        onClick={() => updateFilters({ page: String(pagination.page - 1) })}
+                        disabled={pagination.page <= 1}
+                        className={cn(
+                          'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
+                          pagination.page <= 1
+                            ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        )}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        Anterior
+                      </button>
+
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                          .filter(p => p === 1 || p === pagination.totalPages || Math.abs(p - pagination.page) <= 1)
+                          .map((p, idx, arr) => (
+                            <span key={p}>
+                              {idx > 0 && arr[idx - 1] !== p - 1 && (
+                                <span className="px-2 text-neutral-400">...</span>
                               )}
-                            >
-                              {p}
-                            </button>
-                          </span>
-                        ))}
-                    </div>
+                              <button
+                                onClick={() => updateFilters({ page: String(p) })}
+                                className={cn(
+                                  'w-10 h-10 rounded-lg font-medium transition-colors',
+                                  p === pagination.page
+                                    ? 'bg-cyan-600 text-white'
+                                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                                )}
+                              >
+                                {p}
+                              </button>
+                            </span>
+                          ))}
+                      </div>
 
-                    <button
-                      onClick={() => updateFilters({ page: String(pagination.page + 1) })}
-                      disabled={pagination.page >= pagination.totalPages}
-                      className={cn(
-                        'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                        pagination.page >= pagination.totalPages
-                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
-                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                      )}
-                    >
-                      Siguiente
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </motion.div>
+                      <button
+                        onClick={() => updateFilters({ page: String(pagination.page + 1) })}
+                        disabled={pagination.page >= pagination.totalPages}
+                        className={cn(
+                          'flex items-center gap-1 px-4 py-2 rounded-lg font-medium transition-colors',
+                          pagination.page >= pagination.totalPages
+                            ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
+                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        )}
+                      >
+                        Siguiente
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </motion.div>
+                  </>
                 )}
               </>
             ) : (
               <motion.div
-                className="text-center py-20"
+                className="text-center py-16 lg:py-20"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               >
-                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                  <Grid3X3 className="w-10 h-10 text-neutral-400" />
+                <div className="w-20 h-20 lg:w-24 lg:h-24 mx-auto mb-5 lg:mb-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                  <Grid3X3 className="w-8 h-8 lg:w-10 lg:h-10 text-neutral-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#000000] dark:text-white mb-2">
+                <h3 className="text-lg lg:text-xl font-semibold text-[#000000] dark:text-white mb-2">
                   No hay productos
                 </h3>
-                <p className="text-slate-500 dark:text-neutral-400 mb-6">
+                <p className="text-sm lg:text-base text-slate-500 dark:text-neutral-400 mb-6 px-4">
                   No encontramos productos con los filtros seleccionados
                 </p>
                 {hasActiveFilters && (
-                  <button
+                  <motion.button
                     onClick={clearFilters}
-                    className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-medium hover:bg-cyan-700 transition-colors"
+                    className="px-6 py-3 bg-cyan-600 text-white rounded-xl font-medium hover:bg-cyan-700 active:scale-[0.98] transition-all"
+                    whileTap={{ scale: 0.98 }}
                   >
                     Limpiar filtros
-                  </button>
+                  </motion.button>
                 )}
               </motion.div>
             )}
@@ -749,26 +920,30 @@ export function CategoryProducts({
         {showFilters && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setShowFilters(false)}
             />
             <motion.div
-              className="fixed right-0 top-0 bottom-0 w-80 bg-white dark:bg-[#000000] z-50 lg:hidden shadow-2xl"
+              className="fixed right-0 top-0 bottom-0 w-[85vw] max-w-[320px] bg-white dark:bg-neutral-950 z-50 lg:hidden shadow-2xl overflow-y-auto"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
             >
-              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-800">
-                <h2 className="text-lg font-semibold">Filtros</h2>
-                <button onClick={() => setShowFilters(false)}>
-                  <X className="w-6 h-6" />
+              <div className="flex items-center justify-between p-5 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 bg-white dark:bg-neutral-950 z-10">
+                <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Filtros</h2>
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center active:scale-95 transition-transform"
+                >
+                  <X className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
                 </button>
               </div>
-              <div className="p-6 space-y-6">
+              <div className="p-5 space-y-6">
                 {/* Sort & Variant Filters (Mobile) */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold uppercase tracking-wider">
@@ -900,25 +1075,26 @@ export function CategoryProducts({
                 </div>
 
                 {/* Apply Buttons */}
-                <div className="space-y-3 pt-4">
-                  <button
+                <div className="space-y-3 pt-4 pb-8">
+                  <motion.button
                     onClick={() => {
                       applyPriceFilter();
                       setShowFilters(false);
                     }}
-                    className="w-full py-3 text-sm font-medium text-white bg-cyan-600 rounded-lg"
+                    className="w-full py-3.5 text-[14px] font-bold text-white bg-cyan-600 rounded-xl active:scale-[0.98] transition-transform shadow-lg shadow-cyan-600/25"
+                    whileTap={{ scale: 0.98 }}
                   >
                     Aplicar filtros
-                  </button>
+                  </motion.button>
                   {hasActiveFilters && (
                     <button
                       onClick={() => {
                         clearFilters();
                         setShowFilters(false);
                       }}
-                      className="w-full py-2 text-sm text-neutral-600 dark:text-neutral-400"
+                      className="w-full py-2.5 text-[13px] font-medium text-neutral-500 dark:text-neutral-400 active:text-cyan-600 transition-colors"
                     >
-                      Limpiar filtros
+                      Limpiar todos los filtros
                     </button>
                   )}
                 </div>
@@ -928,8 +1104,10 @@ export function CategoryProducts({
         )}
       </AnimatePresence>
 
-      {/* Footer */}
-      <Footer settings={settings} categories={categories} />
+      {/* Footer - Desktop only (mobile uses bottom nav) */}
+      <div className="hidden lg:block">
+        <Footer settings={settings} categories={categories} />
+      </div>
 
       {/* WhatsApp Button */}
       {settings.whatsapp && (

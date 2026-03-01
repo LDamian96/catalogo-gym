@@ -474,7 +474,28 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       ]);
       setVariants(variantsData);
       setVariantTypes(typesData);
-      setParentVariantValues(productData.variantValues || []);
+      // Merge variant values from checkboxes AND from existing sub-products
+      const directValues = (productData.variantValues || []).map((v: any) => ({
+        variantTypeId: v.variantTypeId,
+        value: v.value,
+      }));
+      const subProductValues: { variantTypeId: string; value: string }[] = [];
+      (variantsData || []).forEach((variant: any) => {
+        (variant.variantValues || []).forEach((v: any) => {
+          subProductValues.push({
+            variantTypeId: v.variantTypeId || v.variantType?.id,
+            value: v.value,
+          });
+        });
+      });
+      const allValues = [...directValues, ...subProductValues];
+      const uniqueValues = allValues.filter(
+        (v, i, arr) =>
+          arr.findIndex(
+            (x) => x.variantTypeId === v.variantTypeId && x.value === v.value
+          ) === i
+      );
+      setParentVariantValues(uniqueValues);
       setParentProduct({
         price: productData.price !== null && productData.price !== undefined
           ? Number(productData.price)

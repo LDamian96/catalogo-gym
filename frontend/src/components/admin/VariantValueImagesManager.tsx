@@ -346,13 +346,30 @@ export function VariantValueImagesManager({
       ]);
       setConfig(configData);
       setVariantTypes(typesData);
-      // Extract variant values from the product
-      setProductVariantValues(
-        (productData.variantValues || []).map((v: any) => ({
-          variantTypeId: v.variantTypeId,
-          value: v.value,
-        }))
+      // Extract variant values from both product-level and sub-product variants
+      const directValues = (productData.variantValues || []).map((v: any) => ({
+        variantTypeId: v.variantTypeId,
+        value: v.value,
+      }));
+      // Also extract values from sub-products (variants)
+      const subProductValues: { variantTypeId: string; value: string }[] = [];
+      (productData.variants || []).forEach((variant: any) => {
+        (variant.variantValues || []).forEach((v: any) => {
+          subProductValues.push({
+            variantTypeId: v.variantTypeId,
+            value: v.value,
+          });
+        });
+      });
+      // Merge and deduplicate
+      const allValues = [...directValues, ...subProductValues];
+      const uniqueValues = allValues.filter(
+        (v, i, arr) =>
+          arr.findIndex(
+            (x) => x.variantTypeId === v.variantTypeId && x.value === v.value
+          ) === i
       );
+      setProductVariantValues(uniqueValues);
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Error al cargar configuracion de imagenes');

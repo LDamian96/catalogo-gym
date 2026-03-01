@@ -29,9 +29,127 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <a href={`/productos/${product.slug}`} onClick={handleClick}>
+      {/* ==================== MOBILE CARD ==================== */}
       <motion.article
         className={cn(
-          'group relative h-full flex flex-col overflow-hidden rounded-2xl',
+          'lg:hidden relative h-full flex flex-col overflow-hidden rounded-[18px]',
+          'bg-white dark:bg-[#111]',
+          'active:scale-[0.97] transition-transform duration-150'
+        )}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.04,
+          ease: v0Ease,
+        }}
+      >
+        {/* Image - compact height */}
+        <div className="relative h-[130px] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+          {mainImage ? (
+            <Image
+              src={mainImage}
+              alt={product.name}
+              fill
+              quality={85}
+              className="object-cover"
+              sizes="50vw"
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-50 dark:bg-neutral-900">
+              <ShoppingBag className="w-10 h-10 text-neutral-300 dark:text-neutral-700" />
+            </div>
+          )}
+
+          {/* Badges - top left */}
+          <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
+            {salePrice && (
+              <span className="inline-flex items-center gap-1 px-[7px] py-[3px] bg-red-600 text-white text-[8px] font-bold rounded-[7px]">
+                <Tag className="w-[9px] h-[9px]" />
+                -{discount}%
+              </span>
+            )}
+            {hasVariants && (
+              <span className="inline-flex items-center gap-1 px-[7px] py-[3px] bg-black/60 text-white text-[8px] font-bold rounded-[7px]">
+                <Zap className="w-[9px] h-[9px]" />
+                +{product._count?.variants} sabores
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Content - compact padding matching design */}
+        <div className="flex-1 flex flex-col gap-0.5 px-2.5 py-2">
+          {/* Category label - teal */}
+          <span className="text-[9px] font-bold uppercase text-cyan-600 dark:text-cyan-400" style={{ letterSpacing: '1px' }}>
+            {product.category.name}
+          </span>
+
+          {/* Title */}
+          <h3 className="text-[12px] font-bold leading-tight line-clamp-2 text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-heading, inherit)' }}>
+            {product.name}
+          </h3>
+
+          {/* Brand */}
+          {product.brand && (
+            <p className="text-[10px] text-slate-400 font-medium">
+              {product.brand.name}
+            </p>
+          )}
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Price */}
+          {product.showPrice && (
+            <div className="flex items-center gap-1.5 mt-1">
+              {salePrice ? (
+                <>
+                  <span className="text-[15px] font-extrabold text-red-600" style={{ fontFamily: 'var(--font-heading, inherit)' }}>
+                    S/ {salePrice.toFixed(2)}
+                  </span>
+                  <span className="text-[10px] text-slate-300 line-through font-medium">
+                    S/ {price.toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-[15px] font-extrabold text-slate-900 dark:text-white" style={{ fontFamily: 'var(--font-heading, inherit)' }}>
+                  S/ {price.toFixed(2)}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Stock */}
+          {product.showStock && product.stock !== null && (
+            <div className="mt-1">
+              {product.stock > 0 ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                  </span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                    {product.stock > 10 ? 'En stock' : `Solo ${product.stock} disponibles`}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-300" />
+                  <span className="text-[10px] text-neutral-400 font-medium">
+                    {product.stockMessage || 'Agotado'}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </motion.article>
+
+      {/* ==================== DESKTOP CARD ==================== */}
+      <motion.article
+        className={cn(
+          'hidden lg:flex group relative h-full flex-col overflow-hidden rounded-2xl',
           'bg-white dark:bg-[#0a0a0a]',
           'border-2 border-cyan-100 dark:border-neutral-800',
           'transition-all duration-500',
@@ -65,16 +183,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                   'group-hover:scale-110',
                   secondImage && 'group-hover:opacity-0'
                 )}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                sizes="(max-width: 1024px) 33vw, 25vw"
               />
               {secondImage && (
                 <Image
-                  src={secondImage}
+                  src={`${secondImage}`}
                   alt={`${product.name} - Vista 2`}
                   fill
                   quality={90}
                   className="object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-110"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  sizes="(max-width: 1024px) 33vw, 25vw"
                 />
               )}
             </>
@@ -87,10 +205,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </div>
           )}
 
-          {/* Colorful Gradient Overlay */}
+          {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-          {/* Quick View Button - Colorful */}
+          {/* Quick View Button */}
           <motion.div
             className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0"
             whileHover={{ scale: 1.1 }}
@@ -107,7 +225,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </span>
           </motion.div>
 
-          {/* Badges Container - Colorful */}
+          {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {salePrice && (
               <motion.div
@@ -121,10 +239,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 </span>
               </motion.div>
             )}
-
           </div>
 
-          {/* Variants Badge - Colorful */}
+          {/* Variants Badge */}
           {hasVariants && (
             <motion.div
               className="absolute top-3 right-3"
@@ -139,7 +256,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </motion.div>
           )}
 
-          {/* Wishlist Button - Colorful */}
+          {/* Wishlist Button */}
           {!hasVariants && (
             <motion.button
               className={cn(
@@ -159,9 +276,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
 
-        {/* Content - Colorful */}
+        {/* Content */}
         <div className="flex-1 flex flex-col p-4 bg-gradient-to-b from-white to-cyan-50/50 dark:from-[#0a0a0a] dark:to-[#0a0a0a]">
-          {/* Category - With color pill */}
+          {/* Category */}
           <span className={cn(
             'inline-flex items-center gap-1 self-start px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md mb-2',
             'bg-gradient-to-r from-cyan-100 to-sky-100 text-cyan-700',
@@ -170,7 +287,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             {product.category.name}
           </span>
 
-          {/* Title - Bold with gradient */}
+          {/* Title */}
           <h3 className={cn(
             'text-sm font-bold leading-snug line-clamp-2 mb-1 transition-all duration-300',
             'bg-gradient-to-r from-cyan-700 via-sky-600 to-blue-700 bg-clip-text text-transparent',
@@ -187,10 +304,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </p>
           )}
 
-          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Price - Colorful */}
+          {/* Price */}
           {product.showPrice && (
             <div className="flex items-center gap-3 mt-3">
               {salePrice ? (
@@ -210,7 +326,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </div>
           )}
 
-          {/* Stock Indicator - Colorful */}
+          {/* Stock */}
           {product.showStock && product.stock !== null && (
             <div className="mt-3">
               {product.stock > 0 ? (
@@ -236,14 +352,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
 
-        {/* Bottom Gradient Bar - Animated */}
+        {/* Bottom Gradient Bar */}
         <div className={cn(
           'h-1 opacity-30 group-hover:opacity-100 transition-opacity duration-500',
           'bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-500',
           'dark:bg-cyan-500'
         )} />
 
-        {/* Corner Decoration - Light mode only */}
+        {/* Corner Decoration */}
         <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500 dark:hidden">
           <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rotate-45 transform origin-center" />
         </div>

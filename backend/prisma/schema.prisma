@@ -61,6 +61,7 @@ model Settings {
   address         String?
   schedule        String?
   cartEnabled     Boolean  @default(true) @map("cart_enabled")
+  variantsEnabled Boolean  @default(true) @map("variants_enabled")
   welcomeMessage  String?  @map("welcome_message")
 
   // SEO Global
@@ -111,6 +112,11 @@ model Brand {
   description   String?
   order         Int      @default(0)
   isActive      Boolean  @default(true) @map("is_active")
+
+  // SEO por marca
+  seoTitle       String?   @map("seo_title")
+  seoDescription String?   @map("seo_description")
+  seoKeywords    String?   @map("seo_keywords")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -347,6 +353,12 @@ model ProductVariant {
   imagePublicId   String?  @map("image_public_id")
   isActive        Boolean  @default(true) @map("is_active")
   order           Int      @default(0)
+
+  // SEO por variante
+  seoTitle       String? @map("seo_title")
+  seoDescription String? @map("seo_description")
+  seoKeywords    String? @map("seo_keywords")
+
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 

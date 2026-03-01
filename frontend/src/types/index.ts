@@ -14,6 +14,7 @@ export interface Settings {
   address: string | null;
   schedule: string | null;
   cartEnabled: boolean;
+  variantsEnabled: boolean;
   welcomeMessage: string | null;
   // SEO
   seoTitle: string | null;
@@ -37,6 +38,7 @@ export interface UpdateSettingsDto {
   address?: string | null;
   schedule?: string | null;
   cartEnabled?: boolean;
+  variantsEnabled?: boolean;
   welcomeMessage?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -105,6 +107,10 @@ export interface Brand {
   description: string | null;
   order: number;
   isActive: boolean;
+  // SEO
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string | null;
   createdAt: string;
   updatedAt: string;
   _count?: { products: number };
@@ -116,6 +122,9 @@ export interface CreateBrandDto {
   description?: string | null;
   isActive?: boolean;
   order?: number;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string | null;
 }
 
 export interface UpdateBrandDto extends Partial<CreateBrandDto> {}

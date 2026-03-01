@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Search,
   Home,
@@ -14,8 +15,10 @@ import {
   Sparkles,
   Tag,
   ChevronLeft,
-  ArrowUpDown,
   ChevronDown,
+  ShoppingBag,
+  ArrowLeft,
+  ShoppingCart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, Navbar, MobileBottomNav } from '@/components/catalog';
@@ -25,9 +28,11 @@ import type {
   CatalogCategory,
   CatalogProduct,
   CatalogSearchResponse,
+  CatalogBrand,
   VariantTypeFilter,
 } from '@/lib/api/catalog';
 import { staggerContainer, staggerItem } from '@/lib/animations';
+import { useCart } from '@/hooks/useCart';
 
 interface SearchResultsProps {
   initialQuery: string;
@@ -35,6 +40,7 @@ interface SearchResultsProps {
   settings: CatalogSettings;
   categories: CatalogCategory[];
   initialFilter?: string;
+  initialBrandSlug?: string;
 }
 
 const sortOptions = [
@@ -51,12 +57,20 @@ const filterTabs = [
   { value: 'sale', label: 'Ofertas', icon: Tag },
 ];
 
+const mobileTabs = [
+  { value: '', label: 'Todos' },
+  { value: 'sale', label: 'Ofertas' },
+  { value: 'newest', label: 'Nuevos' },
+  { value: 'popular', label: 'Populares' },
+];
+
 export function SearchResults({
   initialQuery,
   initialResults,
   settings,
   categories,
   initialFilter,
+  initialBrandSlug,
 }: SearchResultsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,21 +91,45 @@ export function SearchResults({
   const [variantFilters, setVariantFilters] = useState<VariantTypeFilter[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
   const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({});
+  const [brands, setBrands] = useState<CatalogBrand[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [activeBrandInfo, setActiveBrandInfo] = useState<CatalogBrand | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1');
+  const { openCart, items: cartItems } = useCart();
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Load variant filters on mount
+  // Load variant filters and brands on mount
   useEffect(() => {
     async function loadFilters() {
       try {
         const filters = await getCatalogFilters();
         setVariantFilters(filters.variantTypes || []);
+        setBrands(filters.brands || []);
+
+        // If initialBrandSlug is provided, find matching brand and auto-select
+        if (initialBrandSlug && filters.brands) {
+          const matchedBrand = filters.brands.find(
+            (b: CatalogBrand) => b.slug === initialBrandSlug || b.name.toLowerCase() === initialBrandSlug.toLowerCase()
+          );
+          if (matchedBrand) {
+            setSelectedBrand(matchedBrand.id);
+            setActiveBrandInfo(matchedBrand);
+          }
+        }
       } catch (error) {
         console.error('Error loading filters:', error);
       }
     }
     loadFilters();
-  }, []);
+  }, [initialBrandSlug]);
+
+  // Auto-search when brand is auto-selected from URL
+  useEffect(() => {
+    if (activeBrandInfo && selectedBrand) {
+      handleSearchInternal(query, 1);
+    }
+  }, [activeBrandInfo]);
 
   // Debounced live search - searches as user types
   const handleLiveSearch = useCallback((value: string) => {
@@ -127,6 +165,7 @@ export function SearchResults({
       if (page > 1) params.set('page', String(page));
       if (!resetFilters) {
         if (selectedCategory) params.set('categoryId', selectedCategory);
+        if (selectedBrand) params.set('brandId', selectedBrand);
         if (sort && sort !== 'relevance') params.set('sort', sort);
         if (minPrice) params.set('minPrice', minPrice);
         if (maxPrice) params.set('maxPrice', maxPrice);
@@ -141,6 +180,7 @@ export function SearchResults({
         page,
         limit: 12,
         categoryId: resetFilters ? undefined : selectedCategory || undefined,
+        brandId: resetFilters ? undefined : selectedBrand || undefined,
         sort: resetFilters ? undefined : (sort as any) || undefined,
         minPrice: resetFilters ? undefined : (minPrice ? parseFloat(minPrice) : undefined),
         maxPrice: resetFilters ? undefined : (maxPrice ? parseFloat(maxPrice) : undefined),
@@ -180,6 +220,7 @@ export function SearchResults({
 
   const clearFilters = () => {
     setSelectedCategory('');
+    setSelectedBrand('');
     setSort('relevance');
     setMinPrice('');
     setMaxPrice('');
@@ -204,21 +245,286 @@ export function SearchResults({
   };
 
   const hasVariantFilters = Object.values(selectedVariants).some(v => v.length > 0);
-  const hasActiveFilters = selectedCategory || minPrice || maxPrice || (sort && sort !== 'relevance') || hasVariantFilters;
+  const hasActiveFilters = selectedCategory || selectedBrand || minPrice || maxPrice || (sort && sort !== 'relevance') || hasVariantFilters;
 
   // Popular search suggestions
   const suggestions = ['Nuevo', 'Oferta', 'Popular', 'Destacado'];
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-[#000000]">
-      {/* Navbar */}
+    <div className={cn(
+      "min-h-screen pb-24 lg:pb-0 dark:bg-[#000000] dark:lg:from-[#000000] dark:lg:via-[#000000] dark:lg:to-[#000000]",
+      "bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none lg:bg-gradient-to-b lg:from-cyan-50/30 lg:via-white lg:to-white"
+    )}>
+      {/* Navbar - desktop only (Navbar itself is hidden lg:block) */}
       <Navbar settings={settings} categories={categories} />
 
-      {/* Spacer for fixed navbar */}
-      <div className="h-16 lg:h-20" />
+      {/* Mobile Hero Header - BETA.pen Screen 05 style */}
+      <motion.div
+        className="lg:hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="bg-gradient-to-br from-[#06B6D4] via-[#0284C7] to-[#1D4ED8] rounded-b-[26px] shadow-[0_8px_24px_#0EA5E926] px-4 pt-[18px] pb-4 flex flex-col gap-3.5">
+          {/* Top row: Title + Cart */}
+          <div className="flex items-center justify-between">
+            {activeBrandInfo ? (
+              <button
+                onClick={() => router.back()}
+                className="flex items-center gap-1.5 text-white/90"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="text-[13px] font-medium">Marcas</span>
+              </button>
+            ) : (
+              <h1 className="text-[20px] font-extrabold text-white" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                Buscar productos
+              </h1>
+            )}
+            <button
+              onClick={openCart}
+              className="relative flex items-center justify-center w-9 h-9 bg-white/[0.18] rounded-full"
+            >
+              <ShoppingCart className="w-[18px] h-[18px] text-white" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 flex items-center justify-center text-[10px] font-semibold rounded-full bg-white text-[#0891B2]">
+                  {cartItemCount > 9 ? '9+' : cartItemCount}
+                </span>
+              )}
+            </button>
+          </div>
 
-      {/* Simple Header with subtle gradient */}
-      <div className="relative bg-gradient-to-br from-cyan-50/80 via-white to-sky-50/50 dark:from-cyan-950/30 dark:via-[#000000] dark:to-blue-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
+          {/* Brand info when brand active */}
+          {activeBrandInfo && (
+            <div className="flex items-center gap-3">
+              {activeBrandInfo.logo && (
+                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center p-1.5 overflow-hidden">
+                  <Image
+                    src={activeBrandInfo.logo}
+                    alt={activeBrandInfo.name}
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
+              )}
+              <div>
+                <h1 className="text-[26px] font-extrabold text-white leading-tight" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                  {activeBrandInfo.name}
+                </h1>
+                <p className="text-[13px] font-medium text-sky-200">
+                  Productos oficiales de la marca
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Search Bar - BETA.pen style */}
+          <div className="relative">
+            {isSearching ? (
+              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8] animate-spin" />
+            ) : (
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+            )}
+            <input
+              type="text"
+              placeholder={activeBrandInfo ? `Buscar en ${activeBrandInfo.name}...` : "Buscar productos..."}
+              value={inputValue}
+              onChange={(e) => handleLiveSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+                  handleSearch(inputValue, 1);
+                }
+              }}
+              className="w-full pl-10 pr-10 py-2.5 text-[14px] bg-white/[0.91] rounded-xl text-[#0F172A] placeholder:text-[#94A3B8] focus:ring-2 focus:ring-white/30 outline-none font-medium"
+            />
+            {inputValue && (
+              <button
+                type="button"
+                onClick={() => { setInputValue(''); setQuery(''); handleSearchInternal('', 1); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full bg-[#E2E8F0] hover:bg-neutral-300/60"
+              >
+                <X className="w-3 h-3 text-[#64748B]" />
+              </button>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Mobile Category Circles - Horizontal scroll (60x60) - Hidden when brand is active */}
+      {categories.length > 0 && !activeBrandInfo && (
+        <motion.div
+          className="lg:hidden"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.1 }}
+        >
+          <div className="px-3.5 py-2 pt-3">
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+              {/* All categories option */}
+              <button
+                onClick={() => {
+                  setSelectedCategory('');
+                  handleSearch(query, 1);
+                }}
+                className="flex flex-col items-center gap-1.5 flex-shrink-0"
+              >
+                <div className={cn(
+                  'w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-300 border-2',
+                  !selectedCategory
+                    ? 'bg-gradient-to-br from-cyan-500 to-blue-500 border-cyan-400 shadow-lg shadow-cyan-500/30'
+                    : 'bg-neutral-100 dark:bg-white/10 border-transparent'
+                )}>
+                  <Search className={cn(
+                    'w-5 h-5',
+                    !selectedCategory ? 'text-white' : 'text-neutral-400 dark:text-neutral-500'
+                  )} />
+                </div>
+                <span className={cn(
+                  'text-[11px] font-medium text-center leading-tight w-16 truncate',
+                  !selectedCategory
+                    ? 'text-cyan-600 dark:text-cyan-400'
+                    : 'text-neutral-500 dark:text-neutral-400'
+                )}>
+                  Todos
+                </span>
+              </button>
+              {categories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
+                    handleSearch(query, 1);
+                  }}
+                  className="flex flex-col items-center gap-1.5 flex-shrink-0"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <div className={cn(
+                    'w-[60px] h-[60px] rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 border-2',
+                    selectedCategory === category.id
+                      ? 'border-cyan-400 shadow-lg shadow-cyan-500/30 ring-2 ring-cyan-400/30'
+                      : 'border-transparent'
+                  )}>
+                    {category.image ? (
+                      <Image
+                        src={category.image}
+                        alt={category.name}
+                        width={60}
+                        height={60}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className={cn(
+                        'w-full h-full flex items-center justify-center text-white font-bold text-base',
+                        index % 4 === 0 ? 'bg-gradient-to-br from-cyan-400 to-blue-500' :
+                        index % 4 === 1 ? 'bg-gradient-to-br from-purple-400 to-indigo-500' :
+                        index % 4 === 2 ? 'bg-gradient-to-br from-orange-400 to-red-500' :
+                        'bg-gradient-to-br from-emerald-400 to-teal-500'
+                      )}>
+                        {category.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <span className={cn(
+                    'text-[11px] font-medium text-center leading-tight w-16 truncate',
+                    selectedCategory === category.id
+                      ? 'text-cyan-600 dark:text-cyan-400'
+                      : 'text-neutral-500 dark:text-neutral-400'
+                  )}>
+                    {category.name}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Mobile Tabs Row - Todos/Ofertas/Nuevos/Populares - Hidden when brand active */}
+      <div className={cn("lg:hidden", activeBrandInfo && "hidden")}>
+        <div className="flex overflow-x-auto scrollbar-hide">
+          {mobileTabs.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => handleFilterChange(tab.value)}
+              className={cn(
+                'flex-shrink-0 px-5 py-3 text-[13px] font-semibold whitespace-nowrap transition-all relative',
+                activeFilter === tab.value
+                  ? 'text-cyan-600 dark:text-cyan-400'
+                  : 'text-neutral-400 dark:text-neutral-500'
+              )}
+            >
+              {tab.label}
+              {activeFilter === tab.value && (
+                <motion.div
+                  layoutId="mobileTabUnderline"
+                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-cyan-500 rounded-full"
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile Brand Filter Chips - Horizontal scroll - Hidden when brand active */}
+      {brands.length > 0 && !activeBrandInfo && (
+        <motion.div
+          className="lg:hidden"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <div className="px-3.5 py-2">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
+              <motion.button
+                onClick={() => {
+                  setSelectedBrand('');
+                  handleSearch(query, 1);
+                }}
+                className={cn(
+                  'flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-300 border',
+                  !selectedBrand
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-transparent shadow-md shadow-cyan-500/20'
+                    : 'bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10'
+                )}
+                whileTap={{ scale: 0.95 }}
+              >
+                Todas
+              </motion.button>
+              {brands.map((brand, index) => (
+                <motion.button
+                  key={brand.id}
+                  onClick={() => {
+                    setSelectedBrand(brand.id);
+                    handleSearch(query, 1);
+                  }}
+                  className={cn(
+                    'flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-300 border whitespace-nowrap',
+                    selectedBrand === brand.id
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-transparent shadow-md shadow-cyan-500/20'
+                      : 'bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10'
+                  )}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.25, delay: index * 0.04 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {brand.name}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Spacer for fixed navbar - Desktop only */}
+      <div className="hidden lg:block h-20" />
+
+      {/* Simple Header with subtle gradient - Desktop only */}
+      <div className="hidden lg:block relative bg-gradient-to-br from-cyan-50/80 via-white to-sky-50/50 dark:from-cyan-950/30 dark:via-[#000000] dark:to-blue-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
         {/* Subtle decorative elements */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(34,211,238,0.08),transparent)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(59,130,246,0.06),transparent)] pointer-events-none" />
@@ -307,14 +613,14 @@ export function SearchResults({
         </div>
       </div>
 
-      {/* Mobile Filter Bar - Only on mobile */}
-      <div className="lg:hidden border-b border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-[#000000] sticky top-14 z-30">
-        <div className="px-4 py-2.5">
-          <div className="flex items-center justify-between gap-3">
+      {/* Mobile Results Header Bar - "X resultados" + "Relevancia" dropdown */}
+      <div className="lg:hidden sticky z-30 top-0 pt-1">
+        <div className="px-3.5 py-2">
+          <div className="flex items-center justify-between">
             {/* Results count */}
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
               {results && (
-                <><span className="font-medium text-neutral-700 dark:text-neutral-200">{results.meta.total}</span> productos</>
+                <><span className="font-semibold text-neutral-800 dark:text-neutral-200">{results.meta.total}</span> resultados</>
               )}
             </p>
 
@@ -327,7 +633,7 @@ export function SearchResults({
                     setSort(e.target.value);
                     handleSearch(query, 1);
                   }}
-                  className="appearance-none pl-3 pr-8 py-1.5 rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-xs font-medium text-neutral-700 dark:text-neutral-300"
+                  className="appearance-none pl-3 pr-7 py-1.5 rounded-lg bg-neutral-50 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-[12px] font-medium text-neutral-600 dark:text-neutral-300"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -335,7 +641,7 @@ export function SearchResults({
                     </option>
                   ))}
                 </select>
-                <ArrowUpDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-neutral-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-neutral-400 pointer-events-none" />
               </div>
 
               {/* Filter Button */}
@@ -343,8 +649,8 @@ export function SearchResults({
                 onClick={() => setShowFilters(true)}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg',
-                  'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 text-xs font-medium',
-                  hasActiveFilters && 'ring-2 ring-cyan-500'
+                  'bg-neutral-50 dark:bg-white/5 text-neutral-600 dark:text-neutral-300 text-[12px] font-medium border border-neutral-200 dark:border-white/10',
+                  hasActiveFilters && 'ring-2 ring-cyan-500 border-cyan-400'
                 )}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -356,7 +662,7 @@ export function SearchResults({
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-0 lg:px-8 py-0 lg:py-6">
         <div className="flex gap-8">
           {/* Desktop Sidebar - Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
@@ -590,11 +896,12 @@ export function SearchResults({
               </div>
             )}
 
-            {/* Results Grid */}
+            {/* Results - Mobile LIST view + Desktop GRID */}
             {!isSearching && results && results.products.length > 0 && (
               <>
+                {/* Desktop Grid (unchanged) */}
                 <motion.div
-                  className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"
+                  className="hidden lg:grid lg:grid-cols-3 gap-4"
                   variants={staggerContainer}
                   initial="initial"
                   animate="animate"
@@ -605,6 +912,163 @@ export function SearchResults({
                     </motion.div>
                   ))}
                 </motion.div>
+
+                {/* Mobile Brand Grid View - BETA.pen style cards (2 cols) */}
+                {activeBrandInfo && (
+                  <motion.div
+                    className="lg:hidden grid grid-cols-2 gap-2.5 px-3.5 pt-2"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {results.products.map((product, index) => {
+                      const price = Number(product.price);
+                      const salePrice = product.salePrice ? Number(product.salePrice) : null;
+                      const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
+                      const mainImage = product.images?.[0]?.url;
+
+                      return (
+                        <motion.div key={product.id} variants={staggerItem}>
+                          <Link
+                            href={`/productos/${product.slug}`}
+                            className="block bg-white rounded-[18px] overflow-hidden shadow-[0_2px_12px_#0000000A] active:scale-[0.98] transition-transform"
+                          >
+                            {/* Product Image */}
+                            <div className="relative h-[130px] bg-neutral-100 overflow-hidden">
+                              {mainImage ? (
+                                <Image
+                                  src={mainImage}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(max-width: 768px) 50vw"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <ShoppingBag className="w-8 h-8 text-neutral-300" />
+                                </div>
+                              )}
+                              {/* Discount badge */}
+                              {discount > 0 && (
+                                <div className="absolute top-2 left-2 flex items-center gap-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                  <Tag className="w-3 h-3" />
+                                  -{discount}%
+                                </div>
+                              )}
+                              {/* Variant badge */}
+                              {(product as any).variantCount > 1 && (
+                                <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                  +{(product as any).variantCount} sabores
+                                </div>
+                              )}
+                            </div>
+                            {/* Body */}
+                            <div className="p-2.5 flex flex-col gap-0.5">
+                              <p className="text-[9px] font-bold text-[#0891B2] uppercase tracking-[1px]">
+                                {product.category?.name}
+                              </p>
+                              <h3 className="text-[13px] font-bold text-[#0C4A6E] leading-tight line-clamp-2" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                                {product.name}
+                              </h3>
+                              {product.brand && (
+                                <p className="text-[11px] text-[#94A3B8]">{product.brand.name}</p>
+                              )}
+                              <div className="flex items-center gap-1.5 mt-1">
+                                {salePrice ? (
+                                  <>
+                                    <span className="text-[15px] font-extrabold text-[#0C4A6E]">S/ {salePrice.toFixed(2)}</span>
+                                    <span className="text-[11px] text-[#94A3B8] line-through">S/ {price.toFixed(2)}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-[15px] font-extrabold text-[#0C4A6E]">S/ {price.toFixed(2)}</span>
+                                )}
+                              </div>
+                            </div>
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                )}
+
+                {/* Mobile List View - BETA.pen Screen 05 style (white cards, square images, cyan price) */}
+                {!activeBrandInfo && (
+                  <motion.div
+                    className="lg:hidden flex flex-col gap-2.5 px-3.5"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {results.products.map((product, index) => {
+                      const price = Number(product.price);
+                      const salePrice = product.salePrice ? Number(product.salePrice) : null;
+                      const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
+                      const mainImage = product.images?.[0]?.url;
+
+                      return (
+                        <motion.div key={product.id} variants={staggerItem}>
+                          <Link
+                            href={`/productos/${product.slug}`}
+                            className="flex items-center gap-3 p-2.5 bg-white rounded-[16px] shadow-[0_2px_8px_#0000000A] active:scale-[0.98] transition-transform"
+                          >
+                            {/* Square Product Image - 76x76 rounded-[12px] */}
+                            <div className="w-[76px] h-[76px] flex-shrink-0 rounded-[12px] overflow-hidden bg-neutral-100">
+                              {mainImage ? (
+                                <Image
+                                  src={mainImage}
+                                  alt={product.name}
+                                  width={76}
+                                  height={76}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <ShoppingBag className="w-6 h-6 text-neutral-300" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Product Info */}
+                            <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
+                              <p className="text-[10px] font-semibold text-[#0891B2]">
+                                {product.category?.name}
+                              </p>
+                              <h3 className="text-[14px] font-bold text-[#0F172A] leading-tight line-clamp-1" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                                {product.name}
+                              </h3>
+                              {product.brand && (
+                                <p className="text-[11px] text-[#94A3B8] font-medium">
+                                  {product.brand.name}
+                                </p>
+                              )}
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                {salePrice ? (
+                                  <>
+                                    <span className="text-[15px] font-extrabold text-[#0891B2]" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                                      S/ {salePrice.toFixed(2)}
+                                    </span>
+                                    <span className="text-[11px] text-[#94A3B8] line-through">
+                                      S/ {price.toFixed(2)}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-full">
+                                      -{discount}%
+                                    </span>
+                                  </>
+                                ) : (
+                                  <span className="text-[15px] font-extrabold text-[#0891B2]" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                                    S/ {price.toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <ChevronRight className="w-4 h-4 text-[#CBD5E1] flex-shrink-0" />
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                )}
 
                 {/* Pagination */}
                 {results.meta.totalPages > 1 && (

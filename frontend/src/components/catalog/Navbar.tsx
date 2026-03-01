@@ -130,21 +130,21 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
   return (
     <motion.header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden lg:block',
         isTransparent
           ? 'bg-transparent'
-          : 'bg-white dark:bg-[#000000] border-b border-neutral-200 dark:border-white/10'
+          : 'bg-white/70 dark:bg-[#000000]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/20 dark:border-white/10'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: v0Ease }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Mobile Header */}
-        <div className="flex lg:hidden items-center justify-between h-14">
+        {/* Mobile Header - Native App Style */}
+        <div className="flex lg:hidden items-center justify-between h-[56px]">
           <Link href="/" className="flex items-center gap-2.5">
             {settings.logo ? (
-              <div className="relative w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden">
                 <Image
                   src={settings.logo}
                   alt={settings.businessName || 'Logo'}
@@ -153,64 +153,49 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
                 />
               </div>
             ) : (
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">
+              <div className="w-8 h-8 rounded-full bg-neutral-900 dark:bg-white flex items-center justify-center">
+                <span className="text-white dark:text-neutral-900 font-bold text-sm">
                   {(settings.businessName || 'C')[0]}
                 </span>
               </div>
             )}
             <span className={cn(
-              "font-bold truncate max-w-[120px]",
-              isTransparent ? "text-white" : "text-neutral-900 dark:text-white/90"
+              "font-semibold text-[15px] truncate max-w-[140px]",
+              isTransparent ? "text-white" : "text-neutral-900 dark:text-white"
             )}>
               {settings.businessName || 'Catálogo'}
             </span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            {mounted && (
-              <motion.button
-                onClick={toggleTheme}
-                className={cn(
-                  "p-2.5 rounded-xl transition-colors",
-                  isTransparent
-                    ? "bg-black/20 text-white"
-                    : "bg-neutral-100 dark:bg-white/10 text-neutral-700 dark:text-white"
-                )}
-                whileTap={{ scale: 0.95 }}
-              >
-                {resolvedTheme === 'dark' ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </motion.button>
-            )}
-            <motion.button
+          <div className="flex items-center gap-1">
+            <button
               onClick={() => setShowSearch(true)}
               className={cn(
-                "p-2.5 rounded-xl transition-colors",
+                "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
                 isTransparent
-                  ? "bg-black/20 text-white"
-                  : "bg-[#1A1A1F] dark:bg-[#1A1A1F] text-white"
+                  ? "text-white active:bg-white/10"
+                  : "text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-white/10"
               )}
-              whileTap={{ scale: 0.95 }}
             >
-              <Search className="w-5 h-5" />
-            </motion.button>
+              <Search className="w-[20px] h-[20px]" />
+            </button>
             {settings.cartEnabled && (
-              <motion.button
+              <button
                 onClick={openCart}
-                className="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 dark:bg-[#1A1A1F] dark:border dark:border-white/10 text-white"
-                whileTap={{ scale: 0.95 }}
+                className={cn(
+                  "relative w-9 h-9 rounded-full flex items-center justify-center transition-colors",
+                  isTransparent
+                    ? "text-white active:bg-white/10"
+                    : "text-neutral-700 dark:text-neutral-300 active:bg-neutral-100 dark:active:bg-white/10"
+                )}
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ShoppingCart className="w-[20px] h-[20px]" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-cyan-500 dark:text-neutral-900 text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                     {cartItemCount > 9 ? '9+' : cartItemCount}
                   </span>
                 )}
-              </motion.button>
+              </button>
             )}
           </div>
         </div>

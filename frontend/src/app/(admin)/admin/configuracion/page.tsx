@@ -44,6 +44,7 @@ const settingsSchema = z.object({
   address: z.string().max(200).nullable().optional(),
   schedule: z.string().max(200).nullable().optional(),
   cartEnabled: z.boolean(),
+  variantsEnabled: z.boolean(),
   welcomeMessage: z.string().max(500).nullable().optional(),
   // SEO
   seoTitle: z.string().max(70).nullable().optional(),
@@ -81,6 +82,7 @@ export default function ConfiguracionPage() {
       address: '',
       schedule: '',
       cartEnabled: true,
+      variantsEnabled: true,
       welcomeMessage: '',
       seoTitle: '',
       seoDescription: '',
@@ -115,6 +117,7 @@ export default function ConfiguracionPage() {
         address: settingsData.address || '',
         schedule: settingsData.schedule || '',
         cartEnabled: settingsData.cartEnabled,
+        variantsEnabled: settingsData.variantsEnabled,
         welcomeMessage: settingsData.welcomeMessage || '',
         seoTitle: settingsData.seoTitle || '',
         seoDescription: settingsData.seoDescription || '',
@@ -220,8 +223,8 @@ export default function ConfiguracionPage() {
     >
       <motion.div variants={fadeInUp} className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Configuración</h1>
-          <p className="text-neutral-500 dark:text-neutral-400">Personaliza tu catálogo digital</p>
+          <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Configuración</h1>
+          <p className="text-neutral-500 dark:text-neutral-400 mt-1">Personaliza tu catálogo digital</p>
         </div>
         <Button onClick={form.handleSubmit(onSubmit)} disabled={isSaving}>
           {isSaving ? (
@@ -419,6 +422,27 @@ export default function ConfiguracionPage() {
                             <FormLabel className="text-base">Carrito de compras</FormLabel>
                             <FormDescription>
                               Permite agregar productos al carrito
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="variantsEnabled"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Variantes de productos</FormLabel>
+                            <FormDescription>
+                              Habilita sub-productos con variantes (Talla, Color, Sabor, etc.)
                             </FormDescription>
                           </div>
                           <FormControl>

@@ -96,6 +96,8 @@ import {
 import { getCategories } from '@/lib/api/categories';
 import { getBrands } from '@/lib/api/brands';
 import { getVariantTypes, type VariantType } from '@/lib/api/variants';
+import { getSettings } from '@/lib/api/settings';
+import { Upload } from 'lucide-react';
 import type { Product, ProductImage, Category, Brand, CreateProductDto, UpdateProductDto, ProductQueryParams } from '@/types';
 
 const productSchema = z.object({
@@ -165,6 +167,9 @@ export default function ProductosPage() {
   // Discount percentage state for bidirectional sync
   const [discountPercent, setDiscountPercent] = useState<number | null>(null);
 
+  // Settings-based feature toggle
+  const [variantsEnabled, setVariantsEnabled] = useState(true);
+
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -213,14 +218,19 @@ export default function ProductosPage() {
 
   async function loadCategoriesAndBrandsAndVariantTypes() {
     try {
-      const [categoriesData, brandsData, variantTypesData] = await Promise.all([
+      const [categoriesData, brandsData, settingsData] = await Promise.all([
         getCategories(),
         getBrands(),
-        getVariantTypes(),
+        getSettings(),
       ]);
       setCategories(categoriesData);
       setBrands(brandsData);
-      setVariantTypes(variantTypesData);
+      setVariantsEnabled(settingsData.variantsEnabled);
+
+      if (settingsData.variantsEnabled) {
+        const variantTypesData = await getVariantTypes();
+        setVariantTypes(variantTypesData);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -502,15 +512,18 @@ export default function ProductosPage() {
       variants={{ animate: { transition: { staggerChildren: 0.1 } } }}
       className="container mx-auto py-6 space-y-6"
     >
-      {/* Header */}
+      {/* Header elegante estilo BETA.pen */}
       <motion.div variants={fadeInUp} className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Productos</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Productos</h1>
+          <p className="text-neutral-500 dark:text-neutral-400 mt-1">
             {total} productos en total
           </p>
         </div>
-        <Button onClick={openCreateDialog}>
+        <Button
+          onClick={openCreateDialog}
+          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-500/25 border-0"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Nuevo producto
         </Button>
@@ -611,8 +624,8 @@ export default function ProductosPage() {
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group cursor-pointer hover:bg-muted/50 ${isExpanded ? 'bg-muted/30' : ''}`}
-                        onClick={() => toggleProductVariants(product.id)}
+                        className={`group ${variantsEnabled ? 'cursor-pointer' : ''} hover:bg-muted/50 ${isExpanded ? 'bg-muted/30' : ''}`}
+                        onClick={() => variantsEnabled && toggleProductVariants(product.id)}
                       >
                         <TableCell onClick={(e) => e.stopPropagation()}>
                           <div
@@ -635,10 +648,12 @@ export default function ProductosPage() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-2">
-                              {isExpanded ? (
-                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              {variantsEnabled && (
+                                isExpanded ? (
+                                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                )
                               )}
                               <div>
                                 <p className="font-medium">{product.name}</p>
@@ -724,7 +739,7 @@ export default function ProductosPage() {
                         </TableCell>
                       </TableRow>
                       {/* Expanded Variants Row */}
-                      {isExpanded && (
+                      {variantsEnabled && isExpanded && (
                         <TableRow className="bg-muted/20">
                           <TableCell colSpan={8} className="p-0">
                             <Tabs defaultValue="variants" className="w-full">
@@ -1134,7 +1149,7 @@ export default function ProductosPage() {
               </div>
 
               {/* Variant Types Section - Multi-select with checkboxes */}
-              {variantTypes.length > 0 && (
+              {variantsEnabled && variantTypes.length > 0 && (
                 <div className="space-y-4 rounded-lg border p-4">
                   <div className="flex items-center gap-2">
                     <Layers className="h-4 w-4 text-muted-foreground" />
@@ -1204,19 +1219,28 @@ export default function ProductosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Images Dialog */}
+      {/* Images Dialog - Mejorado */}
       <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Imágenes del producto</DialogTitle>
-            <DialogDescription>
-              {managingImagesProduct?.name} - Arrastra para reordenar
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-lg">Imágenes del producto</DialogTitle>
+                <DialogDescription>
+                  {managingImagesProduct?.name}
+                  {productImages.length > 0 && (
+                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400">
+                      {productImages.length} {productImages.length === 1 ? 'imagen' : 'imágenes'}
+                    </span>
+                  )}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
 
-          <div className="space-y-4">
-            {/* Upload */}
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+          <div className="space-y-5">
+            {/* Upload zone mejorada */}
+            <div className="border-2 border-dashed border-neutral-300 dark:border-white/[0.15] rounded-2xl p-8 text-center hover:border-cyan-400 dark:hover:border-cyan-500/50 transition-colors duration-300 bg-neutral-50/50 dark:bg-white/[0.02]">
               <input
                 type="file"
                 id="product-images"
@@ -1230,26 +1254,35 @@ export default function ProductosPage() {
               />
               <label
                 htmlFor="product-images"
-                className="cursor-pointer flex flex-col items-center gap-2"
+                className="cursor-pointer flex flex-col items-center gap-3"
               >
                 {uploadingImageId === managingImagesProduct?.id ? (
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <div className="w-14 h-14 rounded-full bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center">
+                    <Loader2 className="h-7 w-7 animate-spin text-cyan-500" />
+                  </div>
                 ) : (
-                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                  <div className="w-14 h-14 rounded-full bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center">
+                    <Upload className="h-7 w-7 text-cyan-500" />
+                  </div>
                 )}
-                <p className="text-sm text-muted-foreground">
-                  Haz clic o arrastra imágenes aquí
-                </p>
+                <div>
+                  <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    Arrastra imágenes aquí o haz clic
+                  </p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    PNG, JPG, WEBP (máx 5MB)
+                  </p>
+                </div>
               </label>
             </div>
 
-            {/* Images Grid */}
+            {/* Images Grid mejorado */}
             {productImages.length > 0 && (
               <Reorder.Group
                 axis="x"
                 values={productImages}
                 onReorder={handleImagesReorder}
-                className="flex flex-wrap gap-4"
+                className="flex flex-wrap gap-3"
               >
                 {productImages.map((image) => (
                   <Reorder.Item
@@ -1257,40 +1290,51 @@ export default function ProductosPage() {
                     value={image}
                     className="relative group cursor-grab active:cursor-grabbing"
                   >
-                    <div className="w-24 h-24 rounded-lg overflow-hidden border">
+                    <div className="w-32 h-32 rounded-xl overflow-hidden border-2 border-neutral-200 dark:border-white/[0.08] hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors">
                       <img
                         src={image.url}
                         alt="Product"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center rounded-xl backdrop-blur-[2px]">
                       <Button
                         variant="destructive"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-9 w-9 bg-red-500/90 hover:bg-red-600 border-0 shadow-lg"
                         onClick={() => handleImageDelete(image.id)}
                         disabled={uploadingImageId === image.id}
                       >
                         {uploadingImageId === image.id ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          <X className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
                     {image.order === 0 && (
-                      <Badge className="absolute -top-2 -left-2 text-xs">Principal</Badge>
+                      <Badge className="absolute -top-2 -left-2 text-[10px] bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-md">
+                        Principal
+                      </Badge>
                     )}
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
             )}
 
+            {/* Empty state mejorado */}
             {productImages.length === 0 && (
-              <p className="text-center text-muted-foreground py-8">
-                No hay imágenes. Sube la primera.
-              </p>
+              <div className="flex flex-col items-center py-10">
+                <div className="w-16 h-16 rounded-full bg-neutral-100 dark:bg-white/[0.05] flex items-center justify-center mb-4">
+                  <ImageIcon className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
+                </div>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">
+                  No hay imágenes aún
+                </p>
+                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                  Sube la primera imagen del producto
+                </p>
+              </div>
             )}
           </div>
 

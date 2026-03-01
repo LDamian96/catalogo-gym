@@ -101,6 +101,7 @@ export class CatalogService {
             address: settings.address,
             schedule: settings.schedule,
             cartEnabled: settings.cartEnabled,
+            variantsEnabled: settings.variantsEnabled,
             welcomeMessage: settings.welcomeMessage,
             seoTitle: settings.seoTitle,
             seoDescription: settings.seoDescription,
