@@ -106,6 +106,26 @@ export function ProductJsonLd({
         '@type': 'Organization',
         name: settings.businessName || 'Catálogo Digital',
       },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'PE',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          businessDays: {
+            '@type': 'QuantitativeValue',
+            minValue: 1,
+            maxValue: 5,
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'PE',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      },
     },
   };
 
@@ -179,6 +199,15 @@ export function LocalBusinessJsonLd({ settings }: { settings: CatalogSettings })
       : undefined,
     openingHours: settings.businessHours,
     priceRange: '$$',
+    areaServed: {
+      '@type': 'Country',
+      name: 'Peru',
+    },
+    paymentAccepted: 'Cash, Contraentrega, Transferencia bancaria',
+    availableDeliveryMethod: {
+      '@type': 'DeliveryMethod',
+      name: 'Envío a todo Perú - Contraentrega',
+    },
     sameAs: [
       settings.facebook,
       settings.instagram,
