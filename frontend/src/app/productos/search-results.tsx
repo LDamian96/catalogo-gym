@@ -12,13 +12,16 @@ import {
   SlidersHorizontal,
   X,
   Loader2,
-  Sparkles,
   Tag,
   ChevronLeft,
   ChevronDown,
   ShoppingBag,
   ArrowLeft,
   ShoppingCart,
+  Star,
+  Package,
+  Truck,
+  Bike,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, Navbar, MobileBottomNav } from '@/components/catalog';
@@ -39,7 +42,6 @@ interface SearchResultsProps {
   initialResults: CatalogSearchResponse | null;
   settings: CatalogSettings;
   categories: CatalogCategory[];
-  initialFilter?: string;
   initialBrandSlug?: string;
 }
 
@@ -51,25 +53,11 @@ const sortOptions = [
   { value: 'name', label: 'Nombre: A-Z' },
 ];
 
-const filterTabs = [
-  { value: '', label: 'Todos', icon: Search },
-  { value: 'featured', label: 'Destacados', icon: Sparkles },
-  { value: 'sale', label: 'Ofertas', icon: Tag },
-];
-
-const mobileTabs = [
-  { value: '', label: 'Todos' },
-  { value: 'sale', label: 'Ofertas' },
-  { value: 'newest', label: 'Nuevos' },
-  { value: 'popular', label: 'Populares' },
-];
-
 export function SearchResults({
   initialQuery,
   initialResults,
   settings,
   categories,
-  initialFilter,
   initialBrandSlug,
 }: SearchResultsProps) {
   const router = useRouter();
@@ -81,7 +69,6 @@ export function SearchResults({
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoryId') || '');
   const [sort, setSort] = useState(searchParams.get('sort') || 'relevance');
-  const [activeFilter, setActiveFilter] = useState(initialFilter || '');
   const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
   const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
   const [inputValue, setInputValue] = useState(initialQuery);
@@ -90,7 +77,7 @@ export function SearchResults({
   // Variant filters state
   const [variantFilters, setVariantFilters] = useState<VariantTypeFilter[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
-  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({});
+  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({ categories: true });
   const [brands, setBrands] = useState<CatalogBrand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string>('');
   const [activeBrandInfo, setActiveBrandInfo] = useState<CatalogBrand | null>(null);
@@ -156,6 +143,7 @@ export function SearchResults({
     };
   }, []);
 
+
   const handleSearchInternal = async (searchQuery: string, page = 1, resetFilters = false) => {
     setIsSearching(true);
 
@@ -169,7 +157,6 @@ export function SearchResults({
         if (sort && sort !== 'relevance') params.set('sort', sort);
         if (minPrice) params.set('minPrice', minPrice);
         if (maxPrice) params.set('maxPrice', maxPrice);
-        if (activeFilter) params.set('filter', activeFilter);
       }
 
       // Update URL without full page reload
@@ -200,20 +187,6 @@ export function SearchResults({
     await handleSearchInternal(searchQuery, page, resetFilters);
   };
 
-  const handleFilterChange = (newFilter: string) => {
-    setActiveFilter(newFilter);
-
-    const params = new URLSearchParams(searchParams.toString());
-    if (newFilter) {
-      params.set('filter', newFilter);
-    } else {
-      params.delete('filter');
-    }
-    params.set('page', '1');
-
-    router.push(`/productos?${params.toString()}`);
-  };
-
   const handlePageChange = (page: number) => {
     handleSearch(query, page);
   };
@@ -224,7 +197,6 @@ export function SearchResults({
     setSort('relevance');
     setMinPrice('');
     setMaxPrice('');
-    setActiveFilter('');
     setSelectedVariants({});
     handleSearch(query, 1, true);
   };
@@ -242,6 +214,8 @@ export function SearchResults({
         [variantTypeId]: newValues,
       };
     });
+    // Trigger search after state update
+    setTimeout(() => handleSearchInternal(query, 1), 50);
   };
 
   const hasVariantFilters = Object.values(selectedVariants).some(v => v.length > 0);
@@ -253,7 +227,7 @@ export function SearchResults({
   return (
     <div className={cn(
       "min-h-screen pb-24 lg:pb-0 dark:bg-[#000000] dark:lg:from-[#000000] dark:lg:via-[#000000] dark:lg:to-[#000000]",
-      "bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none lg:bg-gradient-to-b lg:from-cyan-50/30 lg:via-white lg:to-white"
+      "bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none lg:bg-gradient-to-b lg:from-sky-50 lg:via-cyan-50/20 lg:to-white"
     )}>
       {/* Navbar - desktop only (Navbar itself is hidden lg:block) */}
       <Navbar settings={settings} categories={categories} />
@@ -443,32 +417,6 @@ export function SearchResults({
         </motion.div>
       )}
 
-      {/* Mobile Tabs Row - Todos/Ofertas/Nuevos/Populares - Hidden when brand active */}
-      <div className={cn("lg:hidden", activeBrandInfo && "hidden")}>
-        <div className="flex overflow-x-auto scrollbar-hide">
-          {mobileTabs.map((tab) => (
-            <button
-              key={tab.value}
-              onClick={() => handleFilterChange(tab.value)}
-              className={cn(
-                'flex-shrink-0 px-5 py-3 text-[13px] font-semibold whitespace-nowrap transition-all relative',
-                activeFilter === tab.value
-                  ? 'text-cyan-600 dark:text-cyan-400'
-                  : 'text-neutral-400 dark:text-neutral-500'
-              )}
-            >
-              {tab.label}
-              {activeFilter === tab.value && (
-                <motion.div
-                  layoutId="mobileTabUnderline"
-                  className="absolute bottom-0 left-2 right-2 h-[2px] bg-cyan-500 rounded-full"
-                />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Mobile Brand Filter Chips - Horizontal scroll - Hidden when brand active */}
       {brands.length > 0 && !activeBrandInfo && (
         <motion.div
@@ -523,13 +471,19 @@ export function SearchResults({
       {/* Spacer for fixed navbar - Desktop only */}
       <div className="hidden lg:block h-20" />
 
-      {/* Simple Header with subtle gradient - Desktop only */}
-      <div className="hidden lg:block relative bg-gradient-to-br from-cyan-50/80 via-white to-sky-50/50 dark:from-cyan-950/30 dark:via-[#000000] dark:to-blue-950/20 border-b border-neutral-200 dark:border-white/[0.08] overflow-hidden">
-        {/* Subtle decorative elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(34,211,238,0.08),transparent)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(59,130,246,0.06),transparent)] pointer-events-none" />
+      {/* Hero Header with gradient - Desktop only */}
+      <motion.div
+        className="hidden lg:block relative overflow-hidden border-b border-neutral-200 dark:border-white/[0.08]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/80 via-sky-50/40 to-purple-50/30 dark:from-cyan-950/30 dark:via-[#000000] dark:to-blue-950/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_-10%,rgba(34,211,238,0.1),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_100%,rgba(139,92,246,0.06),transparent)] pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-4 lg:py-6">
+        <div className="relative max-w-7xl mx-auto px-8 py-7">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm mb-4">
             <Link href="/" className="text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1">
@@ -541,24 +495,46 @@ export function SearchResults({
           </nav>
 
           {/* Title & Search Row */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+          <div className="flex items-start justify-between gap-8">
             <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
+              <motion.h1
+                className="text-[30px] font-extrabold"
+                style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+              >
                 {query ? (
-                  <>Resultados para "<span className="text-cyan-600 dark:text-cyan-400">{query}</span>"</>
+                  <span className="text-neutral-900 dark:text-white">Resultados para &ldquo;<span className="bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 bg-clip-text text-transparent">{query}</span>&rdquo;</span>
                 ) : (
-                  'Todos los Productos'
+                  <span className="bg-gradient-to-r from-cyan-600 via-sky-600 to-blue-700 dark:from-cyan-400 dark:via-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+                    Todos los Productos
+                  </span>
                 )}
-              </h1>
+              </motion.h1>
+              <motion.p
+                className="text-[15px] text-neutral-500 dark:text-neutral-400 mt-1.5"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+              >
+                Explora nuestro catálogo completo de suplementos
+              </motion.p>
             </div>
 
-            {/* Search Box */}
-            <div className="w-full lg:w-80">
-              <div className="relative">
+            {/* Right Column: Search + Shipping */}
+            <motion.div
+              className="flex flex-col items-end gap-3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
+              {/* Search Box */}
+              <div className="relative w-80">
                 {isSearching ? (
-                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-500 animate-spin" />
+                  <Loader2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-cyan-500 animate-spin" />
                 ) : (
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-neutral-400" />
                 )}
                 <input
                   type="text"
@@ -573,7 +549,7 @@ export function SearchResults({
                       handleSearch(inputValue, 1);
                     }
                   }}
-                  className="w-full pl-10 pr-10 py-2.5 text-sm bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
+                  className="w-full pl-11 pr-10 py-2.5 text-sm bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all shadow-sm"
                 />
                 {inputValue && (
                   <button
@@ -589,32 +565,65 @@ export function SearchResults({
                   </button>
                 )}
               </div>
-            </div>
+
+              {/* Shipping Badges - below search */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-r from-sky-50 to-cyan-50 dark:from-sky-500/10 dark:to-cyan-500/10 rounded-xl border border-sky-200/60 dark:border-sky-500/20 shadow-sm">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center shadow-md shadow-sky-500/30">
+                    <Truck className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-[13px] font-bold text-sky-700 dark:text-sky-300">Envío todo Perú</span>
+                </div>
+                <div className="flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 rounded-xl border border-amber-200/60 dark:border-amber-500/20 shadow-sm">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md shadow-amber-500/30">
+                    <Bike className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-[13px] font-bold text-amber-700 dark:text-amber-300">Pago contra entrega</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab.value}
-                onClick={() => handleFilterChange(tab.value)}
-                className={cn(
-                  'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border',
-                  activeFilter === tab.value
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-transparent shadow-lg shadow-cyan-500/25'
-                    : 'bg-white/80 dark:bg-white/5 text-neutral-600 dark:text-neutral-300 border-neutral-200/80 dark:border-white/10 hover:border-cyan-300 dark:hover:border-cyan-500/30 hover:shadow-md'
-                )}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          {/* Stats Badges */}
+          <motion.div
+            className="flex items-center gap-3 mt-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+          >
+            {results && (
+              <div className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-500/10 dark:to-purple-500/10 rounded-xl border border-violet-200/60 dark:border-violet-500/20 shadow-sm">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md shadow-violet-500/30">
+                  <Package className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-sm font-extrabold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">{results.meta.total}</span>
+                <span className="text-xs font-medium text-violet-500/80">productos</span>
+              </div>
+            )}
+            {categories.length > 0 && (
+              <div className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-500/10 dark:to-emerald-500/10 rounded-xl border border-teal-200/60 dark:border-teal-500/20 shadow-sm">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-md shadow-teal-500/30">
+                  <Tag className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-sm font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">{categories.length}</span>
+                <span className="text-xs font-medium text-teal-500/80">categorías</span>
+              </div>
+            )}
+            {brands.length > 0 && (
+              <div className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-500/10 dark:to-rose-500/10 rounded-xl border border-pink-200/60 dark:border-pink-500/20 shadow-sm">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-md shadow-pink-500/30">
+                  <Star className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="text-sm font-extrabold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">{brands.length}</span>
+                <span className="text-xs font-medium text-pink-500/80">marcas</span>
+              </div>
+            )}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile Results Header Bar - "X resultados" + "Relevancia" dropdown */}
-      <div className="lg:hidden sticky z-30 top-0 pt-1">
+      <div className="lg:hidden pt-1">
         <div className="px-3.5 py-2">
           <div className="flex items-center justify-between">
             {/* Results count */}
@@ -662,91 +671,202 @@ export function SearchResults({
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="max-w-7xl mx-auto px-0 lg:px-8 py-0 lg:py-6">
-        <div className="flex gap-8">
+      <div className="px-0 lg:px-8 py-0 lg:py-6">
+        <div className="flex gap-7">
           {/* Desktop Sidebar - Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24 space-y-6">
+            <div className="sticky top-24 space-y-4">
               {/* Sidebar Header */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-cyan-500" />
+              <div className="flex items-center justify-between bg-gradient-to-r from-cyan-100 to-sky-100 dark:from-cyan-900/40 dark:to-sky-900/30 rounded-xl px-4 py-3 border border-cyan-200/60 dark:border-cyan-800/40">
+                <h2 className="text-sm font-semibold text-cyan-700 dark:text-cyan-300 flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4" />
                   Filtros
                 </h2>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline"
+                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
                   >
-                    Limpiar todo
+                    Limpiar
                   </button>
                 )}
               </div>
 
-              {/* Sort & Variant Filters - Desktop */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4 space-y-4">
-                {/* Ordenar por */}
-                <div>
-                  <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                    Ordenar por
-                  </h3>
-                  <div className="space-y-1">
-                    {sortOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setSort(option.value);
-                          handleSearch(query, 1);
-                        }}
-                        className={cn(
-                          'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
-                          sort === option.value
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
-                        )}
-                      >
-                        {option.label}
-                        {sort === option.value && (
-                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              {/* Categories - Collapsible */}
+              <div className="bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-950/40 dark:to-blue-950/30 rounded-xl border border-cyan-100 dark:border-cyan-900/50 overflow-hidden">
+                <button
+                  onClick={() => setExpandedFilters(prev => ({ ...prev, categories: !prev.categories }))}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-cyan-100/50 dark:hover:bg-cyan-900/20 transition-colors"
+                >
+                  <span className="text-xs font-bold text-cyan-800 dark:text-cyan-300 uppercase tracking-wider flex items-center gap-2">
+                    <Tag className="w-3.5 h-3.5" />
+                    Categorías
+                  </span>
+                  <ChevronDown className={cn(
+                    'w-4 h-4 text-cyan-500 transition-transform duration-200',
+                    expandedFilters.categories && 'rotate-180'
+                  )} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {expandedFilters.categories && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
+                        <button
+                          onClick={() => {
+                            setSelectedCategory('');
+                            handleSearch(query, 1);
+                          }}
+                          className={cn(
+                            'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                            !selectedCategory
+                              ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-semibold border border-cyan-300 dark:border-cyan-700'
+                              : 'text-cyan-800 dark:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/30'
+                          )}
+                        >
+                          Todas
+                        </button>
+                        {categories.map((category) => (
+                          <button
+                            key={category.id}
+                            onClick={() => {
+                              setSelectedCategory(category.id);
+                              handleSearch(query, 1);
+                            }}
+                            className={cn(
+                              'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                              selectedCategory === category.id
+                                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-md shadow-cyan-500/20'
+                                : 'text-cyan-800 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/30'
+                            )}
+                          >
+                            {category.name}
+                            {category._count?.products !== undefined && (
+                              <span className={cn(
+                                'ml-auto text-xs',
+                                selectedCategory === category.id ? 'text-white/70' : 'text-cyan-400 dark:text-cyan-600'
+                              )}>
+                                {category._count.products}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                {/* Dynamic Variant Filters - Collapsible */}
-                {variantFilters.map((variantType) => (
-                  <div key={variantType.id} className="border-t border-neutral-200 dark:border-white/10 pt-4">
+              {/* Brands - Collapsible (only if brands exist and enabled in settings) */}
+              {brands.length > 0 && settings.brandsFilterEnabled !== false && (
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/30 rounded-xl border border-amber-100 dark:border-amber-900/50 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedFilters(prev => ({ ...prev, brands: !prev.brands }))}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors"
+                  >
+                    <span className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                      <Star className="w-3.5 h-3.5" />
+                      Marcas
+                    </span>
+                    <ChevronDown className={cn(
+                      'w-4 h-4 text-amber-500 transition-transform duration-200',
+                      expandedFilters.brands && 'rotate-180'
+                    )} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {expandedFilters.brands && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
+                          <button
+                            onClick={() => {
+                              setSelectedBrand('');
+                              handleSearch(query, 1);
+                            }}
+                            className={cn(
+                              'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                              !selectedBrand
+                                ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-semibold border border-amber-300 dark:border-amber-700'
+                                : 'text-amber-800 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/30'
+                            )}
+                          >
+                            Todas
+                          </button>
+                          {brands.map((brand) => (
+                            <button
+                              key={brand.id}
+                              onClick={() => {
+                                setSelectedBrand(brand.id);
+                                handleSearch(query, 1);
+                              }}
+                              className={cn(
+                                'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                                selectedBrand === brand.id
+                                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-md shadow-amber-500/20'
+                                  : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/30'
+                              )}
+                            >
+                              {brand.name}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Dynamic Variant Filters - Collapsible */}
+              {variantFilters.map((variantType, idx) => {
+                const colors = [
+                  { from: 'from-emerald-50', to: 'to-teal-50', darkFrom: 'dark:from-emerald-950/40', darkTo: 'dark:to-teal-950/30', border: 'border-emerald-100 dark:border-emerald-900/50', text: 'text-emerald-800 dark:text-emerald-300', icon: 'text-emerald-500', hoverBg: 'hover:bg-emerald-100 dark:hover:bg-emerald-900/30', activeBg: 'from-emerald-500 to-teal-500', activeShadow: 'shadow-emerald-500/20', chipActive: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-md shadow-emerald-500/20', chipInactive: 'text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/30' },
+                  { from: 'from-purple-50', to: 'to-violet-50', darkFrom: 'dark:from-purple-950/40', darkTo: 'dark:to-violet-950/30', border: 'border-purple-100 dark:border-purple-900/50', text: 'text-purple-800 dark:text-purple-300', icon: 'text-purple-500', hoverBg: 'hover:bg-purple-100 dark:hover:bg-purple-900/30', activeBg: 'from-purple-500 to-violet-500', activeShadow: 'shadow-purple-500/20', chipActive: 'bg-gradient-to-r from-purple-500 to-violet-500 text-white border-transparent shadow-md shadow-purple-500/20', chipInactive: 'text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30' },
+                  { from: 'from-amber-50', to: 'to-orange-50', darkFrom: 'dark:from-amber-950/40', darkTo: 'dark:to-orange-950/30', border: 'border-amber-100 dark:border-amber-900/50', text: 'text-amber-800 dark:text-amber-300', icon: 'text-amber-500', hoverBg: 'hover:bg-amber-100 dark:hover:bg-amber-900/30', activeBg: 'from-amber-500 to-orange-500', activeShadow: 'shadow-amber-500/20', chipActive: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-md shadow-amber-500/20', chipInactive: 'text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30' },
+                ];
+                const c = colors[idx % colors.length];
+                return (
+                  <div key={variantType.id} className={cn('rounded-xl border overflow-hidden bg-gradient-to-br', c.from, c.to, c.darkFrom, c.darkTo, c.border)}>
                     <button
                       onClick={() => setExpandedFilters(prev => ({
                         ...prev,
                         [variantType.id]: !prev[variantType.id]
                       }))}
-                      className="w-full flex items-center justify-between text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                      className={cn('w-full flex items-center justify-between px-4 py-3 transition-colors', c.hoverBg)}
                     >
-                      <span className="flex items-center gap-2">
+                      <span className={cn('text-xs font-bold uppercase tracking-wider flex items-center gap-2', c.text)}>
                         {variantType.name}
                         {selectedVariants[variantType.id]?.length > 0 && (
-                          <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                          <span className="px-1.5 py-0.5 text-[10px] bg-white/80 dark:bg-white/20 rounded-full normal-case font-bold">
                             {selectedVariants[variantType.id].length}
                           </span>
                         )}
                       </span>
                       <ChevronDown className={cn(
                         'w-4 h-4 transition-transform duration-200',
+                        c.icon,
                         expandedFilters[variantType.id] && 'rotate-180'
                       )} />
                     </button>
-                    <AnimatePresence>
+                    <AnimatePresence initial={false}>
                       {expandedFilters[variantType.id] && (
                         <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
+                          initial={{ height: 0 }}
+                          animate={{ height: 'auto' }}
+                          exit={{ height: 0 }}
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 px-3 pb-3">
                             {variantType.values.map((value) => {
                               const isSelected = selectedVariants[variantType.id]?.includes(value.value);
                               return (
@@ -754,10 +874,8 @@ export function SearchResults({
                                   key={value.id}
                                   onClick={() => handleVariantToggle(variantType.id, value.value)}
                                   className={cn(
-                                    'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
-                                    isSelected
-                                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
-                                      : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
+                                    'px-3 py-1.5 rounded-full text-sm transition-all duration-200 border font-medium',
+                                    isSelected ? c.chipActive : c.chipInactive
                                   )}
                                 >
                                   {value.value}
@@ -769,96 +887,9 @@ export function SearchResults({
                       )}
                     </AnimatePresence>
                   </div>
-                ))}
-              </div>
+                );
+              })}
 
-              {/* Categories - Desktop */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
-                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                  Categorías
-                </h3>
-                <div className="space-y-1 max-h-64 overflow-y-auto">
-                  <button
-                    onClick={() => {
-                      setSelectedCategory('');
-                      handleSearch(query, 1);
-                    }}
-                    className={cn(
-                      'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
-                      !selectedCategory
-                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
-                    )}
-                  >
-                    Todas
-                    {!selectedCategory && (
-                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                    )}
-                  </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => {
-                        setSelectedCategory(category.id);
-                        handleSearch(query, 1);
-                      }}
-                      className={cn(
-                        'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
-                        selectedCategory === category.id
-                          ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
-                      )}
-                    >
-                      {category.name}
-                      {category._count?.products !== undefined && (
-                        <span className="ml-auto text-xs text-neutral-400">
-                          {category._count.products}
-                        </span>
-                      )}
-                      {selectedCategory === category.id && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Range - Desktop */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
-                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                  Rango de Precio
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-neutral-500 mb-1 block">Mínimo</label>
-                      <input
-                        type="number"
-                        placeholder="S/ 0"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="text-xs text-neutral-500 mb-1 block">Máximo</label>
-                      <input
-                        type="number"
-                        placeholder="S/ 999"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleSearch(query, 1)}
-                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
-                  >
-                    Aplicar precio
-                  </button>
-                </div>
-              </div>
 
             </div>
           </aside>
@@ -885,6 +916,42 @@ export function SearchResults({
                 </button>
               </motion.div>
             )}
+
+            {/* Desktop Sort Bar */}
+            <motion.div
+              className="hidden lg:flex items-center justify-between mb-5"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                {results ? (
+                  <>Mostrando <span className="font-bold text-neutral-700 dark:text-neutral-200">{results.meta.total}</span> productos</>
+                ) : (
+                  'Cargando productos...'
+                )}
+              </p>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-neutral-500">Ordenar:</span>
+                <div className="relative">
+                  <select
+                    value={sort}
+                    onChange={(e) => {
+                      setSort(e.target.value);
+                      handleSearch(query, 1);
+                    }}
+                    className="appearance-none pl-3.5 pr-8 py-2 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-sm font-medium text-neutral-700 dark:text-neutral-300 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none cursor-pointer transition-all"
+                  >
+                    {sortOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                </div>
+              </div>
+            </motion.div>
 
             {/* Loading State */}
             {isSearching && (
@@ -1073,7 +1140,7 @@ export function SearchResults({
                 {/* Pagination */}
                 {results.meta.totalPages > 1 && (
                   <motion.div
-                    className="flex items-center justify-center gap-2 mt-10"
+                    className="flex items-center justify-center gap-2 mt-10 px-4 lg:px-0"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                   >
@@ -1081,31 +1148,31 @@ export function SearchResults({
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage <= 1}
                       className={cn(
-                        'flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        'flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300',
                         currentPage <= 1
-                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
-                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5'
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed bg-neutral-100 dark:bg-white/5'
+                          : 'text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10 hover:shadow-sm'
                       )}
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Anterior
                     </button>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       {Array.from({ length: results.meta.totalPages }, (_, i) => i + 1)
                         .filter(p => p === 1 || p === results.meta.totalPages || Math.abs(p - currentPage) <= 1)
                         .map((p, idx, arr) => (
                           <span key={p}>
                             {idx > 0 && arr[idx - 1] !== p - 1 && (
-                              <span className="px-2 text-neutral-400">...</span>
+                              <span className="px-1.5 text-neutral-400 text-sm">...</span>
                             )}
                             <button
                               onClick={() => handlePageChange(p)}
                               className={cn(
-                                'w-10 h-10 rounded-lg text-sm font-medium transition-colors',
+                                'w-10 h-10 rounded-xl text-sm font-semibold transition-all duration-300',
                                 p === currentPage
-                                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25'
-                                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
+                                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30 scale-105'
+                                  : 'text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-white/5 hover:bg-neutral-200 dark:hover:bg-white/10'
                               )}
                             >
                               {p}
@@ -1118,10 +1185,10 @@ export function SearchResults({
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage >= results.meta.totalPages}
                       className={cn(
-                        'flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        'flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300',
                         currentPage >= results.meta.totalPages
-                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
-                          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5'
+                          ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed bg-neutral-100 dark:bg-white/5'
+                          : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/40 hover:scale-105'
                       )}
                     >
                       Siguiente

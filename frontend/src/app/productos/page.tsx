@@ -30,7 +30,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const { q, page = '1', categoryId, minPrice, maxPrice, sort, filter, marca } = await searchParams;
+  const { q, page = '1', categoryId, minPrice, maxPrice, sort, marca } = await searchParams;
 
   const homeData = await getCatalogHome();
 
@@ -62,7 +62,6 @@ export default async function SearchPage({ searchParams }: Props) {
         initialResults={searchData}
         settings={homeData.settings}
         categories={homeData.categories}
-        initialFilter={filter}
         initialBrandSlug={marca}
       />
     </CatalogWrapper>

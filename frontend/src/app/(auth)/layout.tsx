@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 import { v0Ease, gradientOrbAnimation } from '@/lib/animations';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 
 export default function AuthLayout({
@@ -11,7 +11,9 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isDark, toggleTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-[#0a0a0f] relative overflow-hidden">

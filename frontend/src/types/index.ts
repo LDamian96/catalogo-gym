@@ -15,6 +15,7 @@ export interface Settings {
   schedule: string | null;
   cartEnabled: boolean;
   variantsEnabled: boolean;
+  brandsFilterEnabled: boolean;
   welcomeMessage: string | null;
   // SEO
   seoTitle: string | null;
@@ -39,6 +40,7 @@ export interface UpdateSettingsDto {
   schedule?: string | null;
   cartEnabled?: boolean;
   variantsEnabled?: boolean;
+  brandsFilterEnabled?: boolean;
   welcomeMessage?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -292,6 +294,69 @@ export interface ReorderVariantGroupItem {
 }
 
 export interface ReorderVariantOptionItem {
+  id: string;
+  order: number;
+}
+
+// =============================================
+// COMBOS
+// =============================================
+
+export interface ComboProduct {
+  id: string;
+  comboId: string;
+  productId: string;
+  quantity: number;
+  order: number;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number | string;
+    salePrice: number | string | null;
+    images?: { id: string; url: string; order: number }[];
+    category?: { id: string; name: string; slug: string };
+    brand?: { id: string; name: string; slug: string; logo: string | null } | null;
+  };
+}
+
+export interface Combo {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image: string | null;
+  imagePublicId: string | null;
+  price: number | string;
+  salePrice: number | string | null;
+  discountPercent: number | null;
+  order: number;
+  isActive: boolean;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string | null;
+  createdAt: string;
+  updatedAt: string;
+  comboProducts?: ComboProduct[];
+}
+
+export interface CreateComboDto {
+  name: string;
+  slug?: string;
+  description?: string | null;
+  price: number;
+  salePrice?: number | null;
+  discountPercent?: number | null;
+  isActive?: boolean;
+  order?: number;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string | null;
+}
+
+export interface UpdateComboDto extends Partial<CreateComboDto> {}
+
+export interface ReorderComboItem {
   id: string;
   order: number;
 }

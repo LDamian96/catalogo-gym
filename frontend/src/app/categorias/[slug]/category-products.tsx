@@ -24,6 +24,8 @@ import {
   Dumbbell,
   Heart,
   Search,
+  Tag,
+  Star,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProductCard, WhatsAppButton, Footer, SearchBar, MobileBottomNav, Navbar } from '@/components/catalog';
@@ -172,7 +174,7 @@ export function CategoryProducts({
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice || '');
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brandId') || '');
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string[]>>({});
-  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({});
+  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({ categories: true });
 
   // Get variant type filters from the filters prop
   const variantFilters: VariantTypeFilter[] = filters.variantTypes || [];
@@ -606,75 +608,182 @@ export function CategoryProducts({
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3.5 lg:px-4 py-2.5 lg:py-6">
         <div className="flex gap-8">
-          {/* Sidebar Categories (Desktop) */}
+          {/* Sidebar Filters (Desktop) */}
           <motion.aside
             className="hidden lg:block w-64 flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="sticky top-32 space-y-6">
-              {/* Sort & Variant Filters - Desktop */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4 space-y-4">
-                {/* Ordenar por */}
-                <div>
-                  <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                    Ordenar por
-                  </h3>
-                  <div className="space-y-1">
-                    {sortOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => updateFilters({ sort: option.value || undefined })}
-                        className={cn(
-                          'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
-                          currentSort === option.value
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
-                        )}
-                      >
-                        {option.label}
-                        {currentSort === option.value && (
-                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <div className="sticky top-24 space-y-4">
+              {/* Sidebar Header */}
+              <div className="flex items-center justify-between bg-gradient-to-r from-cyan-100 to-sky-100 dark:from-cyan-900/40 dark:to-sky-900/30 rounded-xl px-4 py-3 border border-cyan-200/60 dark:border-cyan-800/40">
+                <h2 className="text-sm font-semibold text-cyan-700 dark:text-cyan-300 flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filtros
+                </h2>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
 
-                {/* Dynamic Variant Filters - Collapsible */}
-                {variantFilters.map((variantType) => (
-                  <div key={variantType.id} className="border-t border-neutral-200 dark:border-white/10 pt-4">
+              {/* Categories - Collapsible */}
+              <div className="bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-950/40 dark:to-blue-950/30 rounded-xl border border-cyan-100 dark:border-cyan-900/50 overflow-hidden">
+                <button
+                  onClick={() => setExpandedFilters(prev => ({ ...prev, categories: !prev.categories }))}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-cyan-100/50 dark:hover:bg-cyan-900/20 transition-colors"
+                >
+                  <span className="text-xs font-bold text-cyan-800 dark:text-cyan-300 uppercase tracking-wider flex items-center gap-2">
+                    <Tag className="w-3.5 h-3.5" />
+                    Categorías
+                  </span>
+                  <ChevronDown className={cn(
+                    'w-4 h-4 text-cyan-500 transition-transform duration-200',
+                    expandedFilters.categories && 'rotate-180'
+                  )} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {expandedFilters.categories && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
+                        {categories.map((cat) => (
+                          <Link
+                            key={cat.id}
+                            href={`/categorias/${cat.slug}`}
+                            className={cn(
+                              'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                              cat.slug === category.slug
+                                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-md shadow-cyan-500/20'
+                                : 'text-cyan-800 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/30'
+                            )}
+                          >
+                            {cat.name}
+                            {cat._count?.products !== undefined && (
+                              <span className={cn(
+                                'ml-auto text-xs',
+                                cat.slug === category.slug ? 'text-white/70' : 'text-cyan-400 dark:text-cyan-600'
+                              )}>
+                                {cat._count.products}
+                              </span>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Brands - Collapsible (only if brands exist and enabled in settings) */}
+              {filters.brands.length > 0 && settings.brandsFilterEnabled !== false && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedFilters(prev => ({ ...prev, brands: !prev.brands }))}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors"
+                  >
+                    <span className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider flex items-center gap-2">
+                      <Star className="w-3.5 h-3.5" />
+                      Marcas
+                    </span>
+                    <ChevronDown className={cn(
+                      'w-4 h-4 text-blue-500 transition-transform duration-200',
+                      expandedFilters.brands && 'rotate-180'
+                    )} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {expandedFilters.brands && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
+                          <button
+                            onClick={() => updateFilters({ brandId: undefined })}
+                            className={cn(
+                              'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                              !filters.brands.some(b => b.id === new URLSearchParams(window.location.search).get('brandId'))
+                                ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 font-semibold border border-blue-300 dark:border-blue-700'
+                                : 'text-blue-800 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                            )}
+                          >
+                            Todas
+                          </button>
+                          {filters.brands.map((brand) => (
+                            <button
+                              key={brand.id}
+                              onClick={() => updateFilters({ brandId: brand.id })}
+                              className={cn(
+                                'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
+                                new URLSearchParams(window.location.search).get('brandId') === brand.id
+                                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold shadow-md shadow-blue-500/20'
+                                  : 'text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30'
+                              )}
+                            >
+                              {brand.name}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Dynamic Variant Filters - Collapsible */}
+              {variantFilters.map((variantType, idx) => {
+                const colors = [
+                  { from: 'from-emerald-50', to: 'to-teal-50', darkFrom: 'dark:from-emerald-950/40', darkTo: 'dark:to-teal-950/30', border: 'border-emerald-100 dark:border-emerald-900/50', text: 'text-emerald-800 dark:text-emerald-300', icon: 'text-emerald-500', hoverBg: 'hover:bg-emerald-100 dark:hover:bg-emerald-900/30', chipActive: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-md shadow-emerald-500/20', chipInactive: 'text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/30' },
+                  { from: 'from-purple-50', to: 'to-violet-50', darkFrom: 'dark:from-purple-950/40', darkTo: 'dark:to-violet-950/30', border: 'border-purple-100 dark:border-purple-900/50', text: 'text-purple-800 dark:text-purple-300', icon: 'text-purple-500', hoverBg: 'hover:bg-purple-100 dark:hover:bg-purple-900/30', chipActive: 'bg-gradient-to-r from-purple-500 to-violet-500 text-white border-transparent shadow-md shadow-purple-500/20', chipInactive: 'text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30' },
+                  { from: 'from-amber-50', to: 'to-orange-50', darkFrom: 'dark:from-amber-950/40', darkTo: 'dark:to-orange-950/30', border: 'border-amber-100 dark:border-amber-900/50', text: 'text-amber-800 dark:text-amber-300', icon: 'text-amber-500', hoverBg: 'hover:bg-amber-100 dark:hover:bg-amber-900/30', chipActive: 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-md shadow-amber-500/20', chipInactive: 'text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30' },
+                ];
+                const c = colors[idx % colors.length];
+                return (
+                  <div key={variantType.id} className={cn('rounded-xl border overflow-hidden bg-gradient-to-br', c.from, c.to, c.darkFrom, c.darkTo, c.border)}>
                     <button
                       onClick={() => setExpandedFilters(prev => ({
                         ...prev,
                         [variantType.id]: !prev[variantType.id]
                       }))}
-                      className="w-full flex items-center justify-between text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                      className={cn('w-full flex items-center justify-between px-4 py-3 transition-colors', c.hoverBg)}
                     >
-                      <span className="flex items-center gap-2">
+                      <span className={cn('text-xs font-bold uppercase tracking-wider flex items-center gap-2', c.text)}>
                         {variantType.name}
                         {selectedVariants[variantType.id]?.length > 0 && (
-                          <span className="px-1.5 py-0.5 text-[10px] bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-full normal-case font-medium">
+                          <span className="px-1.5 py-0.5 text-[10px] bg-white/80 dark:bg-white/20 rounded-full normal-case font-bold">
                             {selectedVariants[variantType.id].length}
                           </span>
                         )}
                       </span>
                       <ChevronDown className={cn(
                         'w-4 h-4 transition-transform duration-200',
+                        c.icon,
                         expandedFilters[variantType.id] && 'rotate-180'
                       )} />
                     </button>
-                    <AnimatePresence>
+                    <AnimatePresence initial={false}>
                       {expandedFilters[variantType.id] && (
                         <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
+                          initial={{ height: 0 }}
+                          animate={{ height: 'auto' }}
+                          exit={{ height: 0 }}
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 px-3 pb-3">
                             {variantType.values.map((value) => {
                               const isSelected = selectedVariants[variantType.id]?.includes(value.value);
                               return (
@@ -682,10 +791,8 @@ export function CategoryProducts({
                                   key={value.id}
                                   onClick={() => handleVariantToggle(variantType.id, value.value)}
                                   className={cn(
-                                    'px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border',
-                                    isSelected
-                                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/40 font-medium'
-                                      : 'text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-white/5'
+                                    'px-3 py-1.5 rounded-full text-sm transition-all duration-200 border font-medium',
+                                    isSelected ? c.chipActive : c.chipInactive
                                   )}
                                 >
                                   {value.value}
@@ -697,80 +804,9 @@ export function CategoryProducts({
                       )}
                     </AnimatePresence>
                   </div>
-                ))}
-              </div>
+                );
+              })}
 
-              {/* Categories */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
-                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                  Categorías
-                </h3>
-                <ul className="space-y-1 max-h-64 overflow-y-auto">
-                  {categories.map((cat) => (
-                    <li key={cat.id}>
-                      <Link
-                        href={`/categorias/${cat.slug}`}
-                        className={cn(
-                          'block px-3 py-2 rounded-lg text-sm transition-colors',
-                          cat.slug === category.slug
-                            ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-medium'
-                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5'
-                        )}
-                      >
-                        {cat.name}
-                        <span className="ml-2 text-xs text-neutral-400">
-                          ({cat._count?.products || 0})
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Price Range */}
-              <div className="bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 p-4">
-                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
-                  Rango de Precio
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-neutral-500 mb-1 block">Mínimo</label>
-                      <input
-                        type="number"
-                        placeholder="S/ 0"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="text-xs text-neutral-500 mb-1 block">Máximo</label>
-                      <input
-                        type="number"
-                        placeholder="S/ 999"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                        className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={applyPriceFilter}
-                    className="w-full py-2 text-sm font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-500/10 rounded-lg hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
-                  >
-                    Aplicar precio
-                  </button>
-                  {hasActiveFilters && (
-                    <button
-                      onClick={clearFilters}
-                      className="w-full py-2 text-xs text-neutral-500 hover:text-cyan-600 transition-colors"
-                    >
-                      Limpiar filtros
-                    </button>
-                  )}
-                </div>
-              </div>
             </div>
           </motion.aside>
 

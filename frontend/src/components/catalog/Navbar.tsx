@@ -133,7 +133,9 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden lg:block',
         isTransparent
           ? 'bg-transparent'
-          : 'bg-white/70 dark:bg-[#000000]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/20 dark:border-white/10'
+          : isScrolled
+            ? 'bg-white/80 dark:bg-[#000000]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-neutral-200/50 dark:border-white/10 shadow-sm'
+            : 'bg-white/40 dark:bg-[#000000]/40 backdrop-blur-xl backdrop-saturate-150 border-b border-white/30 dark:border-white/10'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}

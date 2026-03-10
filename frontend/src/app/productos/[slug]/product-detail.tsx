@@ -11,6 +11,8 @@ import {
   Truck,
   Shield,
   RotateCcw,
+  CreditCard,
+  Bike,
   Check,
   Minus,
   Plus,
@@ -295,8 +297,10 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
         </div>
       </div>
 
-      {/* Main Content - V0 Style Layout */}
-      <div className="max-w-7xl mx-auto relative lg:static -mt-6 lg:mt-0 bg-gradient-to-b from-white to-[#EFF9FF] lg:bg-white lg:bg-none dark:bg-[#000000] rounded-t-3xl lg:rounded-none z-10 px-4 sm:px-6 lg:px-8 pt-4 lg:py-12 pb-24 lg:pb-12">
+      {/* Full-width gradient background (Desktop) */}
+      <div className="lg:bg-gradient-to-b lg:from-[#f0fafa] lg:via-[#f5fbfc] lg:to-white dark:lg:from-black dark:lg:via-black dark:lg:to-black">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto relative lg:static -mt-6 lg:mt-0 bg-gradient-to-b from-white to-sky-50 lg:bg-none rounded-t-3xl lg:rounded-none z-10 px-4 sm:px-6 lg:px-8 pt-4 lg:py-12 pb-24 lg:pb-12 dark:bg-black">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
 
           {/* Left Column - Images + Color Selector (Desktop only) */}
@@ -565,47 +569,48 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: v0Ease }}
           >
-            {/* Category & Brand - V0 Style */}
+            {/* Category Badge */}
             <div className="flex items-center gap-2">
-              {/* Mobile: inline cyan text breadcrumb */}
+              {/* Mobile: inline cyan text */}
               <span className="lg:hidden text-[11px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
                 {product.category.name}
                 {product.brand && ` \u2022 ${product.brand.name}`}
               </span>
-              {/* Desktop: pill style */}
+              {/* Desktop: pill */}
               <span className="hidden lg:inline-flex px-2.5 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
                 {product.category.name}
               </span>
-              {product.brand && (
-                <span className="hidden lg:flex items-center gap-2">
-                  <span className="text-neutral-300 dark:text-neutral-600">&bull;</span>
-                  <span className="text-xs text-neutral-500 font-medium">{product.brand.name}</span>
-                </span>
-              )}
             </div>
 
-            {/* Title - V0 Style */}
-            <h1 className="text-[22px] lg:text-3xl font-extrabold lg:font-semibold text-slate-900 dark:text-white tracking-tight leading-[1.15]">
+            {/* Title */}
+            <h1 className="text-[22px] lg:text-[32px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
               {product.name}
             </h1>
 
-            {/* Price - V0 Style */}
+            {/* Brand - Below title on desktop */}
+            {product.brand && (
+              <p className="hidden lg:block text-[14px] text-slate-400">
+                Marca: <span className="text-cyan-700 font-semibold">{product.brand.name}</span>
+              </p>
+            )}
+
+            {/* Price */}
             {product.showPrice && (
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-4">
                 {salePrice ? (
                   <>
-                    <span className="text-[26px] lg:text-3xl font-extrabold lg:font-semibold text-red-600 dark:text-red-500">
+                    <span className="text-[26px] lg:text-[34px] font-extrabold text-slate-900 dark:text-white">
                       S/ {displayPrice.toFixed(2)}
                     </span>
-                    <span className="text-[15px] lg:text-lg text-slate-300 dark:text-slate-500 line-through font-medium">
+                    <span className="text-[15px] lg:text-[18px] text-slate-400 dark:text-slate-500 line-through font-medium">
                       S/ {price.toFixed(2)}
                     </span>
-                    <span className="hidden lg:inline-flex px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-md text-xs font-medium">
+                    <span className="hidden lg:inline-flex px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold">
                       -{discount}%
                     </span>
                   </>
                 ) : (
-                  <span className="text-[26px] lg:text-3xl font-extrabold lg:font-semibold text-slate-900 dark:text-white">
+                  <span className="text-[26px] lg:text-[34px] font-extrabold text-slate-900 dark:text-white">
                     S/ {displayPrice.toFixed(2)}
                   </span>
                 )}
@@ -636,14 +641,17 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
               </div>
             )}
 
-            {/* Description - V0 Style */}
+            {/* Description */}
             {product.description && (
-              <p className="text-slate-500 dark:text-neutral-400 text-[13px] lg:text-sm leading-[1.5] lg:leading-relaxed">
+              <p className="text-slate-500 dark:text-neutral-400 text-[13px] lg:text-[13px] leading-[1.5] lg:leading-[1.6]">
                 {product.description}
               </p>
             )}
 
-            {/* Variants (Sub-products) - V0 Style - SEPARATED BY TYPE */}
+            {/* Divider (Desktop only) */}
+            <div className="hidden lg:block h-px bg-slate-200" />
+
+            {/* Variants (Sub-products) - SEPARATED BY TYPE */}
             {variants.length > 0 && (() => {
               // Filter variants by selected image variant value (e.g., Color)
               const filteredVariants = hasVariantImages && selectedVariantValue && product.imageVariantType
@@ -718,12 +726,12 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                       <div key={variantType.id} className="space-y-2.5 lg:space-y-3">
                         {/* Mobile: "Elige tu sabor" style label / Desktop: variant type name */}
                         <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-bold lg:font-medium text-slate-900 lg:text-neutral-700 dark:text-neutral-300">
+                          <h3 className="text-sm font-bold text-slate-900 lg:text-[13px] lg:font-semibold lg:text-slate-500 lg:uppercase lg:tracking-wider dark:text-neutral-300">
                             <span className="lg:hidden">Elige tu {variantType.name.toLowerCase()}</span>
                             <span className="hidden lg:inline">{variantType.name}</span>
                           </h3>
                           {selectedValue && (
-                            <span className="hidden lg:inline text-sm text-cyan-600 dark:text-cyan-400 font-medium">
+                            <span className="hidden lg:inline text-[13px] text-cyan-600 dark:text-cyan-400 font-medium">
                               {selectedValue}
                             </span>
                           )}
@@ -745,28 +753,23 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
                                 }}
                                 disabled={!isAvailable}
                                 className={cn(
-                                  'relative transition-all min-w-[50px]',
-                                  // Mobile: rounded-xl chips with gradient selected
+                                  'relative min-w-[50px]',
+                                  // Mobile
                                   'px-4 py-2.5 rounded-xl',
-                                  // Desktop: keep old style
-                                  'lg:rounded-xl lg:border',
+                                  // Desktop: soft rounded pills
+                                  'lg:rounded-full lg:px-4 lg:py-2',
                                   isSelected
-                                    ? 'bg-gradient-to-b from-cyan-500 to-blue-600 text-white font-bold border-transparent lg:border-cyan-500 lg:bg-cyan-500/10 lg:bg-none lg:text-cyan-700 lg:dark:text-cyan-300 lg:font-medium'
+                                    ? 'bg-gradient-to-b from-cyan-500 to-blue-600 text-white font-bold border border-transparent lg:bg-none lg:bg-cyan-50 lg:text-cyan-700 lg:font-medium lg:border lg:border-cyan-300'
                                     : isAvailable
-                                      ? 'bg-white border border-slate-200 dark:border-neutral-700 text-slate-500 dark:text-neutral-300 font-semibold lg:font-medium hover:border-cyan-400'
+                                      ? 'bg-white border border-slate-200 dark:border-neutral-700 text-slate-500 dark:text-neutral-300 font-semibold lg:font-normal lg:bg-white lg:border-slate-200 lg:text-slate-500 hover:border-slate-300 hover:text-slate-700'
                                       : 'bg-white border border-slate-100 dark:border-neutral-800 text-slate-300 dark:text-neutral-600 cursor-not-allowed opacity-50'
                                 )}
                               >
-                                <span className="text-xs lg:text-sm">{value}</span>
+                                <span className="text-xs lg:text-[13px]">{value}</span>
                                 {variantStock !== null && variantStock !== undefined && variantStock <= 3 && variantStock > 0 && (
                                   <span className="ml-1.5 text-xs text-amber-500">
                                     ({variantStock})
                                   </span>
-                                )}
-                                {isSelected && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 hidden lg:flex items-center justify-center">
-                                    <Check className="w-2.5 h-2.5 text-white" />
-                                  </div>
                                 )}
                               </button>
                             );
@@ -779,108 +782,72 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
               ) : null;
             })()}
 
-            {/* Quantity - V0 Style */}
-            <div className="space-y-2.5 lg:space-y-3">
-              <h3 className="text-sm font-bold lg:font-medium text-slate-900 lg:text-neutral-700 dark:text-neutral-300">
+            {/* Quantity - Mobile only (desktop quantity is inline with WhatsApp below) */}
+            <div className="lg:hidden space-y-2.5">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-neutral-300">
                 Cantidad
               </h3>
               <div className="flex items-center gap-4">
-                {/* Mobile: separate rounded buttons */}
-                <div className="flex lg:hidden items-center gap-4">
-                  <button
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 rounded-[10px] bg-slate-100 dark:bg-neutral-800 flex items-center justify-center text-slate-500 dark:text-neutral-400 active:scale-95 transition-all"
-                  >
-                    <Minus className="w-[18px] h-[18px]" />
-                  </button>
-                  <span className="text-xl font-extrabold text-slate-900 dark:text-white min-w-[24px] text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(q => q + 1)}
-                    className="w-10 h-10 rounded-[10px] bg-cyan-600 flex items-center justify-center text-white active:scale-95 transition-all"
-                  >
-                    <Plus className="w-[18px] h-[18px]" />
-                  </button>
-                </div>
-                {/* Desktop: bordered container */}
-                <div className="hidden lg:flex items-center border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="w-12 text-center font-medium text-neutral-900 dark:text-white">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(q => q + 1)}
-                    className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-                {product.showPrice && (
-                  <span className="text-sm text-neutral-500 hidden lg:inline">
-                    Total: <span className="font-semibold text-neutral-900 dark:text-white">
-                      S/ {(displayPrice * quantity).toFixed(2)}
-                    </span>
-                  </span>
-                )}
+                <button
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="w-10 h-10 rounded-[10px] bg-slate-100 dark:bg-neutral-800 flex items-center justify-center text-slate-500 dark:text-neutral-400 active:scale-95 transition-all"
+                >
+                  <Minus className="w-[18px] h-[18px]" />
+                </button>
+                <span className="text-xl font-extrabold text-slate-900 dark:text-white min-w-[24px] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(q => q + 1)}
+                  className="w-10 h-10 rounded-[10px] bg-cyan-600 flex items-center justify-center text-white active:scale-95 transition-all"
+                >
+                  <Plus className="w-[18px] h-[18px]" />
+                </button>
               </div>
             </div>
 
-            {/* CTA Buttons - V0 Style */}
-            <div className="flex flex-col gap-3 pt-2 lg:pt-4">
-              {/* Mobile: WhatsApp first, then Cart */}
-              {/* Desktop: Cart first, then WhatsApp */}
-
-              {/* Desktop Cart Button (shows first on desktop) */}
-              {settings.cartEnabled && (
-                <div className="hidden lg:block">
-                  <AddToCartButton
-                    item={{
-                      id: currentVariant?.id || product.id,
-                      productId: product.id,
-                      name: product.name,
-                      price: displayPrice,
-                      image: currentVariant?.image || images[0]?.url || null,
-                      variant: currentVariant
-                        ? {
-                            id: currentVariant.id,
-                            name: currentVariant.name || '',
-                            values: currentVariant.variantValues?.map(v => `${v.variantType.name}: ${v.value}`).join(', ') || '',
-                          }
-                        : undefined,
-                      maxStock: displayStock,
-                    }}
-                    quantity={quantity}
-                  />
+            {/* CTA - Desktop: Quantity + WhatsApp side by side / Mobile: stacked */}
+            <div className="flex flex-col gap-3 pt-2 lg:pt-0">
+              {/* Desktop: quantity + WhatsApp inline */}
+              <div className="hidden lg:flex items-center gap-3">
+                <div className="flex items-center border border-slate-200 rounded-full gap-5 px-4 py-2.5">
+                  <button
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="text-base text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    −
+                  </button>
+                  <span className="w-5 text-center text-sm font-semibold text-slate-700 dark:text-white">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(q => q + 1)}
+                    className="text-base text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    +
+                  </button>
                 </div>
-              )}
+                <button
+                  onClick={handleWhatsAppOrder}
+                  className="flex-1 flex items-center justify-center gap-2 px-8 py-3 rounded-full text-[13px] font-medium bg-[#25D366] text-white hover:bg-[#2eda6e] transition-all duration-200"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Pedir por WhatsApp
+                </button>
+              </div>
 
-              {/* WhatsApp Button - Mobile: green gradient prominent, Desktop: subtle */}
+              {/* Mobile: WhatsApp button */}
               <button
                 onClick={handleWhatsAppOrder}
-                className={cn(
-                  'w-full flex items-center justify-center gap-2 transition-all duration-200',
-                  // Mobile: green gradient, tall, rounded-2xl, shadow
-                  'h-[54px] rounded-2xl text-[15px] font-bold bg-gradient-to-b from-[#25D366] to-[#128C7E] text-white shadow-[0_6px_20px_#0EA5E940]',
-                  // Desktop: subtle style
-                  'lg:h-auto lg:px-5 lg:py-2.5 lg:rounded-lg lg:text-sm lg:font-medium lg:bg-none lg:bg-emerald-500/10 lg:text-emerald-600 lg:dark:text-emerald-400 lg:border lg:border-emerald-500/20 lg:hover:bg-emerald-500/20 lg:shadow-none'
-                )}
+                className="lg:hidden w-full flex items-center justify-center gap-2 h-[54px] rounded-2xl text-[15px] font-bold bg-gradient-to-b from-[#25D366] to-[#128C7E] text-white shadow-[0_6px_20px_#0EA5E940] transition-all duration-200"
               >
-                {/* Mobile: message-circle icon */}
-                <MessageCircle className="w-[18px] h-[18px] lg:hidden" />
-                {/* Desktop: WhatsApp SVG icon */}
-                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current hidden lg:block">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
+                <MessageCircle className="w-[18px] h-[18px]" />
                 Pedir por WhatsApp
               </button>
 
-              {/* Mobile Cart Button - outlined, cyan border, below WhatsApp */}
+              {/* Mobile Cart Button */}
               {settings.cartEnabled && (
                 <div className="lg:hidden">
                   <AddToCartButton
@@ -906,21 +873,18 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
               )}
             </div>
 
-            {/* Features - V0 Style (Desktop only) */}
-            <div className="hidden lg:grid grid-cols-3 gap-3 pt-6 mt-2 border-t border-neutral-200 dark:border-neutral-800">
-              {[
-                { icon: Truck, label: 'Envío' },
-                { icon: Shield, label: 'Garantía' },
-                { icon: RotateCcw, label: 'Devolución' },
-              ].map((feature) => (
-                <div key={feature.label} className="text-center">
-                  <div className="w-10 h-10 mx-auto mb-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                    <feature.icon className="w-4 h-4 text-neutral-500 dark:text-neutral-400" />
-                  </div>
-                  <span className="text-xs text-neutral-500">{feature.label}</span>
-                </div>
-              ))}
+            {/* Shipping info - small & premium (Desktop only) */}
+            <div className="hidden lg:flex items-center gap-6 pt-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">🚚</span>
+                <span className="text-xs font-medium text-slate-500">Envío a todo Perú</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">🏍</span>
+                <span className="text-xs font-medium text-slate-500">Pago contraentrega</span>
+              </div>
             </div>
+
           </motion.div>
         </div>
 
@@ -944,6 +908,7 @@ export function ProductDetail({ product, relatedProducts, settings, categories =
           </motion.section>
         )}
       </div>
+      </div>{/* Close full-width gradient wrapper */}
 
       {/* Footer */}
       <Footer settings={settings} />

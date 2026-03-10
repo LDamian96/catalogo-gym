@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, Home, Layers, ArrowRight, Sparkles, Search, ShoppingCart } from 'lucide-react';
+import { ChevronRight, Home, Layers, ArrowRight, Sparkles, Search, ShoppingCart, Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
@@ -269,56 +269,134 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
                 </motion.div>
               );
             })}
+
+            {/* Combos Card - Mobile */}
+            <motion.div
+              key="combos-mobile"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: filteredCategories.length * 0.07, ease: v0Ease }}
+            >
+              <Link
+                href="/combos"
+                className={cn(
+                  'block relative h-[105px] rounded-[20px] overflow-hidden group active:scale-[0.98] transition-transform',
+                  'shadow-lg',
+                  'shadow-purple-500/20'
+                )}
+              >
+                {/* Layer 2: Purple→Cyan gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/[0.88] via-violet-500/75 to-cyan-500/25" />
+
+                {/* Gift icon as background decoration */}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+                  <Gift className="w-16 h-16 text-white" />
+                </div>
+
+                {/* Layer 3: Text info */}
+                <div className="absolute left-4 top-5 flex flex-col gap-[3px]">
+                  <h3 className="text-[22px] font-black text-white leading-tight line-clamp-1">
+                    Combos
+                  </h3>
+                  <span className="text-[12px] font-semibold text-white/[0.82]">
+                    Ahorra m&aacute;s &rarr;
+                  </span>
+                </div>
+              </Link>
+            </motion.div>
           </div>
 
-          {/* Desktop: Original grid layout */}
+          {/* Desktop: Colorful cards (same as landing /inicio) */}
           <div className="hidden lg:block">
-            <motion.div
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              {filteredCategories.map((category, index) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05, ease: v0Ease }}
-                  viewport={{ once: true }}
-                >
-                  <Link
-                    href={`/categorias/${category.slug}`}
-                    className="block relative h-36 lg:h-40 rounded-2xl overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300"
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {filteredCategories.map((category, index) => {
+                const gradients = [
+                  'bg-gradient-to-br from-red-400 via-red-500 to-orange-600',
+                  'bg-gradient-to-br from-amber-400 via-amber-500 to-indigo-600',
+                  'bg-gradient-to-br from-amber-400 via-orange-500 to-red-500',
+                  'bg-gradient-to-br from-emerald-400 via-teal-500 to-red-600',
+                  'bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600',
+                  'bg-gradient-to-br from-pink-400 via-rose-500 to-red-600',
+                  'bg-gradient-to-br from-violet-400 via-purple-500 to-indigo-600',
+                  'bg-gradient-to-br from-sky-400 via-cyan-500 to-teal-600',
+                ];
+                return (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05, ease: v0Ease }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -8, scale: 1.02 }}
                   >
-                    {/* Gradient background */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${cardGradients[index % cardGradients.length]}`} />
+                    <Link
+                      href={`/categorias/${category.slug}`}
+                      className="block relative h-36 lg:h-44 rounded-2xl overflow-hidden group shadow-lg hover:shadow-2xl transition-all duration-500"
+                    >
+                      <div className={`absolute inset-0 ${gradients[index % gradients.length]}`} />
+                      {category.image && (
+                        <motion.div
+                          className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-50 transition-all duration-700"
+                          style={{ backgroundImage: `url(${category.image})` }}
+                          whileHover={{ scale: 1.15 }}
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="relative h-full p-4 flex flex-col justify-end">
+                        <h3 className="text-lg lg:text-xl font-black text-white drop-shadow-lg">
+                          {category.name}
+                        </h3>
+                        <motion.span
+                          className="text-white/90 text-sm mt-1 flex items-center gap-1 font-medium"
+                          whileHover={{ x: 5 }}
+                        >
+                          {category._count?.products || 0} productos <ArrowRight className="w-4 h-4" />
+                        </motion.span>
+                      </div>
+                      {/* Corner decoration */}
+                      <div className="absolute top-0 right-0 w-12 h-12 overflow-hidden">
+                        <div className="absolute -top-6 -right-6 w-12 h-12 bg-white/20 rotate-45" />
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
 
-                    {/* Image overlay */}
-                    {category.image && (
-                      <div
-                        className="absolute inset-0 bg-cover bg-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                        style={{ backgroundImage: `url(${category.image})` }}
-                      />
-                    )}
-
-                    {/* Dark gradient overlay for text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-                    {/* Content */}
-                    <div className="relative h-full p-4 flex flex-col justify-end">
-                      <h3 className="text-base lg:text-lg font-bold text-white drop-shadow-md line-clamp-1">
-                        {category.name}
-                      </h3>
-                      <span className="text-white/80 text-xs mt-1 flex items-center gap-1">
-                        {category._count?.products || 0} productos
-                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                      </span>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </motion.div>
+              {/* Combos Card - Desktop */}
+              <motion.div
+                key="combos-desktop"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: filteredCategories.length * 0.05, ease: v0Ease }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8, scale: 1.02 }}
+              >
+                <Link
+                  href="/combos"
+                  className="block relative h-36 lg:h-44 rounded-2xl overflow-hidden group shadow-lg hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-violet-500 to-cyan-500" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
+                    <Gift className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="relative h-full p-4 flex flex-col justify-end">
+                    <h3 className="text-lg lg:text-xl font-black text-white drop-shadow-lg">
+                      Combos
+                    </h3>
+                    <motion.span
+                      className="text-white/90 text-sm mt-1 flex items-center gap-1 font-medium"
+                      whileHover={{ x: 5 }}
+                    >
+                      Ahorra más <ArrowRight className="w-4 h-4" />
+                    </motion.span>
+                  </div>
+                  <div className="absolute top-0 right-0 w-12 h-12 overflow-hidden">
+                    <div className="absolute -top-6 -right-6 w-12 h-12 bg-white/20 rotate-45" />
+                  </div>
+                </Link>
+              </motion.div>
+            </div>
           </div>
 
           {/* Empty State */}

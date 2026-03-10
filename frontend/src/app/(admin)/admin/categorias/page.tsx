@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +24,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -168,23 +169,29 @@ function CategoryTreeItem({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold truncate">{node.name}</h3>
-                  {level > 0 && (
-                    <Badge variant="outline" className="text-xs">
-                      Nivel {level}
-                    </Badge>
-                  )}
-                  <Badge variant={node.isActive ? 'default' : 'secondary'}>
+                  <Badge variant={node.isActive ? 'default' : 'secondary'} className="text-[10px]">
                     {node.isActive ? 'Activa' : 'Inactiva'}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  /{node.slug} • {node._count?.products || 0} productos
-                  {hasChildren && ` • ${node.children.length} subcategorías`}
-                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Badge variant="outline" className="text-[10px] font-normal">
+                    {node._count?.products || 0} productos
+                  </Badge>
+                  {hasChildren && (
+                    <Badge variant="outline" className="text-[10px] font-normal">
+                      {node.children.length} sub
+                    </Badge>
+                  )}
+                  {level > 0 && (
+                    <Badge variant="outline" className="text-[10px] font-normal text-muted-foreground">
+                      Nivel {level}
+                    </Badge>
+                  )}
+                </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Actions - always visible */}
+              <div className="flex items-center gap-1">
                 <input
                   type="file"
                   id={`image-${node.id}`}
@@ -254,6 +261,17 @@ function CategoryTreeItem({
   );
 }
 
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export default function CategoriasPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryTree, setCategoryTree] = useState<CategoryTreeNode[]>([]);
@@ -264,6 +282,7 @@ export default function CategoriasPage() {
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
   const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const slugManuallyEdited = useRef(false);
 
   const form = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
@@ -315,6 +334,7 @@ export default function CategoriasPage() {
 
   function openCreateDialog(parentId?: string) {
     setEditingCategory(null);
+    slugManuallyEdited.current = false;
     form.reset({
       name: '',
       slug: '',
@@ -329,6 +349,7 @@ export default function CategoriasPage() {
 
   function openEditDialog(category: Category) {
     setEditingCategory(category);
+    slugManuallyEdited.current = true; // Al editar, no sobreescribir el slug existente
     form.reset({
       name: category.name,
       slug: category.slug,
@@ -529,6 +550,13 @@ export default function CategoriasPage() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <Tabs defaultValue="general" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="general">Datos</TabsTrigger>
+                  <TabsTrigger value="seo">SEO</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="general" className="space-y-4 mt-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -536,7 +564,16 @@ export default function CategoriasPage() {
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input placeholder="Electrónicos" {...field} />
+                      <Input
+                        placeholder="Electrónicos"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (!slugManuallyEdited.current) {
+                            form.setValue('slug', generateSlug(e.target.value));
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -554,10 +591,14 @@ export default function CategoriasPage() {
                         placeholder="electronicos"
                         {...field}
                         value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          slugManuallyEdited.current = e.target.value !== '';
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      Déjalo vacío para generar automáticamente
+                      Se genera del nombre. Edítalo si quieres personalizarlo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -623,8 +664,12 @@ export default function CategoriasPage() {
                   </FormItem>
                 )}
               />
+                </TabsContent>
 
-              <SEOFields form={form} showCard={false} />
+                <TabsContent value="seo" className="space-y-4 mt-4">
+                  <SEOFields form={form} showCard={false} />
+                </TabsContent>
+              </Tabs>
 
               <DialogFooter className="gap-2">
                 <Button

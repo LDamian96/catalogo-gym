@@ -459,10 +459,10 @@ export function VariantValueImagesManager({
         <div className="text-center py-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
           <ImageIcon className="w-8 h-8 mx-auto text-amber-500 mb-2" />
           <p className="text-sm text-amber-700 dark:text-amber-300">
-            Este producto no tiene valores de variante configurados
+            Este producto no tiene atributos configurados
           </p>
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-            Primero agrega valores de variante al producto (ej: Color, Talla)
+            Primero agrega atributos al producto (ej: Color, Talla, Sabor)
           </p>
         </div>
       </div>
@@ -473,40 +473,31 @@ export function VariantValueImagesManager({
 
   return (
     <div className="p-4 space-y-4 bg-slate-50 dark:bg-slate-800/30">
-      {/* Header */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Imagenes por Variante
-            </h4>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Sube imagenes especificas para cada valor (ej: fotos para cada color)
-            </p>
-          </div>
+      {/* Header + Select in one row */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <ImageIcon className="w-4 h-4 text-slate-500" />
+          <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Imágenes por atributo
+          </h4>
           {config?.totalImages ? (
-            <Badge variant="outline">
+            <Badge variant="outline" className="text-xs">
               {config.totalImages} imagen{config.totalImages !== 1 ? 'es' : ''}
             </Badge>
           ) : null}
         </div>
-
-        {/* Select Variant Type */}
-        <div className="flex items-center gap-3">
-          <Label className="text-sm whitespace-nowrap">
-            Tipo de variante con imagenes:
-          </Label>
+        <div className="flex items-center gap-2">
           <Select
             value={config?.imageVariantType?.id || 'none'}
             onValueChange={handleChangeImageVariantType}
             disabled={changingType}
           >
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Seleccionar..." />
+            <SelectTrigger className="w-44 h-8 text-xs">
+              <SelectValue placeholder="Seleccionar atributo..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">
-                <span className="text-slate-500">Ninguno (desactivar)</span>
+                <span className="text-slate-500">Desactivado</span>
               </SelectItem>
               {availableTypes.map((type) => (
                 <SelectItem key={type.id} value={type.id}>
@@ -522,9 +513,6 @@ export function VariantValueImagesManager({
       {/* Images by Value */}
       {config?.imageVariantType && selectedTypeValues.length > 0 && (
         <div className="space-y-2">
-          <Label className="text-sm text-slate-600 dark:text-slate-400">
-            Imagenes por {config.imageVariantType.name}:
-          </Label>
           {selectedTypeValues.map((value) => (
             <VariantValueImageGroup
               key={value}
@@ -550,8 +538,7 @@ export function VariantValueImagesManager({
       {config?.imageVariantType && selectedTypeValues.length === 0 && (
         <div className="text-center py-6 bg-slate-100 dark:bg-slate-800 rounded-lg">
           <p className="text-sm text-slate-500">
-            No hay valores de "{config.imageVariantType.name}" configurados en este
-            producto
+            No hay valores de &quot;{config.imageVariantType.name}&quot; en este producto
           </p>
         </div>
       )}

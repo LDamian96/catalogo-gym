@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Grid3X3, Package, ShoppingCart } from 'lucide-react';
+import { Home, Grid3X3, Package, ShoppingCart, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { v0Ease } from '@/lib/animations';
 import { useCart } from '@/hooks/useCart';
@@ -18,6 +20,12 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { items, openCart } = useCart();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -27,6 +35,10 @@ export function MobileBottomNav() {
     } else {
       router.push(href);
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -51,7 +63,7 @@ export function MobileBottomNav() {
             <motion.button
               key={item.href}
               onClick={() => handleNavClick(item.href, item.isCartAction)}
-              className="relative flex flex-col items-center justify-center px-4 py-1.5 touch-manipulation"
+              className="relative flex flex-col items-center justify-center px-3 py-1.5 touch-manipulation"
               whileTap={{ scale: 0.95 }}
             >
               {/* Icon */}
@@ -101,6 +113,26 @@ export function MobileBottomNav() {
             </motion.button>
           );
         })}
+
+        {/* Theme Toggle */}
+        {mounted && (
+          <motion.button
+            onClick={toggleTheme}
+            className="relative flex flex-col items-center justify-center px-3 py-1.5 touch-manipulation"
+            whileTap={{ scale: 0.95 }}
+          >
+            <div className="relative">
+              {resolvedTheme === 'dark' ? (
+                <Sun className="w-5 h-5 text-neutral-400 dark:text-neutral-500 transition-colors duration-200" strokeWidth={1.5} />
+              ) : (
+                <Moon className="w-5 h-5 text-neutral-400 dark:text-neutral-500 transition-colors duration-200" strokeWidth={1.5} />
+              )}
+            </div>
+            <span className="mt-1 text-[10px] font-medium text-neutral-400 dark:text-neutral-500 transition-colors duration-200">
+              Tema
+            </span>
+          </motion.button>
+        )}
       </div>
     </motion.nav>
   );

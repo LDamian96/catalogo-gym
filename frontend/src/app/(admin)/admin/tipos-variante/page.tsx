@@ -313,15 +313,15 @@ export default function TiposVariantePage() {
       <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Tipos de Variante
+            Atributos
           </h1>
           <p className="text-slate-500 dark:text-slate-400">
-            Gestiona los tipos de variante y sus valores (Talla: S, M, L, XL)
+            Gestiona los atributos y sus valores (Talla: S, M, L, XL)
           </p>
         </div>
         <Button onClick={() => handleOpenTypeModal()} className="gap-2">
           <Plus className="w-4 h-4" />
-          Nuevo Tipo
+          Nuevo Atributo
         </Button>
       </motion.div>
 
@@ -331,10 +331,10 @@ export default function TiposVariantePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Layers className="w-5 h-5" />
-              Tipos de Variante
+              Atributos
             </CardTitle>
             <CardDescription>
-              Haz clic en un tipo para ver y gestionar sus valores
+              Haz clic en un atributo para ver y gestionar sus valores
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -346,14 +346,14 @@ export default function TiposVariantePage() {
               <div className="text-center py-12">
                 <Layers className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-500 dark:text-slate-400">
-                  No hay tipos de variante configurados
+                  No hay atributos configurados
                 </p>
                 <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                  Crea tipos como Talla, Color, Material, etc.
+                  Crea atributos como Talla, Color, Material, etc.
                 </p>
                 <Button onClick={() => handleOpenTypeModal()} className="mt-4 gap-2">
                   <Plus className="w-4 h-4" />
-                  Crear Primer Tipo
+                  Crear Primer Atributo
                 </Button>
               </div>
             ) : (
@@ -500,12 +500,12 @@ export default function TiposVariantePage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingType ? 'Editar Tipo de Variante' : 'Nuevo Tipo de Variante'}
+              {editingType ? 'Editar Atributo' : 'Nuevo Atributo'}
             </DialogTitle>
             <DialogDescription>
               {editingType
-                ? 'Actualiza la información del tipo de variante'
-                : 'Crea un nuevo tipo de variante (ej: Talla, Color, Material)'}
+                ? 'Actualiza la información del atributo'
+                : 'Crea un nuevo atributo (ej: Talla, Color, Material, Sabor)'}
             </DialogDescription>
           </DialogHeader>
 

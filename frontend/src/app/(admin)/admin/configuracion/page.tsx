@@ -45,6 +45,7 @@ const settingsSchema = z.object({
   schedule: z.string().max(200).nullable().optional(),
   cartEnabled: z.boolean(),
   variantsEnabled: z.boolean(),
+  brandsFilterEnabled: z.boolean(),
   welcomeMessage: z.string().max(500).nullable().optional(),
   // SEO
   seoTitle: z.string().max(70).nullable().optional(),
@@ -83,6 +84,7 @@ export default function ConfiguracionPage() {
       schedule: '',
       cartEnabled: true,
       variantsEnabled: true,
+      brandsFilterEnabled: true,
       welcomeMessage: '',
       seoTitle: '',
       seoDescription: '',
@@ -118,6 +120,7 @@ export default function ConfiguracionPage() {
         schedule: settingsData.schedule || '',
         cartEnabled: settingsData.cartEnabled,
         variantsEnabled: settingsData.variantsEnabled,
+        brandsFilterEnabled: settingsData.brandsFilterEnabled ?? true,
         welcomeMessage: settingsData.welcomeMessage || '',
         seoTitle: settingsData.seoTitle || '',
         seoDescription: settingsData.seoDescription || '',
@@ -443,6 +446,27 @@ export default function ConfiguracionPage() {
                             <FormLabel className="text-base">Variantes de productos</FormLabel>
                             <FormDescription>
                               Habilita sub-productos con variantes (Talla, Color, Sabor, etc.)
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="brandsFilterEnabled"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Filtro de marcas</FormLabel>
+                            <FormDescription>
+                              Mostrar filtro de marcas en la página de productos
                             </FormDescription>
                           </div>
                           <FormControl>

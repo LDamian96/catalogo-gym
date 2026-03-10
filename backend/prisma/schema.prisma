@@ -60,8 +60,9 @@ model Settings {
   description     String?
   address         String?
   schedule        String?
-  cartEnabled     Boolean  @default(true) @map("cart_enabled")
-  variantsEnabled Boolean  @default(true) @map("variants_enabled")
+  cartEnabled          Boolean  @default(true) @map("cart_enabled")
+  variantsEnabled      Boolean  @default(true) @map("variants_enabled")
+  brandsFilterEnabled  Boolean  @default(true) @map("brands_filter_enabled")
   welcomeMessage  String?  @map("welcome_message")
 
   // SEO Global
@@ -207,6 +208,7 @@ model Product {
   variantValues      ProductVariantValue[]   // Valores de variante del producto principal
   variants           ProductVariant[]        // Sub-productos
   stats              ProductStat[]
+  comboProducts      ComboProduct[]          // Combos que incluyen este producto
 
   @@index([categoryId, isActive, order])
   @@index([brandId, isActive])
@@ -391,6 +393,58 @@ model ProductVariantVariantValue {
   @@index([productVariantId])
   @@index([variantTypeId])
   @@map("product_variant_variant_values")
+}
+
+// ============================================
+// COMBO (Combos de productos)
+// ============================================
+
+model Combo {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  image           String?
+  imagePublicId   String?  @map("image_public_id")
+  price           Decimal  @db.Decimal(10, 2)
+  salePrice       Decimal? @map("sale_price") @db.Decimal(10, 2)
+  discountPercent Int?     @map("discount_percent")
+  order           Int      @default(0)
+  isActive        Boolean  @default(true) @map("is_active")
+
+  // SEO
+  seoTitle       String? @map("seo_title")
+  seoDescription String? @map("seo_description")
+  seoKeywords    String? @map("seo_keywords")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  comboProducts ComboProduct[]
+
+  @@index([isActive, order])
+  @@map("combos")
+}
+
+// ============================================
+// COMBO_PRODUCT (Productos en un combo - M:N)
+// ============================================
+
+model ComboProduct {
+  id        String @id @default(cuid())
+  comboId   String @map("combo_id")
+  productId String @map("product_id")
+  quantity  Int    @default(1)
+  order     Int    @default(0)
+
+  // Relations
+  combo   Combo   @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([comboId, productId])
+  @@index([comboId, order])
+  @@map("combo_products")
 }
 
 // ============================================

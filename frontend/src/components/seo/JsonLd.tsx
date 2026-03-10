@@ -38,10 +38,6 @@ export function OrganizationJsonLd({ settings }: { settings: CatalogSettings }) 
           availableLanguage: 'Spanish',
         }
       : undefined,
-    sameAs: [
-      settings.facebook,
-      settings.instagram,
-    ].filter(Boolean),
   };
 
   return <JsonLd data={data} />;
@@ -99,7 +95,7 @@ export function ProductJsonLd({
       priceCurrency: 'PEN',
       price: typeof price === 'string' ? parseFloat(price) : price,
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      availability: product.stock && product.stock > 0
+      availability: product.stock === null || product.stock > 0
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       seller: {
@@ -197,7 +193,7 @@ export function LocalBusinessJsonLd({ settings }: { settings: CatalogSettings })
           addressCountry: 'PE',
         }
       : undefined,
-    openingHours: settings.businessHours,
+    openingHours: settings.schedule || undefined,
     priceRange: '$$',
     areaServed: {
       '@type': 'Country',
@@ -208,10 +204,6 @@ export function LocalBusinessJsonLd({ settings }: { settings: CatalogSettings })
       '@type': 'DeliveryMethod',
       name: 'Envío a todo Perú - Contraentrega',
     },
-    sameAs: [
-      settings.facebook,
-      settings.instagram,
-    ].filter(Boolean),
   };
 
   return <JsonLd data={data} />;

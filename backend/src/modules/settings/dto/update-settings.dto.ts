@@ -10,6 +10,7 @@ export const updateSettingsSchema = z.object({
   schedule: z.string().max(200).optional().nullable(),
   cartEnabled: z.boolean().optional(),
   variantsEnabled: z.boolean().optional(),
+  brandsFilterEnabled: z.boolean().optional(),
   welcomeMessage: z.string().max(500).optional().nullable(),
   // SEO
   seoTitle: z.string().max(70).optional().nullable(),
@@ -48,6 +49,9 @@ export class UpdateSettingsDtoClass implements UpdateSettingsDto {
 
   @ApiPropertyOptional({ example: true })
   variantsEnabled?: boolean;
+
+  @ApiPropertyOptional({ example: true })
+  brandsFilterEnabled?: boolean;
 
   @ApiPropertyOptional({ example: 'Bienvenido a nuestra tienda!' })
   welcomeMessage?: string | null;

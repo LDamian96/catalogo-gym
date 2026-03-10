@@ -376,8 +376,8 @@ export function BrandProducts({
             <motion.div
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-5"
               variants={staggerContainer}
-              initial="hidden"
-              animate="show"
+              initial="initial"
+              animate="animate"
             >
               {products.map((product) => (
                 <motion.div key={product.id} variants={staggerItem}>

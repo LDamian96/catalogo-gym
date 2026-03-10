@@ -11,6 +11,7 @@ import {
   Tag,
   Layers,
   Package,
+  Gift,
   BarChart3,
   QrCode,
   FileUp,
@@ -23,7 +24,7 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -72,7 +73,8 @@ const allNavigation = [
   { name: 'Productos', href: '/admin/productos', icon: Package, section: 'main' },
   { name: 'Categorías', href: '/admin/categorias', icon: FolderOpen, section: 'main' },
   { name: 'Marcas', href: '/admin/marcas', icon: Tag, section: 'main' },
-  { name: 'Tipos de Variante', href: '/admin/tipos-variante', icon: Layers, section: 'main', requiresVariants: true },
+  { name: 'Combos', href: '/admin/combos', icon: Gift, section: 'main' },
+  { name: 'Atributos', href: '/admin/tipos-variante', icon: Layers, section: 'main', requiresVariants: true },
   { name: 'Estadísticas', href: '/admin/estadisticas', icon: BarChart3, section: 'tools' },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings, section: 'tools' },
   { name: 'Importar/Exportar', href: '/admin/importar', icon: FileUp, section: 'tools' },
@@ -104,7 +106,9 @@ function getInitials(name: string | null | undefined, email: string) {
 function UserSection({ isCollapsed = false }: { isCollapsed?: boolean }) {
   const { user } = useAuthStore();
   const handleLogout = useLogout();
-  const { isDark, toggleTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
 
   return (
     <div className={`border-t border-neutral-200 dark:border-white/[0.08] ${isCollapsed ? 'p-2' : 'p-3'}`}>
@@ -408,10 +412,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [isAuthenticated]);
 
-  // Protección de rutas
+  // Protección de rutas - check both store AND cookie to avoid race condition after login
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+      // Double-check: maybe store isn't hydrated yet but cookie exists
+      const hasToken = document.cookie.includes('accessToken=');
+      if (!hasToken) {
+        router.push('/login');
+      }
     }
   }, [isAuthenticated, isLoading, router]);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,6 +26,7 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
+  MoreHorizontal,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Table,
   TableBody,
   TableCell,
@@ -95,7 +102,7 @@ import {
 } from '@/lib/api/products';
 import { getCategories } from '@/lib/api/categories';
 import { getBrands } from '@/lib/api/brands';
-import { getVariantTypes, type VariantType } from '@/lib/api/variants';
+import { getVariantTypes, generateVariantCombinations, type VariantType } from '@/lib/api/variants';
 import { getSettings } from '@/lib/api/settings';
 import { Upload } from 'lucide-react';
 import type { Product, ProductImage, Category, Brand, CreateProductDto, UpdateProductDto, ProductQueryParams } from '@/types';
@@ -130,6 +137,17 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -20 },
 };
+
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
 
 export default function ProductosPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -166,6 +184,7 @@ export default function ProductosPage() {
 
   // Discount percentage state for bidirectional sync
   const [discountPercent, setDiscountPercent] = useState<number | null>(null);
+  const slugManuallyEdited = useRef(false);
 
   // Settings-based feature toggle
   const [variantsEnabled, setVariantsEnabled] = useState(true);
@@ -246,6 +265,7 @@ export default function ProductosPage() {
 
   function openCreateDialog() {
     setEditingProduct(null);
+    slugManuallyEdited.current = false;
     form.reset({
       categoryId: categories[0]?.id || '',
       brandId: null,
@@ -274,6 +294,7 @@ export default function ProductosPage() {
       // Fetch full product data to get variantValues
       const product = await getProduct(productFromList.id);
       setEditingProduct(product);
+      slugManuallyEdited.current = true;
       form.reset({
         categoryId: product.categoryId,
         brandId: product.brandId || null,
@@ -354,7 +375,21 @@ export default function ProductosPage() {
           variantValues,
         };
         await updateProduct(editingProduct.id, dto);
-        toast.success('Producto actualizado');
+        // Auto-generate variant combinations if variant values were selected
+        if (variantValues.length > 0) {
+          try {
+            const result = await generateVariantCombinations(editingProduct.id);
+            if (result.created > 0) {
+              toast.success(`Producto actualizado + ${result.created} combinaciones generadas`);
+            } else {
+              toast.success('Producto actualizado');
+            }
+          } catch {
+            toast.success('Producto actualizado');
+          }
+        } else {
+          toast.success('Producto actualizado');
+        }
       } else {
         const dto: CreateProductDto = {
           categoryId: data.categoryId,
@@ -376,8 +411,22 @@ export default function ProductosPage() {
           seoKeywords: data.seoKeywords || null,
           variantValues,
         };
-        await createProduct(dto);
-        toast.success('Producto creado');
+        const createdProduct = await createProduct(dto);
+        // Auto-generate variant combinations if variant values were selected
+        if (variantValues.length > 0) {
+          try {
+            const result = await generateVariantCombinations(createdProduct.id);
+            if (result.created > 0) {
+              toast.success(`Producto creado + ${result.created} combinaciones generadas`);
+            } else {
+              toast.success('Producto creado');
+            }
+          } catch {
+            toast.success('Producto creado');
+          }
+        } else {
+          toast.success('Producto creado');
+        }
       }
 
       setIsDialogOpen(false);
@@ -608,14 +657,11 @@ export default function ProductosPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-16">Imagen</TableHead>
                   <TableHead>Producto</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead>Marca</TableHead>
                   <TableHead className="text-right">Precio</TableHead>
                   <TableHead className="text-center">Stock</TableHead>
                   <TableHead className="text-center">Estado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead className="text-right w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -627,53 +673,39 @@ export default function ProductosPage() {
                         className={`group ${variantsEnabled ? 'cursor-pointer' : ''} hover:bg-muted/50 ${isExpanded ? 'bg-muted/30' : ''}`}
                         onClick={() => variantsEnabled && toggleProductVariants(product.id)}
                       >
-                        <TableCell onClick={(e) => e.stopPropagation()}>
-                          <div
-                            className="w-12 h-12 rounded-lg overflow-hidden bg-muted cursor-pointer"
-                            onClick={() => openImagesDialog(product)}
-                          >
-                            {product.images && product.images[0] ? (
-                              <img
-                                src={product.images[0].url}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              {variantsEnabled && (
-                                isExpanded ? (
-                                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                                ) : (
-                                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                                )
+                          <div className="flex items-center gap-3">
+                            {variantsEnabled && (
+                              isExpanded ? (
+                                <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                              )
+                            )}
+                            <div
+                              className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0 cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); openImagesDialog(product); }}
+                            >
+                              {product.images && product.images[0] ? (
+                                <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
                               )}
-                              <div>
-                                <p className="font-medium">{product.name}</p>
-                                <p className="text-sm text-muted-foreground">/{product.slug}</p>
-                              </div>
                             </div>
-                            {product.isFeatured && (
-                              <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                            )}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <p className="font-medium truncate">{product.name}</p>
+                                {product.isFeatured && (
+                                  <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {product.category?.name || '-'}{product.brand ? ` · ${product.brand.name}` : ''}
+                              </p>
+                            </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{product.category?.name || '-'}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          {product.brand ? (
-                            <Badge variant="secondary">{product.brand.name}</Badge>
-                          ) : (
-                            <span className="text-muted-foreground">-</span>
-                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div>
@@ -702,46 +734,40 @@ export default function ProductosPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openImagesDialog(product)}
-                              title="Gestionar imágenes"
-                            >
-                              <ImageIcon className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDuplicate(product)}
-                              title="Duplicar"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openEditDialog(product)}
-                              title="Editar"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setDeletingProduct(product)}
-                              title="Eliminar"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEditDialog(product)}>
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openImagesDialog(product)}>
+                                <ImageIcon className="h-4 w-4 mr-2" />
+                                Imágenes
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDuplicate(product)}>
+                                <Copy className="h-4 w-4 mr-2" />
+                                Duplicar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => setDeletingProduct(product)}
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Eliminar
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
                       {/* Expanded Variants Row */}
                       {variantsEnabled && isExpanded && (
                         <TableRow className="bg-muted/20">
-                          <TableCell colSpan={8} className="p-0">
+                          <TableCell colSpan={5} className="p-0">
                             <Tabs defaultValue="variants" className="w-full">
                               <div className="px-4 pt-3 border-b">
                                 <TabsList className="h-9">
@@ -821,6 +847,13 @@ export default function ProductosPage() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <Tabs defaultValue="general" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="general">Producto</TabsTrigger>
+                  <TabsTrigger value="seo">SEO</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="general" className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -880,7 +913,16 @@ export default function ProductosPage() {
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input placeholder="iPhone 15 Pro" {...field} />
+                      <Input
+                        placeholder="iPhone 15 Pro"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (!slugManuallyEdited.current) {
+                            form.setValue('slug', generateSlug(e.target.value));
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -898,10 +940,14 @@ export default function ProductosPage() {
                         placeholder="iphone-15-pro"
                         {...field}
                         value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          slugManuallyEdited.current = e.target.value !== '';
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      Déjalo vacío para generar automáticamente
+                      Se genera del nombre. Edítalo si quieres personalizarlo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -1153,10 +1199,10 @@ export default function ProductosPage() {
                 <div className="space-y-4 rounded-lg border p-4">
                   <div className="flex items-center gap-2">
                     <Layers className="h-4 w-4 text-muted-foreground" />
-                    <h4 className="font-medium">Opciones de variante disponibles</h4>
+                    <h4 className="font-medium">Atributos / Variantes</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Selecciona las opciones disponibles para este producto. Los sub-productos se crean manualmente.
+                    Selecciona los atributos disponibles para este producto. Las combinaciones se crean automáticamente.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {variantTypes.map((type) => (
@@ -1199,7 +1245,12 @@ export default function ProductosPage() {
                 </div>
               )}
 
-              <SEOFields form={form} showCard={false} />
+                </TabsContent>
+
+                <TabsContent value="seo" className="space-y-4 mt-4">
+                  <SEOFields form={form} showCard={false} />
+                </TabsContent>
+              </Tabs>
 
               <DialogFooter className="gap-2">
                 <Button

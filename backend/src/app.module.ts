@@ -36,6 +36,7 @@ import { VariantsModule } from './modules/variants/variants.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { StatsModule } from './modules/stats/stats.module';
 import { ImportExportModule } from './modules/import-export/import-export.module';
+import { CombosModule } from './modules/combos/combos.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { ImportExportModule } from './modules/import-export/import-export.module
     CatalogModule,
     StatsModule,
     ImportExportModule,
+    CombosModule,
   ],
   providers: [
     // Global Rate Limit Guard

@@ -34,8 +34,11 @@ export interface CatalogSettings {
   currency: string;
   description: string | null;
   address: string | null;
+  schedule: string | null;
   businessHours: string | null;
   cartEnabled: boolean;
+  variantsEnabled: boolean;
+  brandsFilterEnabled: boolean;
   welcomeMessage: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -159,11 +162,47 @@ export interface CatalogProduct {
   _count?: { variants: number };
 }
 
+export interface CatalogComboProduct {
+  id: string;
+  comboId: string;
+  productId: string;
+  quantity: number;
+  order: number;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    price: number | string;
+    salePrice: number | string | null;
+    stock?: number | null;
+    images?: { id: string; url: string; order: number }[];
+    category?: { id: string; name: string; slug: string };
+    brand?: { id: string; name: string; slug: string; logo: string | null } | null;
+  };
+}
+
+export interface CatalogCombo {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image: string | null;
+  price: number | string;
+  salePrice: number | string | null;
+  discountPercent: number | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string | null;
+  comboProducts: CatalogComboProduct[];
+}
+
 export interface CatalogHome {
   settings: CatalogSettings | null;
   categories: CatalogCategory[];
   featuredProducts: CatalogProduct[];
   brands: CatalogBrand[];
+  combos: CatalogCombo[];
 }
 
 export interface VariantTypeFilter {
@@ -291,6 +330,16 @@ export async function getCatalogBrand(
   }
 ): Promise<CatalogBrandPage> {
   const { data } = await catalogApi.get<CatalogBrandPage>(`/catalog/brands/${slug}`, { params });
+  return data;
+}
+
+export async function getCatalogCombos(): Promise<CatalogCombo[]> {
+  const { data } = await catalogApi.get<CatalogCombo[]>('/catalog/combos');
+  return data;
+}
+
+export async function getCatalogCombo(slug: string): Promise<CatalogCombo> {
+  const { data } = await catalogApi.get<CatalogCombo>(`/catalog/combos/${slug}`);
   return data;
 }
 

@@ -9,7 +9,7 @@ export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string; minPrice?: string; maxPrice?: string; sort?: string }>;
+  searchParams: Promise<{ page?: string; minPrice?: string; maxPrice?: string; sort?: string; brandId?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -55,7 +55,7 @@ function getSortParams(sort?: string): { sortBy?: 'order' | 'price' | 'name' | '
 
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { page = '1', minPrice, maxPrice, sort } = await searchParams;
+  const { page = '1', minPrice, maxPrice, sort, brandId } = await searchParams;
 
   try {
     const sortParams = getSortParams(sort);
@@ -66,6 +66,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         limit: 12,
         minPrice: minPrice ? parseFloat(minPrice) : undefined,
         maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        brandId: brandId || undefined,
         ...sortParams,
       }),
       getCatalogHome(),

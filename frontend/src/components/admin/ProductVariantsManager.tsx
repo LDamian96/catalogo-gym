@@ -766,23 +766,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Generate Combinations Button */}
-          {parentVariantValues.length > 0 && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowGenerateConfirm(true)}
-              className="gap-2"
-              disabled={generating || parentVariantValues.length === 0}
-            >
-              {generating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Sparkles className="w-4 h-4" />
-              )}
-              Generar Combinaciones
-            </Button>
-          )}
           {/* Delete All Button */}
           {variants.length > 0 && (
             <Button
@@ -812,10 +795,10 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       {!loading && parentVariantValues.length === 0 && (
         <div className="text-center py-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
           <p className="text-sm text-amber-700 dark:text-amber-300">
-            Este producto no tiene valores de variante configurados
+            Este producto no tiene atributos configurados
           </p>
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-            Edita el producto y selecciona valores de variante (Talla, Color, etc.)
+            Edita el producto y selecciona atributos (Talla, Color, Sabor, etc.)
           </p>
         </div>
       )}
@@ -835,7 +818,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
             No hay sub-productos configurados
           </p>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-            Usa "Generar Combinaciones" para crear {expectedCombinations} variantes automáticamente
+            Guarda el producto con atributos seleccionados y las combinaciones se crearán automáticamente
           </p>
         </div>
       )}
@@ -1136,29 +1119,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
             >
               {loadingAction && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Generate Combinations Confirmation */}
-      <AlertDialog open={showGenerateConfirm} onOpenChange={setShowGenerateConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Generar combinaciones automáticamente</AlertDialogTitle>
-            <AlertDialogDescription>
-              Se crearán {expectedCombinations} variantes combinando todos los valores de variante del producto.
-              Las combinaciones que ya existen serán omitidas.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleGenerateCombinations}
-              disabled={generating}
-            >
-              {generating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Generar {expectedCombinations} Variantes
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

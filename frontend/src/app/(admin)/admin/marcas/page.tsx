@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -49,6 +49,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SEOFields } from '@/components/shared';
 import {
   getBrands,
@@ -83,6 +84,17 @@ const fadeInUp = {
   exit: { opacity: 0, y: -20 },
 };
 
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export default function MarcasPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +103,7 @@ export default function MarcasPage() {
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
   const [deletingBrand, setDeletingBrand] = useState<Brand | null>(null);
   const [uploadingLogoId, setUploadingLogoId] = useState<string | null>(null);
+  const slugManuallyEdited = useRef(false);
 
   const form = useForm<BrandFormData>({
     resolver: zodResolver(brandSchema),
@@ -124,6 +137,7 @@ export default function MarcasPage() {
 
   function openCreateDialog() {
     setEditingBrand(null);
+    slugManuallyEdited.current = false;
     form.reset({
       name: '',
       slug: '',
@@ -138,6 +152,7 @@ export default function MarcasPage() {
 
   function openEditDialog(brand: Brand) {
     setEditingBrand(brand);
+    slugManuallyEdited.current = true;
     form.reset({
       name: brand.name,
       slug: brand.slug,
@@ -433,6 +448,13 @@ export default function MarcasPage() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <Tabs defaultValue="general" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="general">Datos</TabsTrigger>
+                  <TabsTrigger value="seo">SEO</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="general" className="space-y-4 mt-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -440,7 +462,16 @@ export default function MarcasPage() {
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nike" {...field} />
+                      <Input
+                        placeholder="Nike"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (!slugManuallyEdited.current) {
+                            form.setValue('slug', generateSlug(e.target.value));
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -454,9 +485,17 @@ export default function MarcasPage() {
                   <FormItem>
                     <FormLabel>Slug (URL)</FormLabel>
                     <FormControl>
-                      <Input placeholder="nike" {...field} value={field.value || ''} />
+                      <Input
+                        placeholder="nike"
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          slugManuallyEdited.current = e.target.value !== '';
+                        }}
+                      />
                     </FormControl>
-                    <FormDescription>Déjalo vacío para generar automáticamente</FormDescription>
+                    <FormDescription>Se genera del nombre. Edítalo si quieres personalizarlo.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -497,8 +536,12 @@ export default function MarcasPage() {
                 )}
               />
 
-              {/* SEO Fields */}
-              <SEOFields form={form} showCard={false} />
+                </TabsContent>
+
+                <TabsContent value="seo" className="space-y-4 mt-4">
+                  <SEOFields form={form} showCard={false} />
+                </TabsContent>
+              </Tabs>
 
               <DialogFooter className="gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>

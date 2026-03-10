@@ -17,6 +17,9 @@ export const CACHE_KEYS = {
   PRODUCT: (id: string) => `product:${id}`,
   PRODUCT_SLUG: (slug: string) => `product:slug:${slug}`,
   FEATURED_PRODUCTS: 'products:featured',
+  COMBOS: 'combos:all',
+  COMBO: (id: string) => `combo:${id}`,
+  COMBO_SLUG: (slug: string) => `combo:slug:${slug}`,
 };
 
 // Cache TTLs (in seconds)
@@ -30,6 +33,8 @@ export const CACHE_TTL = {
   PRODUCTS_LIST: 300, // 5 minutes
   PRODUCT_DETAIL: 600, // 10 minutes
   FEATURED: 600, // 10 minutes
+  COMBOS: 1800, // 30 minutes
+  COMBO: 1800, // 30 minutes
 };
 
 @Injectable()
@@ -149,6 +154,16 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     await this.del(CACHE_KEYS.BRANDS);
   }
 
+  async invalidateCombos(): Promise<void> {
+    await this.del(CACHE_KEYS.COMBOS);
+    await this.delPattern('combo:*');
+  }
+
+  async invalidateCombo(id: string): Promise<void> {
+    await this.del(CACHE_KEYS.COMBO(id));
+    await this.del(CACHE_KEYS.COMBOS);
+  }
+
   /**
    * Invalida TODO el caché del catálogo público y admin
    * Usar después de importaciones masivas o cambios globales
@@ -160,6 +175,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       this.invalidateCategories(),
       this.invalidateSettings(),
       this.invalidateTrackingPixels(),
+      this.invalidateCombos(),
       this.del('catalog:home'),
       this.delPattern('catalog:*'),
     ]);

@@ -87,6 +87,25 @@ export class CatalogController {
     return this.catalogService.getProductsByBrand(slug, query);
   }
 
+  @Get('combos')
+  @ApiOperation({
+    summary: 'Get active combos',
+    description: 'Returns all active combos with their products',
+  })
+  async getCombos() {
+    return this.catalogService.getCombos();
+  }
+
+  @Get('combos/:slug')
+  @ApiOperation({
+    summary: 'Get combo by slug',
+    description: 'Returns combo details with included products',
+  })
+  @ApiParam({ name: 'slug', description: 'Combo slug', example: 'combo-fuerza-total' })
+  async getComboBySlug(@Param('slug') slug: string) {
+    return this.catalogService.getComboBySlug(slug);
+  }
+
   @Get('filters')
   @ApiOperation({
     summary: 'Get available filters',

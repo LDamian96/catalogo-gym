@@ -24,7 +24,7 @@ export class CatalogService {
     }
 
     // Fetch all data in parallel
-    const [settings, categories, featuredProducts, brands] = await Promise.all([
+    const [settings, categories, featuredProducts, brands, combos] = await Promise.all([
       // Settings
       this.prisma.settings.findUnique({
         where: { id: 'main' },
@@ -88,6 +88,29 @@ export class CatalogService {
           _count: { select: { products: { where: { isActive: true } } } },
         },
       }),
+
+      // Active combos with products
+      this.prisma.combo.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+        include: {
+          comboProducts: {
+            orderBy: { order: 'asc' },
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  price: true,
+                  salePrice: true,
+                  images: { orderBy: { order: 'asc' }, take: 1 },
+                },
+              },
+            },
+          },
+        },
+      }),
     ]);
 
     const result = {
@@ -102,6 +125,7 @@ export class CatalogService {
             schedule: settings.schedule,
             cartEnabled: settings.cartEnabled,
             variantsEnabled: settings.variantsEnabled,
+            brandsFilterEnabled: settings.brandsFilterEnabled,
             welcomeMessage: settings.welcomeMessage,
             seoTitle: settings.seoTitle,
             seoDescription: settings.seoDescription,
@@ -116,6 +140,7 @@ export class CatalogService {
       categories,
       featuredProducts,
       brands,
+      combos,
     };
 
     // Cache for 5 minutes
@@ -684,6 +709,83 @@ export class CatalogService {
     });
 
     return { success: true };
+  }
+
+  /**
+   * GET /catalog/combos - Lista pública de combos activos
+   */
+  async getCombos() {
+    const cacheKey = 'catalog:combos';
+    const cached = await this.cache.get(cacheKey);
+    if (cached) return cached;
+
+    const combos = await this.prisma.combo.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+      include: {
+        comboProducts: {
+          orderBy: { order: 'asc' },
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                price: true,
+                salePrice: true,
+                images: { orderBy: { order: 'asc' }, take: 1 },
+                category: { select: { id: true, name: true, slug: true } },
+                brand: { select: { id: true, name: true, slug: true, logo: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    await this.cache.set(cacheKey, combos, 1800);
+    return combos;
+  }
+
+  /**
+   * GET /catalog/combos/:slug - Detalle público de un combo
+   */
+  async getComboBySlug(slug: string) {
+    const cacheKey = `catalog:combo:${slug}`;
+    const cached = await this.cache.get(cacheKey);
+    if (cached) return cached;
+
+    const combo = await this.prisma.combo.findFirst({
+      where: { slug, isActive: true },
+      include: {
+        comboProducts: {
+          orderBy: { order: 'asc' },
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                description: true,
+                price: true,
+                salePrice: true,
+                stock: true,
+                images: { orderBy: { order: 'asc' }, take: 1 },
+                category: { select: { id: true, name: true, slug: true } },
+                brand: { select: { id: true, name: true, slug: true, logo: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!combo) {
+      throw new NotFoundException('Combo no encontrado');
+    }
+
+    await this.cache.set(cacheKey, combo, 1800);
+    return combo;
   }
 
   /**
