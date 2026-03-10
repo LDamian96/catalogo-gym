@@ -4,23 +4,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, Home, Layers, ArrowRight, Sparkles, Search, ShoppingCart, Gift } from 'lucide-react';
+import { ChevronRight, Home, Layers, ArrowRight, Search, ShoppingCart, Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
-import { staggerContainer, staggerItem, v0Ease } from '@/lib/animations';
-
-// Gradient colors for category cards (v0 Cyan/Blue palette)
-const cardGradients = [
-  'from-cyan-400 to-blue-500',
-  'from-sky-400 to-cyan-500',
-  'from-teal-400 to-cyan-500',
-  'from-blue-400 to-indigo-500',
-  'from-cyan-500 to-sky-500',
-  'from-emerald-400 to-teal-500',
-  'from-sky-500 to-blue-600',
-  'from-cyan-400 to-teal-600',
-];
+import { v0Ease } from '@/lib/animations';
 
 // Mobile full-width rectangle card gradients (BETA.pen design)
 // Each entry: [gradient classes, shadow color for the card]

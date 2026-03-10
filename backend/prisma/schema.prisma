@@ -424,6 +424,7 @@ model Combo {
   comboProducts ComboProduct[]
 
   @@index([isActive, order])
+  @@index([slug])
   @@map("combos")
 }
 
@@ -444,6 +445,7 @@ model ComboProduct {
 
   @@unique([comboId, productId])
   @@index([comboId, order])
+  @@index([productId])
   @@map("combo_products")
 }
 
@@ -465,6 +467,7 @@ model ProductStat {
   @@unique([productId, type, date])
   @@index([type, date])
   @@index([productId, type])
+  @@index([date])
   @@map("product_stats")
 }
 

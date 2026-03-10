@@ -19,7 +19,6 @@ import {
   Menu,
   ChevronRight,
   ChevronUp,
-  User,
   PanelLeftClose,
   Sun,
   Moon,
@@ -29,7 +28,6 @@ import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,11 +59,6 @@ const SidebarContext = createContext<{
   setIsCollapsed: () => {},
   variantsEnabled: true,
 });
-
-// Hook for child components to access sidebar context
-function useSidebarContext() {
-  return useContext(SidebarContext);
-}
 
 // Navegación del sidebar
 const allNavigation = [

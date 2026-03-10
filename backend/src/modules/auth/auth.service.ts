@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../database/prisma.service';
-import { comparePassword } from '../../common/utils/hash.util';
+import { comparePassword, hashPassword } from '../../common/utils/hash.util';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto, TokensResponseDto, UserResponseDto } from './dto/auth-response.dto';
 
@@ -40,10 +40,11 @@ export class AuthService {
     // Generate tokens
     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-    // Store refresh token in database
+    // Store hashed refresh token in database
+    const hashedRefreshToken = await hashPassword(tokens.refreshToken);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshToken: tokens.refreshToken },
+      data: { refreshToken: hashedRefreshToken },
     });
 
     return {
@@ -66,17 +67,19 @@ export class AuthService {
       throw new UnauthorizedException('Token de refresco invalido');
     }
 
-    if (user.refreshToken !== refreshToken) {
+    const isTokenValid = await comparePassword(refreshToken, user.refreshToken);
+    if (!isTokenValid) {
       throw new UnauthorizedException('Token de refresco no coincide');
     }
 
     // Generate new tokens
     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-    // Update refresh token in database
+    // Store hashed refresh token in database
+    const hashedRefreshToken = await hashPassword(tokens.refreshToken);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshToken: tokens.refreshToken },
+      data: { refreshToken: hashedRefreshToken },
     });
 
     return tokens;

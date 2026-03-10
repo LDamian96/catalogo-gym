@@ -1,14 +1,12 @@
 'use client';
 
-import { motion, AnimatePresence, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
   Tag,
   ChevronRight,
   Star,
-  Zap,
-  TrendingUp,
   ShoppingBag,
   Sparkles,
   Crown,
@@ -28,12 +26,11 @@ import {
   Footer,
   Navbar,
   MobileBottomNav,
-  TransitionLink,
   Hero,
 } from '@/components/catalog';
 import type { CatalogHomeData } from '@/lib/api/catalog';
 import { cn } from '@/lib/utils';
-import { v0Ease, gradientOrbAnimation } from '@/lib/animations';
+import { v0Ease } from '@/lib/animations';
 
 interface CatalogLandingProps {
   data: CatalogHomeData;
@@ -43,16 +40,6 @@ const fadeInUp = {
   initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -16 },
-};
-
-const fadeInDown = {
-  initial: { opacity: 0, y: -32 },
-  animate: { opacity: 1, y: 0 },
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1 },
 };
 
 const staggerContainer = {
@@ -65,40 +52,10 @@ const staggerContainer = {
   },
 };
 
-function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-  const spring = useSpring(0, { duration: 2000 });
-
-  useEffect(() => {
-    if (isInView) {
-      spring.set(value);
-    }
-  }, [isInView, value, spring]);
-
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    return spring.on('change', (latest) => {
-      setDisplayValue(Math.floor(latest));
-    });
-  }, [spring]);
-
-  return <span ref={ref}>{displayValue}{suffix}</span>;
-}
-
 export function CatalogLanding({ data }: CatalogLandingProps) {
   const { settings, categories, featuredProducts, brands, combos = [] } = data;
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [, setCurrentSlide] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.95]);
-
-  if (!settings) {
-    return null;
-  }
 
   const featuredOnly = featuredProducts.filter((p) => p.isFeatured).slice(0, 8);
   const productsOnSale = featuredProducts.filter((p) => p.salePrice).slice(0, 8);
@@ -111,6 +68,10 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
     }, 5000);
     return () => clearInterval(timer);
   }, [heroProducts.length]);
+
+  if (!settings) {
+    return null;
+  }
 
   return (
     <div ref={containerRef} className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:bg-[#000000] overflow-hidden pb-24 lg:pb-0">

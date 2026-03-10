@@ -33,8 +33,8 @@ import {
   uploadOgImage,
   deleteOgImage,
 } from '@/lib/api/settings';
-import { getTrackingPixels, createTrackingPixel, deleteTrackingPixel } from '@/lib/api/tracking-pixels';
-import type { Settings, TrackingPixel, PixelType } from '@/types';
+import { getTrackingPixels, deleteTrackingPixel } from '@/lib/api/tracking-pixels';
+import type { Settings, TrackingPixel } from '@/types';
 
 const settingsSchema = z.object({
   businessName: z.string().min(2, 'Mínimo 2 caracteres').max(100),

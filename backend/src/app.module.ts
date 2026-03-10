@@ -19,6 +19,7 @@ import { DatabaseModule } from './database/database.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 
 // Common Module (Cloudinary, Cache services)
 import { CommonModule } from './common/common.module';
@@ -96,10 +97,14 @@ import { CombosModule } from './modules/combos/combos.module';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
-    // Global Exception Filter
+    // Global Exception Filters
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: PrismaExceptionFilter,
     },
   ],
 })

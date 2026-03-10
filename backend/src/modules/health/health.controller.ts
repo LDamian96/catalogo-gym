@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator';
 import { PrismaService } from '../../database/prisma.service';
+import { CacheService } from '../../common/services/cache.service';
 
 interface HealthCheckResponse {
   status: 'ok' | 'error';
@@ -9,6 +10,7 @@ interface HealthCheckResponse {
   services: {
     api: 'up' | 'down';
     database: 'up' | 'down';
+    cache: 'up' | 'down';
   };
   version: string;
 }
@@ -16,7 +18,10 @@ interface HealthCheckResponse {
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cache: CacheService,
+  ) {}
 
   @Public()
   @Get()
@@ -25,15 +30,24 @@ export class HealthController {
   @ApiResponse({ status: 503, description: 'Servicio no disponible' })
   async check(): Promise<HealthCheckResponse> {
     let databaseStatus: 'up' | 'down' = 'down';
+    let cacheStatus: 'up' | 'down' = 'down';
 
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       databaseStatus = 'up';
-    } catch (error) {
+    } catch {
       databaseStatus = 'down';
     }
 
-    const allUp = databaseStatus === 'up';
+    try {
+      await this.cache.set('health:ping', 'pong', 10);
+      const val = await this.cache.get('health:ping');
+      cacheStatus = val ? 'up' : 'down';
+    } catch {
+      cacheStatus = 'down';
+    }
+
+    const allUp = databaseStatus === 'up' && cacheStatus === 'up';
 
     return {
       status: allUp ? 'ok' : 'error',
@@ -41,6 +55,7 @@ export class HealthController {
       services: {
         api: 'up',
         database: databaseStatus,
+        cache: cacheStatus,
       },
       version: process.env.npm_package_version || '1.0.0',
     };

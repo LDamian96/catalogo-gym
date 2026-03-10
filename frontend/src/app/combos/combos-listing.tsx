@@ -8,15 +8,11 @@ import {
   ChevronRight,
   ArrowUpDown,
   ShoppingCart,
-  Tag,
-  Eye,
-  Sparkles,
   ArrowRight,
   Flame,
   Percent,
 } from 'lucide-react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { Navbar, Footer, WhatsAppButton, MobileBottomNav } from '@/components/catalog';
 import type { CatalogSettings, CatalogCategory, CatalogCombo } from '@/lib/api/catalog';
 

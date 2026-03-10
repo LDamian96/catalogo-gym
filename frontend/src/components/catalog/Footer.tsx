@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Facebook, Instagram, MessageCircle, Mail, Phone, MapPin, Zap, Star, Sparkles, ArrowRight, Crown, Heart } from 'lucide-react';
-import { v0Ease } from '@/lib/animations';
+import { Facebook, Instagram, MessageCircle, Heart } from 'lucide-react';
 import type { CatalogSettings, CatalogCategory } from '@/lib/api/catalog';
 
 interface FooterProps {
@@ -12,7 +11,7 @@ interface FooterProps {
   categories?: CatalogCategory[];
 }
 
-export function Footer({ settings, categories }: FooterProps) {
+export function Footer({ settings }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (

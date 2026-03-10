@@ -13,7 +13,6 @@ import {
   Link2,
   Smartphone,
   Share2,
-  ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,7 +30,7 @@ import {
 } from '@/components/ui/select';
 
 import { getSettings } from '@/lib/api/settings';
-import { fadeIn, staggerContainer, staggerItem } from '@/lib/utils/animations';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 
 const presetColors = [
   { name: 'Negro', fg: '#000000', bg: '#ffffff' },

@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { ShoppingCart, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useCart, CartItem } from '@/hooks/useCart';

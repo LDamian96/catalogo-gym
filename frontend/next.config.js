@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+  output: 'standalone',
+  compress: true,
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',

@@ -59,7 +59,6 @@ import {
   deleteProductVariantImage,
   reorderProductVariants,
   getVariantTypes,
-  generateVariantCombinations,
   deleteAllProductVariants,
   getVariantValueImages,
   type ProductVariant,
@@ -453,10 +452,8 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
   // Delete confirmation
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Generate/Delete all confirmation
-  const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
+  // Delete all confirmation
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
-  const [generating, setGenerating] = useState(false);
 
   // Load data on mount
   useEffect(() => {
@@ -475,15 +472,15 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       setVariants(variantsData);
       setVariantTypes(typesData);
       // Merge variant values from checkboxes AND from existing sub-products
-      const directValues = (productData.variantValues || []).map((v: any) => ({
+      const directValues = (productData.variantValues || []).map((v: { variantTypeId: string; value: string }) => ({
         variantTypeId: v.variantTypeId,
         value: v.value,
       }));
       const subProductValues: { variantTypeId: string; value: string }[] = [];
-      (variantsData || []).forEach((variant: any) => {
-        (variant.variantValues || []).forEach((v: any) => {
+      (variantsData || []).forEach((variant: { variantValues?: { variantTypeId?: string; variantType?: { id: string }; value: string }[] }) => {
+        (variant.variantValues || []).forEach((v: { variantTypeId?: string; variantType?: { id: string }; value: string }) => {
           subProductValues.push({
-            variantTypeId: v.variantTypeId || v.variantType?.id,
+            variantTypeId: v.variantTypeId || v.variantType?.id || '',
             value: v.value,
           });
         });
@@ -495,7 +492,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
             (x) => x.variantTypeId === v.variantTypeId && x.value === v.value
           ) === i
       );
-      setParentVariantValues(uniqueValues);
+      setParentVariantValues(uniqueValues as ParentVariantValue[]);
       setParentProduct({
         price: productData.price !== null && productData.price !== undefined
           ? Number(productData.price)
@@ -606,7 +603,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
     selectedValues: Record<string, string>
   ): { variantTypeId: string; value: string }[] => {
     return Object.entries(selectedValues)
-      .filter(([_, value]) => value) // Only include non-empty values
+      .filter(([, value]) => value) // Only include non-empty values
       .map(([variantTypeId, value]) => ({ variantTypeId, value }));
   };
 
@@ -626,28 +623,6 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
     return parentVariantValues
       .filter(pv => pv.variantTypeId === typeId)
       .map(pv => pv.value);
-  };
-
-  // Handle generate combinations
-  const handleGenerateCombinations = async () => {
-    setGenerating(true);
-    try {
-      const result = await generateVariantCombinations(productId);
-      if (result.created > 0) {
-        toast.success(`${result.created} combinaciones creadas${result.skipped > 0 ? `, ${result.skipped} ya existían` : ''}`);
-      } else if (result.skipped > 0) {
-        toast.info(`Todas las ${result.skipped} combinaciones ya existían`);
-      } else {
-        toast.info('No hay combinaciones para generar');
-      }
-      setVariants(result.variants);
-    } catch (error: any) {
-      console.error('Error generating combinations:', error);
-      toast.error(error?.response?.data?.message || 'Error al generar combinaciones');
-    } finally {
-      setGenerating(false);
-      setShowGenerateConfirm(false);
-    }
   };
 
   // Handle delete all variants
@@ -710,9 +685,10 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
 
       setShowModal(false);
       await loadData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving variant:', error);
-      const message = error?.response?.data?.message || 'Error al guardar';
+      const axiosError = error as { response?: { data?: { message?: string | string[] } } };
+      const message = axiosError?.response?.data?.message || 'Error al guardar';
       toast.error(Array.isArray(message) ? message[0] : message);
     } finally {
       setLoadingAction(false);
@@ -906,7 +882,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {Object.entries(formData.variantValues)
-                      .filter(([_, value]) => value)
+                      .filter(([, value]) => value)
                       .map(([typeId, value]) => {
                         const typeName = variantTypes.find(t => t.id === typeId)?.name || '';
                         return (

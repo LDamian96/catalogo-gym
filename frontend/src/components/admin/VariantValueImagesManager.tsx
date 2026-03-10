@@ -16,7 +16,6 @@ import {
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -149,9 +148,10 @@ function VariantValueImageGroup({
       }
       toast.success(`${files.length} imagen(es) subida(s) para ${value}`);
       onImageUploaded();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error uploading image:', error);
-      toast.error(error?.response?.data?.message || 'Error al subir imagen');
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      toast.error(axiosError?.response?.data?.message || 'Error al subir imagen');
     } finally {
       setUploading(false);
       // Reset input
@@ -321,7 +321,6 @@ function VariantValueImageGroup({
 
 export function VariantValueImagesManager({
   productId,
-  productName,
 }: VariantValueImagesManagerProps) {
   const [config, setConfig] = useState<ImageVariantConfig | null>(null);
   const [variantTypes, setVariantTypes] = useState<VariantType[]>([]);
@@ -347,14 +346,14 @@ export function VariantValueImagesManager({
       setConfig(configData);
       setVariantTypes(typesData);
       // Extract variant values from both product-level and sub-product variants
-      const directValues = (productData.variantValues || []).map((v: any) => ({
+      const directValues = (productData.variantValues || []).map((v: { variantTypeId: string; value: string }) => ({
         variantTypeId: v.variantTypeId,
         value: v.value,
       }));
       // Also extract values from sub-products (variants)
       const subProductValues: { variantTypeId: string; value: string }[] = [];
-      (productData.variants || []).forEach((variant: any) => {
-        (variant.variantValues || []).forEach((v: any) => {
+      ((productData as unknown as { variants?: { variantValues?: { variantTypeId: string; value: string }[] }[] }).variants || []).forEach((variant) => {
+        (variant.variantValues || []).forEach((v: { variantTypeId: string; value: string }) => {
           subProductValues.push({
             variantTypeId: v.variantTypeId,
             value: v.value,
@@ -551,7 +550,7 @@ export function VariantValueImagesManager({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Eliminar todas las imagenes de "{deleteAllValue?.value}"?
+              Eliminar todas las imagenes de &quot;{deleteAllValue?.value}&quot;?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Esta accion no se puede deshacer. Se eliminaran todas las imagenes

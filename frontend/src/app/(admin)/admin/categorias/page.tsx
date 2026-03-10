@@ -67,7 +67,6 @@ import {
   updateCategory,
   deleteCategory,
   uploadCategoryImage,
-  deleteCategoryImage,
 } from '@/lib/api/categories';
 import type { Category, CategoryTreeNode, CreateCategoryDto, UpdateCategoryDto } from '@/types';
 

@@ -11,13 +11,23 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    hsts: { maxAge: 31536000, includeSubDomains: true },
+  }));
   app.use(compression());
 
   // CORS configuration
   const frontendUrl = configService.get<string>('app.frontendUrl');
+  const nodeEnv = configService.get<string>('app.nodeEnv');
+  const corsOrigins: (string | RegExp)[] = [];
+  if (frontendUrl) corsOrigins.push(frontendUrl);
+  if (nodeEnv === 'development') {
+    corsOrigins.push('http://localhost:3000', 'http://localhost:3001');
+  }
   app.enableCors({
-    origin: [frontendUrl || 'http://localhost:3000', 'http://localhost:3000', 'http://localhost:3001'],
+    origin: corsOrigins.length > 0 ? corsOrigins : false,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -39,7 +49,6 @@ async function bootstrap() {
   );
 
   // Swagger documentation (only in development)
-  const nodeEnv = configService.get<string>('app.nodeEnv');
   if (nodeEnv === 'development') {
     const config = new DocumentBuilder()
       .setTitle('Catalogo Digital API')

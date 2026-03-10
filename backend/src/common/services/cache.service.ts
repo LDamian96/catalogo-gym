@@ -48,13 +48,16 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
       host: this.configService.get<string>('redis.host'),
       port: this.configService.get<number>('redis.port'),
       password: this.configService.get<string>('redis.password'),
+      maxRetriesPerRequest: 3,
       retryStrategy: (times) => {
-        if (times > 3) {
-          console.error('Redis connection failed after 3 retries');
+        if (times > 10) {
+          console.error('Redis connection failed after 10 retries');
           return null;
         }
-        return Math.min(times * 100, 3000);
+        return Math.min(times * 200, 5000);
       },
+      enableReadyCheck: true,
+      lazyConnect: false,
     });
 
     this.client.on('error', (err) => {
@@ -68,6 +71,7 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
   onModuleDestroy() {
     if (this.client) {
+      this.client.removeAllListeners();
       this.client.disconnect();
     }
   }
@@ -106,10 +110,20 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
 
   async delPattern(pattern: string): Promise<void> {
     try {
-      const keys = await this.client.keys(pattern);
-      if (keys.length > 0) {
-        await this.client.del(...keys);
-      }
+      let cursor = '0';
+      do {
+        const [nextCursor, keys] = await this.client.scan(
+          cursor,
+          'MATCH',
+          pattern,
+          'COUNT',
+          100,
+        );
+        cursor = nextCursor;
+        if (keys.length > 0) {
+          await this.client.del(...keys);
+        }
+      } while (cursor !== '0');
     } catch (error) {
       console.error(`Cache delete pattern error for ${pattern}:`, error);
     }

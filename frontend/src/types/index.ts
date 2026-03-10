@@ -92,7 +92,7 @@ export interface CreateCategoryDto {
   seoKeywords?: string | null;
 }
 
-export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {}
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
 
 export interface ReorderCategoryItem {
   id: string;
@@ -129,7 +129,7 @@ export interface CreateBrandDto {
   seoKeywords?: string | null;
 }
 
-export interface UpdateBrandDto extends Partial<CreateBrandDto> {}
+export type UpdateBrandDto = Partial<CreateBrandDto>;
 
 export interface ReorderBrandItem {
   id: string;
@@ -158,7 +158,7 @@ export interface CreateTrackingPixelDto {
   config?: Record<string, unknown>;
 }
 
-export interface UpdateTrackingPixelDto extends Partial<CreateTrackingPixelDto> {}
+export type UpdateTrackingPixelDto = Partial<CreateTrackingPixelDto>;
 
 // Valor de variante del producto principal (Talla=M, Color=Negro)
 export interface ProductVariantValue {
@@ -354,7 +354,7 @@ export interface CreateComboDto {
   seoKeywords?: string | null;
 }
 
-export interface UpdateComboDto extends Partial<CreateComboDto> {}
+export type UpdateComboDto = Partial<CreateComboDto>;
 
 export interface ReorderComboItem {
   id: string;
@@ -408,7 +408,7 @@ export interface CreateProductDto {
   variantValues?: { variantTypeId: string; value: string }[];
 }
 
-export interface UpdateProductDto extends Partial<CreateProductDto> {}
+export type UpdateProductDto = Partial<CreateProductDto>;
 
 export interface ReorderImageItem {
   id: string;

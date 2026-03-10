@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, Reorder } from 'framer-motion';
 import { toast } from 'sonner';
 import {
   Plus,
@@ -14,13 +14,8 @@ import {
   Image as ImageIcon,
   Package,
   Search,
-  Filter,
   Copy,
-  GripVertical,
-  X,
   Star,
-  Eye,
-  EyeOff,
   ChevronLeft,
   ChevronRight,
   ChevronDown,

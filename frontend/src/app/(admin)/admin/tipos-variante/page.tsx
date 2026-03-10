@@ -167,9 +167,10 @@ export default function TiposVariantePage() {
       }
       setShowTypeModal(false);
       await loadVariantTypes();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving variant type:', error);
-      const message = error?.response?.data?.message || 'Error al guardar';
+      const axiosError = error as { response?: { data?: { message?: string | string[] } } };
+      const message = axiosError?.response?.data?.message || 'Error al guardar';
       toast.error(Array.isArray(message) ? message[0] : message);
     } finally {
       setLoadingAction(false);
@@ -185,9 +186,10 @@ export default function TiposVariantePage() {
       toast.success('Tipo de variante eliminado');
       setDeleteTypeId(null);
       await loadVariantTypes();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting variant type:', error);
-      const message = error?.response?.data?.message || 'Error al eliminar';
+      const axiosError = error as { response?: { data?: { message?: string | string[] } } };
+      const message = axiosError?.response?.data?.message || 'Error al eliminar';
       toast.error(Array.isArray(message) ? message[0] : message);
     } finally {
       setLoadingAction(false);
@@ -275,9 +277,10 @@ export default function TiposVariantePage() {
       }
       setShowValueModal(false);
       await loadVariantTypes();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving value:', error);
-      const message = error?.response?.data?.message || 'Error al guardar';
+      const axiosError = error as { response?: { data?: { message?: string | string[] } } };
+      const message = axiosError?.response?.data?.message || 'Error al guardar';
       toast.error(Array.isArray(message) ? message[0] : message);
     } finally {
       setLoadingAction(false);
@@ -293,9 +296,10 @@ export default function TiposVariantePage() {
       toast.success('Valor eliminado');
       setDeleteValueId(null);
       await loadVariantTypes();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting value:', error);
-      const message = error?.response?.data?.message || 'Error al eliminar';
+      const axiosError = error as { response?: { data?: { message?: string | string[] } } };
+      const message = axiosError?.response?.data?.message || 'Error al eliminar';
       toast.error(Array.isArray(message) ? message[0] : message);
     } finally {
       setLoadingAction(false);
@@ -656,7 +660,7 @@ export default function TiposVariantePage() {
                   <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <p className="text-xs text-slate-500 mb-2">Vista previa:</p>
                     <div className="flex flex-wrap gap-1">
-                      {bulkValues.split(',').map((v, i) => v.trim()).filter(v => v).map((v, i) => (
+                      {bulkValues.split(',').map((v) => v.trim()).filter(v => v).map((v, i) => (
                         <Badge key={i} variant="secondary" className="text-xs">
                           {v}
                         </Badge>

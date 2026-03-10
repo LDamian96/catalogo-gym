@@ -13,7 +13,6 @@ import {
   Package,
   Search,
   Calendar,
-  Loader2,
   RefreshCw,
 } from 'lucide-react';
 import {
@@ -24,8 +23,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
   Legend,
 } from 'recharts';
 import Image from 'next/image';
@@ -49,7 +46,7 @@ import {
   type StatsSummary,
   type StatsQueryParams,
 } from '@/lib/api/stats';
-import { fadeIn, staggerContainer, staggerItem } from '@/lib/utils/animations';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 
 const periodOptions = [
   { value: 'today', label: 'Hoy' },
@@ -94,8 +91,8 @@ export default function EstadisticasPage() {
     return num.toString();
   };
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+  const formatDate = (dateStr: unknown) => {
+    const date = new Date(String(dateStr));
     return date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
   };
 

@@ -30,7 +30,7 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const { items, openCart } = useCart();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

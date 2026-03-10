@@ -29,7 +29,6 @@ import { searchCatalog, getCatalogFilters } from '@/lib/api/catalog';
 import type {
   CatalogSettings,
   CatalogCategory,
-  CatalogProduct,
   CatalogSearchResponse,
   CatalogBrand,
   VariantTypeFilter,
@@ -168,7 +167,7 @@ export function SearchResults({
         limit: 12,
         categoryId: resetFilters ? undefined : selectedCategory || undefined,
         brandId: resetFilters ? undefined : selectedBrand || undefined,
-        sort: resetFilters ? undefined : (sort as any) || undefined,
+        sort: resetFilters ? undefined : (sort as 'relevance' | 'newest' | 'price_asc' | 'price_desc' | 'name') || undefined,
         minPrice: resetFilters ? undefined : (minPrice ? parseFloat(minPrice) : undefined),
         maxPrice: resetFilters ? undefined : (maxPrice ? parseFloat(maxPrice) : undefined),
       });
@@ -988,7 +987,7 @@ export function SearchResults({
                     initial="initial"
                     animate="animate"
                   >
-                    {results.products.map((product, index) => {
+                    {results.products.map((product) => {
                       const price = Number(product.price);
                       const salePrice = product.salePrice ? Number(product.salePrice) : null;
                       const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
@@ -1023,9 +1022,9 @@ export function SearchResults({
                                 </div>
                               )}
                               {/* Variant badge */}
-                              {(product as any).variantCount > 1 && (
+                              {((product as unknown as Record<string, unknown>).variantCount as number) > 1 && (
                                 <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
-                                  +{(product as any).variantCount} sabores
+                                  +{(product as unknown as Record<string, unknown>).variantCount as number} sabores
                                 </div>
                               )}
                             </div>
@@ -1066,7 +1065,7 @@ export function SearchResults({
                     initial="initial"
                     animate="animate"
                   >
-                    {results.products.map((product, index) => {
+                    {results.products.map((product) => {
                       const price = Number(product.price);
                       const salePrice = product.salePrice ? Number(product.salePrice) : null;
                       const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;

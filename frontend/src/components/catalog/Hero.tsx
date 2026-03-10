@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Phone, MapPin, Clock, Sparkles, Star, Zap, ShoppingBag, Gift, Truck, Shield, Tag } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Clock, Sparkles, Zap, Tag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';

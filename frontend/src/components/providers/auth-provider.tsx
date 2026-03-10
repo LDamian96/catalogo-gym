@@ -24,7 +24,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const user = await getMe();
       setUser(user);
-    } catch (error) {
+    } catch {
       // Intentar refresh token
       try {
         await refreshToken();
