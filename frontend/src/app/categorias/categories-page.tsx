@@ -191,7 +191,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       </div>
 
       {/* Categories Grid */}
-      <section className="py-6 lg:py-12 pb-24 lg:pb-12 bg-gradient-to-b from-cyan-50/50 via-white to-white dark:from-[#000000] dark:via-[#000000] dark:to-[#000000]">
+      <section className="py-6 lg:py-12 lg:pb-12 bg-gradient-to-b from-cyan-50/50 via-white to-white dark:from-[#000000] dark:via-[#000000] dark:to-[#000000]">
         <div className="max-w-7xl mx-auto px-0 lg:px-4 sm:px-6 lg:px-8">
 
           {/* Mobile: Section header (BETA.pen design) */}

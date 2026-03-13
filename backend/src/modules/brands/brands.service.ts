@@ -11,6 +11,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { ReorderBrandsDto } from './dto/reorder-brands.dto';
 import { Brand } from '@prisma/client';
 import { generateSlug } from '../../common/utils/slug.util';
+import { generateBrandSeo } from '../../common/utils/auto-seo.util';
 
 @Injectable()
 export class BrandsService {
@@ -99,6 +100,15 @@ export class BrandsService {
       _max: { order: true },
     });
     const order = dto.order ?? (maxOrder._max.order ?? -1) + 1;
+
+    // Auto-generate SEO fields if not provided
+    if (!dto.seoTitle || !dto.seoDescription || !dto.seoKeywords) {
+      const settings = await this.prisma.settings.findUnique({ where: { id: 'main' }, select: { businessName: true } });
+      const autoSeo = generateBrandSeo({ name: dto.name, businessName: settings?.businessName });
+      if (!dto.seoTitle) dto.seoTitle = autoSeo.seoTitle;
+      if (!dto.seoDescription) dto.seoDescription = autoSeo.seoDescription;
+      if (!dto.seoKeywords) dto.seoKeywords = autoSeo.seoKeywords;
+    }
 
     const brand = await this.prisma.brand.create({
       data: {

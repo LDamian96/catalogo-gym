@@ -225,7 +225,7 @@ export function SearchResults({
 
   return (
     <div className={cn(
-      "min-h-screen pb-24 lg:pb-0 dark:bg-[#000000] dark:lg:from-[#000000] dark:lg:via-[#000000] dark:lg:to-[#000000]",
+      "min-h-screen dark:bg-[#000000] dark:lg:from-[#000000] dark:lg:via-[#000000] dark:lg:to-[#000000]",
       "bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none lg:bg-gradient-to-b lg:from-sky-50 lg:via-cyan-50/20 lg:to-white"
     )}>
       {/* Navbar - desktop only (Navbar itself is hidden lg:block) */}

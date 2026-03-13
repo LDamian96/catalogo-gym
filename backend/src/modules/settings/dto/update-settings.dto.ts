@@ -11,11 +11,16 @@ export const updateSettingsSchema = z.object({
   cartEnabled: z.boolean().optional(),
   variantsEnabled: z.boolean().optional(),
   brandsFilterEnabled: z.boolean().optional(),
+  stockAlertsEnabled: z.boolean().optional(),
   welcomeMessage: z.string().max(500).optional().nullable(),
   // SEO
   seoTitle: z.string().max(70).optional().nullable(),
   seoDescription: z.string().max(160).optional().nullable(),
   seoKeywords: z.string().max(200).optional().nullable(),
+  // Redes Sociales
+  facebook: z.string().max(200).optional().nullable().transform(v => v === '' ? null : v),
+  instagram: z.string().max(200).optional().nullable().transform(v => v === '' ? null : v),
+  tiktok: z.string().max(200).optional().nullable().transform(v => v === '' ? null : v),
   // Tracking
   googleAnalyticsId: z.string().max(50).optional().nullable(),
   googleTagManagerId: z.string().max(50).optional().nullable(),
@@ -53,6 +58,9 @@ export class UpdateSettingsDtoClass implements UpdateSettingsDto {
   @ApiPropertyOptional({ example: true })
   brandsFilterEnabled?: boolean;
 
+  @ApiPropertyOptional({ example: false })
+  stockAlertsEnabled?: boolean;
+
   @ApiPropertyOptional({ example: 'Bienvenido a nuestra tienda!' })
   welcomeMessage?: string | null;
 
@@ -64,6 +72,15 @@ export class UpdateSettingsDtoClass implements UpdateSettingsDto {
 
   @ApiPropertyOptional({ example: 'tienda,productos,calidad' })
   seoKeywords?: string | null;
+
+  @ApiPropertyOptional({ example: 'https://facebook.com/mitienda' })
+  facebook?: string | null;
+
+  @ApiPropertyOptional({ example: 'https://instagram.com/mitienda' })
+  instagram?: string | null;
+
+  @ApiPropertyOptional({ example: 'https://tiktok.com/@mitienda' })
+  tiktok?: string | null;
 
   @ApiPropertyOptional({ example: 'G-XXXXXXXXXX' })
   googleAnalyticsId?: string | null;

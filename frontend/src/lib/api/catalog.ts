@@ -46,6 +46,7 @@ export interface CatalogSettings {
   ogImage: string | null;
   facebook: string | null;
   instagram: string | null;
+  tiktok: string | null;
   googleAnalyticsId: string | null;
   googleTagManagerId: string | null;
   facebookPixelId: string | null;

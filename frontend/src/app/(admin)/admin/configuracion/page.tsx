@@ -46,11 +46,16 @@ const settingsSchema = z.object({
   cartEnabled: z.boolean(),
   variantsEnabled: z.boolean(),
   brandsFilterEnabled: z.boolean(),
+  stockAlertsEnabled: z.boolean(),
   welcomeMessage: z.string().max(500).nullable().optional(),
   // SEO
   seoTitle: z.string().max(70).nullable().optional(),
   seoDescription: z.string().max(160).nullable().optional(),
   seoKeywords: z.string().max(200).nullable().optional(),
+  // Redes Sociales
+  facebook: z.string().max(200).nullable().optional(),
+  instagram: z.string().max(200).nullable().optional(),
+  tiktok: z.string().max(200).nullable().optional(),
   // Tracking
   googleAnalyticsId: z.string().max(50).nullable().optional(),
   googleTagManagerId: z.string().max(50).nullable().optional(),
@@ -85,10 +90,14 @@ export default function ConfiguracionPage() {
       cartEnabled: true,
       variantsEnabled: true,
       brandsFilterEnabled: true,
+      stockAlertsEnabled: false,
       welcomeMessage: '',
       seoTitle: '',
       seoDescription: '',
       seoKeywords: '',
+      facebook: '',
+      instagram: '',
+      tiktok: '',
       googleAnalyticsId: '',
       googleTagManagerId: '',
       facebookPixelId: '',
@@ -121,10 +130,14 @@ export default function ConfiguracionPage() {
         cartEnabled: settingsData.cartEnabled,
         variantsEnabled: settingsData.variantsEnabled,
         brandsFilterEnabled: settingsData.brandsFilterEnabled ?? true,
+        stockAlertsEnabled: settingsData.stockAlertsEnabled ?? false,
         welcomeMessage: settingsData.welcomeMessage || '',
         seoTitle: settingsData.seoTitle || '',
         seoDescription: settingsData.seoDescription || '',
         seoKeywords: settingsData.seoKeywords || '',
+        facebook: settingsData.facebook || '',
+        instagram: settingsData.instagram || '',
+        tiktok: settingsData.tiktok || '',
         googleAnalyticsId: settingsData.googleAnalyticsId || '',
         googleTagManagerId: settingsData.googleTagManagerId || '',
         facebookPixelId: settingsData.facebookPixelId || '',
@@ -475,6 +488,92 @@ export default function ConfiguracionPage() {
                               onCheckedChange={field.onChange}
                             />
                           </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="stockAlertsEnabled"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Alertas de stock bajo</FormLabel>
+                            <FormDescription>
+                              Recibe notificaciones cuando un producto tenga stock bajo
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Redes Sociales */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Redes Sociales</CardTitle>
+                    <CardDescription>
+                      URLs de tus redes sociales. Aparecerán en el footer del catálogo
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="facebook"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Facebook</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://facebook.com/mitienda"
+                              {...field}
+                              value={field.value || ''}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="instagram"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Instagram</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://instagram.com/mitienda"
+                              {...field}
+                              value={field.value || ''}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="tiktok"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>TikTok</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://tiktok.com/@mitienda"
+                              {...field}
+                              value={field.value || ''}
+                            />
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

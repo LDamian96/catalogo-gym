@@ -1,0 +1,827 @@
+{
+  "name": "01 - Chatbot WhatsApp Ventas (AI Agent)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-chatbot",
+        "options": {
+          "rawBody": true
+        },
+        "responseMode": "lastNode"
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 460],
+      "webhookId": "whatsapp-chatbot-trigger"
+    },
+    {
+      "parameters": {
+        "content": "## 01 - Chatbot WhatsApp Ventas (AI Agent)\n\nAgente de ventas inteligente para tienda de suplementos deportivos.\n\n**Arquitectura:**\n1. Webhook recibe mensaje de Evolution API\n2. Extrae teléfono, nombre y mensaje del cliente\n3. AI Agent (Langchain) con memoria por sesión (teléfono)\n4. **Herramienta 1:** Buscar productos (HTTP GET /catalog/products?search=X)\n5. **Herramienta 2:** Buscar combos (HTTP GET /catalog/combos)\n6. **Herramienta 3:** Registrar pedido en Google Sheets (HTTP POST Sheets API v4)\n7. Envía respuesta al cliente por WhatsApp via Evolution API\n\n**Variables de entorno requeridas:**\n- `CATALOG_API_URL` - URL base del API del catálogo (ej: http://cat_backend:3000/api/v1)\n- `EVOLUTION_API_URL` - URL de Evolution API (ej: https://evo.tudominio.com)\n- `EVOLUTION_API_KEY` - API Key de Evolution API\n- `EVOLUTION_INSTANCE` - Nombre de la instancia de Evolution\n- `GOOGLE_SHEETS_SPREADSHEET_ID` - ID del spreadsheet de pedidos\n- `GOOGLE_SHEETS_API_KEY` - API Key o usar credenciales OAuth de Google\n- `NEGOCIO` - Nombre del negocio\n- `NUMERO_PAGO` - Número de Yape/Plin para pagos\n- `NEGOCIO_DNI` - DNI/RUC del negocio (remitente Shalom)\n- `NEGOCIO_TELEFONO` - Teléfono del negocio (contacto Shalom)\n- `SHALOM_AGENCIA_ORIGEN` - Agencia Shalom de origen (ej: 'AV MEXICO CO')",
+        "width": 520,
+        "height": 460,
+        "color": 4
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000002",
+      "name": "Info del Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, -60]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "set-message",
+              "name": "messageText",
+              "value": "={{ $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text || $json.body.data.message.imageMessage?.caption || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-name",
+              "name": "senderName",
+              "value": "={{ $json.body.data.pushName || 'Cliente' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-instance",
+              "name": "instanceName",
+              "value": "={{ $json.body.instance || $env.EVOLUTION_INSTANCE || 'default' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-has-image",
+              "name": "hasImage",
+              "value": "={{ !!$json.body.data.message.imageMessage }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000003",
+      "name": "Extraer datos del mensaje",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [520, 460]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-msg-not-empty",
+              "leftValue": "={{ $json.messageText }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000004",
+      "name": "Tiene mensaje?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [760, 460]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Cliente: {{ $json.senderName }} ({{ $json.senderPhone }})\n{{ $json.hasImage ? '[El cliente envió una imagen/foto' + ($json.messageText ? ' con texto: ' + $json.messageText : ', posiblemente un voucher de pago') + ']' : $json.messageText }}",
+        "options": {
+          "systemMessage": "=Eres el asesor de ventas de {{ $env.NEGOCIO || 'la tienda' }}. Respondes por WhatsApp de forma profesional, cercana y confiable. Eres también asesor nutricional deportivo.\n\nMÉTODOS DE ENVÍO:\n- Lima y Callao: Delivery motorizado S/15. Pago contra entrega (solo el delivery se adelanta por Yape). El motorizado llega a la dirección del cliente.\n- Provincias: 50% de adelanto por Yape. Enviamos por Shalom a la agencia más cercana del cliente. Una vez enviado, compartimos foto del comprobante de envío y el cliente deposita el resto.\n\nMÉTODOS DE PAGO:\n- Yape / Plin al {{ $env.NUMERO_PAGO || 'número de la tienda' }}\n- Transferencia BCP / Interbank\n\nTONO:\n- Habla como un asesor real, no como bot. Usa emojis con moderación (1-2 por mensaje máximo).\n- Muestra entusiasmo genuino por los productos.\n- Si el cliente bromea, sigue la onda brevemente.\n- Usa \"te\" no \"usted\". Cercano pero respetuoso.\n- Celebra cuando el cliente decide comprar: \"Excelente elección!\"\n- Si dice gracias, responde cálido: \"Con gusto, para eso estamos\"\n- No uses frases genéricas tipo \"¿En qué más puedo ayudarte?\" en cada mensaje. Solo cuando sea natural.\n- Cuando saludas por primera vez al cliente usa \"Hola mazeta!\" de forma natural. Solo en el primer saludo, no lo repitas después.\n- NUNCA digas el nombre de la empresa al saludar ni en las respuestas.\n\nREGLAS:\n1. Primer mensaje del cliente: responde su consulta + menciona las opciones de envío. Solo una vez.\n2. Mensajes siguientes: responde solo lo que pregunta. No repitas info de envío a menos que pregunte o pida otro producto nuevo.\n3. Cuando el cliente decide comprar: pregunta si es Lima o provincia para indicarle el monto exacto a adelantar.\n4. Cuando envía foto de voucher: agradece y pide datos de envío según la zona:\n   - LIMA/CALLAO: nombre completo, DNI, celular, dirección exacta, referencia, y pídele que comparta su ubicación en tiempo real para el motorizado.\n   - PROVINCIA: nombre completo, DNI, celular, y pregunta: \"¿A qué agencia Shalom quieres que llegue tu pedido?\"\n5. Después de confirmar pedido: recomienda un combo o producto relacionado de forma natural, no forzada.\n6. No inventes productos ni precios. SOLO recomienda productos que existan en el catálogo. Siempre usa la herramienta buscar_productos antes de recomendar cualquier cosa. Si no encuentras el producto en el catálogo, dilo honestamente.\n7. Respuestas cortas y claras. No mandes párrafos largos.\n\nROL DE ASESOR NUTRICIONAL:\n- Si el cliente menciona un objetivo (subir de peso, ganar músculo, definir, bajar grasa, energía), recomienda productos según su meta.\n- Pregunta si tiene alguna intolerancia o restricción (lactosa, gluten) antes de recomendar.\n- Explica brevemente para qué sirve cada producto, sin ser técnico.\n\nGUÍA DE RECOMENDACIONES:\nSubir de peso / Ganar masa:\n→ Mass Gainer (alto en calorías, ideal para hardgainers)\n→ Complementar con Creatina (más fuerza y volumen muscular)\n→ Pre-entreno (más energía y rendimiento en el gym)\n\nGanar músculo sin subir grasa:\n→ Whey Protein (proteína limpia, baja en grasa)\n→ Creatina (fuerza y recuperación)\n→ BCAA o Glutamina (recuperación muscular)\n\nDefinición / Bajar grasa:\n→ Isolate o Hydro Whey (proteína pura, casi cero grasa)\n→ L-Carnitina (ayuda a quemar grasa como energía)\n→ Pre-entreno sin azúcar (energía sin calorías extra)\n\nEnergía / Rendimiento:\n→ Pre-entreno (enfoque, energía y pump)\n→ Creatina (más reps, más fuerza)\n→ Cafeína o BCAA con energía\n\nINTOLERANCIAS:\n- Intolerante a lactosa → recomendar Isolate o proteína vegana\n- Celíaco → verificar que sea libre de gluten\n- Vegano → proteína plant-based\n\nFORMA DE RECOMENDAR:\n\"Si tu objetivo es ganar masa, te recomiendo el Mass Gainer — te aporta las calorías y proteína que necesitas. Y para complementar, una Creatina que te da más fuerza en cada entreno 💪 ¿Te armo un combo?\"\n\nFLUJO DE VENTA:\nConsulta → Asesoría/Producto + envío (1ra vez) → Cliente decide → Pago → Voucher → Datos envío → Registrar pedido → Confirmación → Recomendación\n\nLÓGICA DE ENVÍO:\n- Si el cliente es de LIMA/CALLAO → asume delivery motorizado. Pide datos de delivery.\n- Si el cliente es de PROVINCIA → siempre Shalom. Pide agencia Shalom.\n- Si el cliente de Lima/Callao pide explícitamente Shalom (\"mándalo por Shalom\", \"prefiero Shalom\", \"por agencia\") → acepta sin problema y pide agencia Shalom.\n\n📍 DELIVERY MOTORIZADO (Lima/Callao por defecto):\nPedir: nombre completo, DNI, celular, dirección exacta, referencia, ubicación en tiempo real (Google Maps).\nRegistrar con registrar_pedido_lima.\nNO usar registrar_envio_shalom.\n\n📦 SHALOM (Provincia siempre + Lima si el cliente lo pide):\nPedir: nombre completo, DNI, celular, agencia Shalom destino.\nNo pedir dirección ni referencia (recoge en agencia).\nRegistrar con registrar_envio_shalom.\n\nDATOS PEDIDO LIMA (registrar_pedido_lima):\n- fecha (YYYY-MM-DD)\n- nombre_cliente\n- dni\n- celular\n- producto (nombre y cantidad)\n- total (producto + envío)\n- metodo_pago (yape/plin/transferencia)\n- direccion\n- referencia\n- ubicacion (link de Google Maps o texto de ubicación)\n- estado: \"Pagado\"\n\nDATOS ENVÍO SHALOM (registrar_envio_shalom):\n- dni_destinatario\n- telefono_destinatario\n- agencia_destino (nombre agencia Shalom)\n- mercaderia (nombre del producto)\n- cantidad (número de bultos)\n\n📊 REGISTRO DE VENTAS (registrar_venta):\nSIEMPRE usa esta herramienta con cada pedido confirmado, sea Lima o provincia.\nRegistra la venta en la hoja 'Ventas' para control general.\n- fecha (YYYY-MM-DD)\n- nombre_cliente\n- dni\n- celular\n- producto (nombre del producto)\n- cantidad\n- precio_unitario (precio de cada unidad)\n- total_producto (precio x cantidad)\n- envio (costo del envío: S/15 motorizado o lo que corresponda Shalom)\n- total_pagado (total_producto + envio)\n- metodo_pago (yape/plin/transferencia)\n- tipo_envio (motorizado o shalom)\n- estado: \"Pagado\"\n\nORDEN DE REGISTRO:\n1. Primero registrar_venta (SIEMPRE)\n2. Si Lima/Callao motorizado → registrar_pedido_lima\n3. Si Shalom → registrar_envio_shalom",
+          "maxIterations": 10
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000005",
+      "name": "Agente de Ventas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1000, 460]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 800
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000006",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [860, 700],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.senderPhone }}",
+        "contextWindowLength": 50
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000007",
+      "name": "Memoria Conversación",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [1020, 700]
+    },
+    {
+      "parameters": {
+        "name": "buscar_productos",
+        "description": "Busca productos en el catálogo de la tienda. Usa esta herramienta cuando el cliente pregunte por un producto específico, categoría, precio o disponibilidad. Envía el término de búsqueda como parámetro 'search'. Devuelve nombre, precio, descripción, slug y disponibilidad de los productos encontrados.",
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/catalog/products",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "search",
+              "value": "{search_term}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "search_term",
+              "description": "Término de búsqueda del producto. Puede ser nombre, marca, categoría o tipo de producto (ej: 'whey protein', 'creatina', 'mass gainer', 'pre entreno')"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000008",
+      "name": "Buscar Productos",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1140, 700]
+    },
+    {
+      "parameters": {
+        "name": "buscar_combos",
+        "description": "Obtiene todos los combos/ofertas disponibles en la tienda. Usa esta herramienta cuando el cliente pregunte por combos, ofertas, promociones o paquetes. No requiere parámetros. Devuelve la lista completa de combos con productos incluidos, precios y descuentos.",
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/catalog/combos",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000009",
+      "name": "Buscar Combos",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1280, 700]
+    },
+    {
+      "parameters": {
+        "name": "registrar_pedido_lima",
+        "description": "Registra un pedido de LIMA/CALLAO con delivery motorizado. Usa esta herramienta SOLO para pedidos de Lima/Callao cuando el cliente haya confirmado TODOS sus datos y el pago. NO usar para provincia ni para envíos por Shalom. Los parámetros son: fecha (YYYY-MM-DD), nombre_cliente, dni, celular, producto, total, metodo_pago, direccion, referencia, ubicacion (link Google Maps), estado.",
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_SPREADSHEET_ID }}/values/Pedidos Lima!A1:append",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "valueInputOption",
+              "value": "USER_ENTERED"
+            },
+            {
+              "name": "insertDataOption",
+              "value": "INSERT_ROWS"
+            },
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_SHEETS_API_KEY }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"values\":[[\"{ fecha }\",\"{ nombre_cliente }\",\"{ dni }\",\"{ celular }\",\"{ producto }\",\"{ total }\",\"{ metodo_pago }\",\"{ direccion }\",\"{ referencia }\",\"{ ubicacion }\",\"{ estado }\"]]}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fecha",
+              "description": "Fecha del pedido en formato YYYY-MM-DD"
+            },
+            {
+              "name": "nombre_cliente",
+              "description": "Nombre completo del cliente"
+            },
+            {
+              "name": "dni",
+              "description": "DNI del cliente"
+            },
+            {
+              "name": "celular",
+              "description": "Número de celular/WhatsApp del cliente"
+            },
+            {
+              "name": "producto",
+              "description": "Nombre del producto y cantidad (ej: 'Whey Protein 5lb x1, Creatina x2')"
+            },
+            {
+              "name": "total",
+              "description": "Monto total del pedido incluyendo envío (ej: 'S/185')"
+            },
+            {
+              "name": "metodo_pago",
+              "description": "Método de pago usado: yape, plin o transferencia"
+            },
+            {
+              "name": "direccion",
+              "description": "Dirección exacta de entrega para el motorizado"
+            },
+            {
+              "name": "referencia",
+              "description": "Referencia de la dirección (ej: 'frente al parque', 'al lado de la bodega')"
+            },
+            {
+              "name": "ubicacion",
+              "description": "Link de Google Maps o descripción de ubicación en tiempo real del cliente"
+            },
+            {
+              "name": "estado",
+              "description": "Estado del pedido. Siempre debe ser 'Pagado'"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000010",
+      "name": "Registrar Pedido Lima",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1420, 700]
+    },
+    {
+      "parameters": {
+        "name": "registrar_envio_shalom",
+        "description": "Registra un envío en la hoja 'Envíos Shalom' con formato de carga masiva de Shalom Pro. Usa esta herramienta DESPUÉS de registrar_pedido, SOLO cuando el pedido es de PROVINCIA (no Lima). Los datos del remitente (negocio) se llenan automáticamente. El admin solo necesita completar peso y dimensiones después. Parámetros: dni_destinatario (DNI del cliente), telefono_destinatario (celular del cliente), agencia_destino (nombre de la agencia Shalom destino, ej: 'HUANCAYO', 'CUSCO PARQUE INDUSTRIAL'), mercaderia (nombre del producto), cantidad (número de unidades).",
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_SPREADSHEET_ID }}/values/Envíos Shalom!A1:append",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "valueInputOption",
+              "value": "USER_ENTERED"
+            },
+            {
+              "name": "insertDataOption",
+              "value": "INSERT_ROWS"
+            },
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_SHEETS_API_KEY }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"values\":[[\"{ dni_destinatario }\",\"{ telefono_destinatario }\",\"{{ $env.NEGOCIO_DNI || '' }}\",\"{{ $env.NEGOCIO_TELEFONO || '' }}\",\"\",\"{{ $env.SHALOM_AGENCIA_ORIGEN || '' }}\",\"{ agencia_destino }\",\"{ mercaderia }\",\"\",\"\",\"\",\"\",\"{ cantidad }\"]]}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "dni_destinatario",
+              "description": "DNI del cliente destinatario"
+            },
+            {
+              "name": "telefono_destinatario",
+              "description": "Número de celular del cliente destinatario"
+            },
+            {
+              "name": "agencia_destino",
+              "description": "Nombre de la agencia Shalom de destino (ej: 'HUANCAYO', 'CUSCO PARQUE INDUSTRIAL', 'AREQUIPA'). Debe ser el nombre exacto de la agencia Shalom."
+            },
+            {
+              "name": "mercaderia",
+              "description": "Descripción de la mercadería/producto (ej: 'Whey Protein 5lb x1', 'PAQUETE L')"
+            },
+            {
+              "name": "cantidad",
+              "description": "Cantidad de bultos/paquetes a enviar (número, ej: 1, 2)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000018",
+      "name": "Registrar Envío Shalom",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1560, 700]
+    },
+    {
+      "parameters": {
+        "name": "registrar_venta",
+        "description": "Registra una venta en la hoja general 'Ventas'. Usa SIEMPRE esta herramienta con cada pedido confirmado, sea Lima o provincia, ANTES de registrar en la hoja específica (Pedidos Lima o Envíos Shalom). Esto lleva el control general de todas las ventas.",
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_SPREADSHEET_ID }}/values/Ventas!A1:append",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "valueInputOption",
+              "value": "USER_ENTERED"
+            },
+            {
+              "name": "insertDataOption",
+              "value": "INSERT_ROWS"
+            },
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_SHEETS_API_KEY }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"values\":[[\"{ fecha }\",\"{ nombre_cliente }\",\"{ dni }\",\"{ celular }\",\"{ producto }\",\"{ cantidad }\",\"{ precio_unitario }\",\"{ total_producto }\",\"{ envio }\",\"{ total_pagado }\",\"{ metodo_pago }\",\"{ tipo_envio }\",\"{ estado }\"]]}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fecha",
+              "description": "Fecha de la venta en formato YYYY-MM-DD"
+            },
+            {
+              "name": "nombre_cliente",
+              "description": "Nombre completo del cliente"
+            },
+            {
+              "name": "dni",
+              "description": "DNI del cliente"
+            },
+            {
+              "name": "celular",
+              "description": "Número de celular/WhatsApp del cliente"
+            },
+            {
+              "name": "producto",
+              "description": "Nombre del producto (ej: 'Whey Protein ON 5lb')"
+            },
+            {
+              "name": "cantidad",
+              "description": "Cantidad de unidades compradas (ej: 1, 2)"
+            },
+            {
+              "name": "precio_unitario",
+              "description": "Precio por unidad del producto (ej: 170)"
+            },
+            {
+              "name": "total_producto",
+              "description": "Precio total del producto: precio_unitario x cantidad (ej: 170)"
+            },
+            {
+              "name": "envio",
+              "description": "Costo del envío (ej: 15 para motorizado Lima, o el costo de Shalom)"
+            },
+            {
+              "name": "total_pagado",
+              "description": "Monto total pagado por el cliente: total_producto + envio (ej: 185)"
+            },
+            {
+              "name": "metodo_pago",
+              "description": "Método de pago: yape, plin o transferencia"
+            },
+            {
+              "name": "tipo_envio",
+              "description": "Tipo de envío: 'motorizado' para Lima/Callao o 'shalom' para provincia/agencia"
+            },
+            {
+              "name": "estado",
+              "description": "Estado de la venta. Siempre 'Pagado'"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000019",
+      "name": "Registrar Venta",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1700, 700]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-response-text",
+              "name": "responseText",
+              "value": "={{ $json.output || $json.text || 'Lo siento, no pude procesar tu mensaje. ¿Podrías intentar de nuevo?' }}",
+              "type": "string"
+            },
+            {
+              "id": "keep-phone",
+              "name": "senderPhone",
+              "value": "={{ $('Extraer datos del mensaje').item.json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "keep-instance",
+              "name": "instanceName",
+              "value": "={{ $('Extraer datos del mensaje').item.json.instanceName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000011",
+      "name": "Preparar respuesta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1300, 460]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'https://evo.tudominio.com' }}/message/sendText/{{ $json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}\",\n  \"text\": {{ JSON.stringify($json.responseText) }}\n}",
+        "options": {
+          "timeout": 15000,
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000012",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1820, 460]
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 3) + 3 }}",
+        "unit": "minutes"
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000017",
+      "name": "Esperar 3-5 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1560, 460]
+    },
+    {
+      "parameters": {
+        "content": "## Notas de configuración\n\n**Chat Model:** Por defecto usa OpenAI (gpt-4o-mini). Para usar Claude, reemplaza el nodo OpenAI Chat Model por un nodo lmChatAnthropic y conecta al agente.\n\n**Memoria:** Buffer de ventana con 50 mensajes por sesión. La sesión se identifica por el número de teléfono del cliente. Si quieres persistencia con Redis, cambia el tipo de memoria.\n\n**Google Sheets:** La herramienta registrar_pedido usa la API de Google Sheets v4 directamente. Asegúrate de:\n1. Crear un spreadsheet con 3 hojas:\n   - Hoja 'Ventas': headers → Fecha, Cliente, DNI, Celular, Producto, Cantidad, Precio Unitario, Total Producto, Envío, Total Pagado, Método Pago, Tipo Envío, Estado\n   - Hoja 'Pedidos Lima': headers → Fecha, Cliente, DNI, Celular, Producto, Total, Método Pago, Dirección, Referencia, Ubicación, Estado\n   - Hoja 'Envíos Shalom': headers → DESTINATARIO (DOC), TELF. DESTINATARIO, CONTACTO (DOC), TELF. CONTACTO, NRO GRR, ORIGEN, DESTINO, MERCADERIA, ALTO, ANCHO, LARGO, PESO, CANTIDAD\n2. Ventas = registro general de TODAS las ventas (Lima + provincia)\n3. Pedidos Lima = datos operativos del motorizado\n4. Envíos Shalom = formato carga masiva pro.shalom.pe (admin completa peso/dimensiones)\n5. Configurar la API Key o credenciales OAuth",
+        "width": 440,
+        "height": 340,
+        "color": 6
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000013",
+      "name": "Notas Configuración",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [760, -60]
+    },
+    {
+      "parameters": {
+        "content": "## Error Handler\n\nSi el agente falla, envía un mensaje de disculpa al cliente para que no se quede sin respuesta.",
+        "width": 300,
+        "height": 120,
+        "color": 2
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000014",
+      "name": "Nota Error",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1240, 820]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error-msg",
+              "name": "responseText",
+              "value": "Disculpa, tuve un problema procesando tu mensaje. ¿Podrías intentar de nuevo en unos minutos?",
+              "type": "string"
+            },
+            {
+              "id": "error-phone",
+              "name": "senderPhone",
+              "value": "={{ $('Extraer datos del mensaje').item.json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "error-instance",
+              "name": "instanceName",
+              "value": "={{ $('Extraer datos del mensaje').item.json.instanceName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000015",
+      "name": "Mensaje de error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1300, 900]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'https://evo.tudominio.com' }}/message/sendText/{{ $json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}\",\n  \"text\": {{ JSON.stringify($json.responseText) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000016",
+      "name": "Enviar error WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 900]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos del mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos del mensaje": {
+      "main": [
+        [
+          {
+            "node": "Tiene mensaje?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiene mensaje?": {
+      "main": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria Conversación": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Productos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Combos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Pedido Lima": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Envío Shalom": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Venta": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Ventas",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Ventas": {
+      "main": [
+        [
+          {
+            "node": "Preparar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Esperar 3-5 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar 3-5 min": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje de error": {
+      "main": [
+        [
+          {
+            "node": "Enviar error WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "whatsapp"
+    },
+    {
+      "name": "chatbot"
+    },
+    {
+      "name": "catalogo"
+    },
+    {
+      "name": "ai-agent"
+    },
+    {
+      "name": "ventas"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-10T00:00:00.000Z",
+  "versionId": "2"
+}

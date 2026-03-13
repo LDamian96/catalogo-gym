@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 // WhatsApp official logo SVG component
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -23,209 +20,54 @@ interface WhatsAppButtonProps {
 export function WhatsAppButton({
   phoneNumber = '51999999999',
   message = '¡Hola! Me interesa conocer más sobre sus productos.',
-  businessName = 'el catálogo',
 }: WhatsAppButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [customMessage, setCustomMessage] = useState(message);
-
-  const handleSend = () => {
-    const encodedMessage = encodeURIComponent(customMessage);
+  const handleClick = () => {
     const cleanPhone = phoneNumber.replace(/\D/g, '');
+    const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
-    setIsOpen(false);
   };
 
   return (
-    <>
-      {/* Floating Button - A la derecha en todas las resoluciones */}
-      <motion.div
-        className="fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-40"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1, type: 'spring', stiffness: 200 }}
+    <motion.div
+      className="fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-40"
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 1, type: 'spring', stiffness: 200 }}
+    >
+      <motion.button
+        onClick={handleClick}
+        className="relative w-14 h-14 rounded-full bg-[#25D366] shadow-[0_4px_14px_rgba(37,211,102,0.4)] flex items-center justify-center"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
       >
-        <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          className={cn(
-            'relative w-14 h-14 rounded-full',
-            'bg-[#25D366]',
-            'shadow-lg shadow-[#25D366]/30',
-            'flex items-center justify-center',
-            'group'
-          )}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          {/* Pulse Ring */}
-          <motion.div
-            className="absolute inset-0 rounded-full bg-[#25D366]"
-            animate={{
-              scale: [1, 1.3, 1.3],
-              opacity: [0.5, 0, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeOut',
-            }}
-          />
+        {/* Pulse Ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-[#25D366]"
+          animate={{
+            scale: [1, 1.3, 1.3],
+            opacity: [0.4, 0, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeOut',
+          }}
+        />
+        <WhatsAppIcon className="w-7 h-7 text-white relative" />
+      </motion.button>
 
-          {/* Icon */}
-          <AnimatePresence mode="wait">
-            {isOpen ? (
-              <motion.div
-                key="close"
-                initial={{ scale: 0, rotate: -90 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                <X className="w-6 h-6 text-white" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="whatsapp"
-                initial={{ scale: 0, rotate: 90 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: -90 }}
-                transition={{ duration: 0.2 }}
-              >
-                <WhatsAppIcon className="w-7 h-7 text-white" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.button>
-
-        {/* Tooltip - Solo en desktop, a la izquierda del botón */}
-        {!isOpen && (
-          <motion.div
-            className="hidden lg:block absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.5 }}
-          >
-            <div className="px-3 py-2 bg-slate-900 text-white text-sm rounded-lg shadow-lg">
-              ¿Necesitas ayuda?
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-slate-900 rotate-45" />
-            </div>
-          </motion.div>
-        )}
+      {/* Tooltip - Solo desktop */}
+      <motion.div
+        className="hidden lg:block absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap"
+        initial={{ opacity: 0, x: 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.5 }}
+      >
+        <div className="px-3 py-2 bg-slate-900 text-white text-sm rounded-lg shadow-lg">
+          ¿Necesitas ayuda?
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-slate-900 rotate-45" />
+        </div>
       </motion.div>
-
-      {/* Chat Popup */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="fixed bottom-40 lg:bottom-28 right-4 lg:right-6 z-40 w-80 max-w-[calc(100vw-2rem)]"
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          >
-            <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden">
-              {/* Header */}
-              <div className="bg-[#25D366] p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <WhatsAppIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold">WhatsApp</h3>
-                    <p className="text-white/80 text-sm">
-                      Respuesta inmediata
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-4">
-                {/* Welcome Message */}
-                <div className="mb-4">
-                  <div className="bg-slate-100 dark:bg-neutral-800 rounded-2xl rounded-tl-none p-3 inline-block max-w-[85%]">
-                    <p className="text-slate-700 dark:text-neutral-200 text-sm">
-                      ¡Hola! 👋 Bienvenido a {businessName}. ¿En qué podemos ayudarte?
-                    </p>
-                  </div>
-                  <p className="text-xs text-slate-400 dark:text-neutral-500 mt-1">Ahora</p>
-                </div>
-
-                {/* Message Input */}
-                <div className="relative">
-                  <textarea
-                    value={customMessage}
-                    onChange={(e) => setCustomMessage(e.target.value)}
-                    placeholder="Escribe tu mensaje..."
-                    rows={3}
-                    className={cn(
-                      'w-full px-4 py-3 pr-12',
-                      'bg-slate-100 dark:bg-neutral-800 rounded-xl',
-                      'border-0 outline-none resize-none',
-                      'text-slate-700 dark:text-neutral-200 placeholder:text-slate-400 dark:placeholder:text-neutral-500',
-                      'text-sm'
-                    )}
-                  />
-                  <motion.button
-                    onClick={handleSend}
-                    className={cn(
-                      'absolute right-2 bottom-2',
-                      'w-9 h-9 rounded-full',
-                      'bg-[#25D366] text-white',
-                      'flex items-center justify-center',
-                      'shadow-lg shadow-[#25D366]/30'
-                    )}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Send className="w-4 h-4" />
-                  </motion.button>
-                </div>
-
-                {/* Quick Messages */}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {['¿Tienen stock?', '¿Hacen envíos?', 'Precios'].map((quick) => (
-                    <motion.button
-                      key={quick}
-                      onClick={() => setCustomMessage(`Hola, ${quick.toLowerCase()}`)}
-                      className={cn(
-                        'px-3 py-1.5 rounded-full',
-                        'bg-slate-100 dark:bg-neutral-800 hover:bg-[#25D366]/10',
-                        'text-slate-600 dark:text-neutral-300 hover:text-[#25D366]',
-                        'text-xs font-medium',
-                        'transition-colors duration-200'
-                      )}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {quick}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="px-4 py-2 bg-slate-50 dark:bg-neutral-800/50 border-t border-slate-100 dark:border-neutral-800">
-                <p className="text-xs text-slate-400 dark:text-neutral-500 text-center">
-                  Powered by WhatsApp Business
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Backdrop */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-    </>
+    </motion.div>
   );
 }

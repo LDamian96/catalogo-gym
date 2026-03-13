@@ -1,0 +1,416 @@
+{
+  "name": "05 - Alertas de Stock Bajo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cada 6 horas",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "content": "## 05 - Alertas de Stock Bajo\n\n**Trigger:** Cron cada 6 horas\n\n**Flujo:**\n1. Login al API\n2. Obtiene todos los productos activos\n3. Filtra los que tienen stock < 5 (y stock no es null)\n4. Si hay productos con stock bajo, envia alerta por WhatsApp al admin\n5. Si no hay, no hace nada",
+        "width": 450,
+        "height": 220
+      },
+      "id": "sticky-info",
+      "name": "Info del Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 40]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com' }}\",\n  \"password\": \"{{ $env.CATALOG_ADMIN_PASSWORD || 'password' }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "auth-login",
+      "name": "Login API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/products?limit=500&isActive=true",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.accessToken || $json.tokens?.accessToken }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "get-products",
+      "name": "GET Productos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst products = response.data || response.items || response || [];\nconst STOCK_THRESHOLD = 5;\n\n// Filtrar productos con stock bajo\nconst lowStock = (Array.isArray(products) ? products : []).filter(p => \n  p.stock !== null && \n  p.stock !== undefined && \n  p.stock < STOCK_THRESHOLD &&\n  p.isActive === true\n);\n\nif (lowStock.length === 0) {\n  return [{ json: { hasLowStock: false, message: 'No hay productos con stock bajo' } }];\n}\n\n// Ordenar de menor a mayor stock\nlowStock.sort((a, b) => (a.stock || 0) - (b.stock || 0));\n\nreturn [{\n  json: {\n    hasLowStock: true,\n    lowStockProducts: lowStock.map(p => ({\n      id: p.id,\n      name: p.name,\n      stock: p.stock,\n      price: p.price,\n      category: p.category?.name || 'Sin categoria',\n      slug: p.slug\n    })),\n    totalLowStock: lowStock.length\n  }\n}];"
+      },
+      "id": "filter-low-stock",
+      "name": "Filtrar stock bajo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "content": "## Filtro de stock\n\nFiltra productos activos con:\n- stock != null (productos que manejan inventario)\n- stock < 5 unidades\n\nUmbral configurable en el nodo Code (STOCK_THRESHOLD).",
+        "width": 320,
+        "height": 140
+      },
+      "id": "sticky-filter",
+      "name": "Nota Filtro",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [860, 120]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-low-stock",
+              "leftValue": "={{ $json.hasLowStock }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-low-stock",
+      "name": "Hay stock bajo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1570, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst products = data.lowStockProducts || [];\n\nlet message = '⚠️ *ALERTA DE STOCK BAJO*\\n\\n';\nmessage += `Se detectaron *${data.totalLowStock}* producto(s) con stock bajo (< 5 unidades):\\n\\n`;\n\nfor (let i = 0; i < products.length; i++) {\n  const p = products[i];\n  const stockEmoji = p.stock === 0 ? '🔴' : p.stock <= 2 ? '🟠' : '🟡';\n  message += `${stockEmoji} *${p.name}*\\n`;\n  message += `   Stock: ${p.stock} unidades\\n`;\n  message += `   Categoria: ${p.category}\\n`;\n  message += `   Precio: S/ ${p.price}\\n\\n`;\n}\n\nmessage += '---\\n';\nmessage += '📦 Recuerda reabastecer estos productos pronto.';\n\nif (products.some(p => p.stock === 0)) {\n  message += '\\n\\n🔴 *URGENTE:* Hay productos con stock en 0 que no se mostraran en el catalogo.';\n}\n\nreturn [{ json: { alertMessage: message } }];"
+      },
+      "id": "format-alert",
+      "name": "Formatear alerta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1790, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'https://evo.tudominio.com' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE || 'catalogo-whatsapp' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $env.ADMIN_PHONE || '51999999999' }}@s.whatsapp.net\",\n  \"text\": {{ JSON.stringify($json.alertMessage) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-alert-whatsapp",
+      "name": "Enviar alerta WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 200]
+    },
+    {
+      "parameters": {
+        "content": "## Envio de alerta\n\nFormatea un mensaje bonito con emojis de semaforo:\n- 🔴 Stock = 0 (urgente)\n- 🟠 Stock 1-2 (critico)\n- 🟡 Stock 3-4 (bajo)\n\nEnvia por WhatsApp al numero de admin.",
+        "width": 320,
+        "height": 150
+      },
+      "id": "sticky-alert",
+      "name": "Nota Alerta",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1300, 20]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-ok",
+              "name": "result",
+              "value": "Alerta de stock bajo enviada correctamente",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-success",
+      "name": "Log exito",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2230, 200]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-no-alert",
+              "name": "result",
+              "value": "No hay productos con stock bajo. Sin alertas.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-no-alert",
+      "name": "Sin alertas",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1790, 420]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/catalog/home",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "get-settings",
+      "name": "GET Settings",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-stock-alerts",
+              "leftValue": "={{ $json.settings?.stockAlertsEnabled }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-alerts-enabled",
+      "name": "Alertas habilitadas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-disabled",
+              "name": "result",
+              "value": "Alertas de stock deshabilitadas en configuracion.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-disabled",
+      "name": "Alertas deshabilitadas",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [910, 500]
+    }
+  ],
+  "connections": {
+    "Cada 6 horas": {
+      "main": [
+        [
+          {
+            "node": "GET Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Settings": {
+      "main": [
+        [
+          {
+            "node": "Alertas habilitadas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alertas habilitadas?": {
+      "main": [
+        [
+          {
+            "node": "Login API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alertas deshabilitadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login API": {
+      "main": [
+        [
+          {
+            "node": "GET Productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Productos": {
+      "main": [
+        [
+          {
+            "node": "Filtrar stock bajo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar stock bajo": {
+      "main": [
+        [
+          {
+            "node": "Hay stock bajo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hay stock bajo?": {
+      "main": [
+        [
+          {
+            "node": "Formatear alerta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin alertas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear alerta": {
+      "main": [
+        [
+          {
+            "node": "Enviar alerta WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar alerta WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Log exito",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "stock"
+    },
+    {
+      "name": "alertas"
+    },
+    {
+      "name": "whatsapp"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-10T00:00:00.000Z",
+  "versionId": "1"
+}

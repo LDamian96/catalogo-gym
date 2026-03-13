@@ -12,6 +12,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ReorderCategoriesDto } from './dto/reorder-categories.dto';
 import { Category } from '@prisma/client';
 import { generateSlug } from '../../common/utils/slug.util';
+import { generateCategorySeo } from '../../common/utils/auto-seo.util';
 
 // Tipo para categoría con relaciones jerárquicas
 export type CategoryWithHierarchy = Category & {
@@ -230,6 +231,16 @@ export class CategoriesService {
     });
     const order = dto.order ?? (maxOrder._max.order ?? -1) + 1;
 
+    // Auto-generate SEO fields if not provided
+    let { seoTitle, seoDescription, seoKeywords } = dto;
+    if (!seoTitle || !seoDescription || !seoKeywords) {
+      const settings = await this.prisma.settings.findUnique({ where: { id: 'main' }, select: { businessName: true } });
+      const autoSeo = generateCategorySeo({ name: dto.name, businessName: settings?.businessName });
+      if (!seoTitle) seoTitle = autoSeo.seoTitle;
+      if (!seoDescription) seoDescription = autoSeo.seoDescription;
+      if (!seoKeywords) seoKeywords = autoSeo.seoKeywords;
+    }
+
     const category = await this.prisma.category.create({
       data: {
         name: dto.name,
@@ -238,9 +249,9 @@ export class CategoriesService {
         level,
         order,
         isActive: dto.isActive ?? true,
-        seoTitle: dto.seoTitle,
-        seoDescription: dto.seoDescription,
-        seoKeywords: dto.seoKeywords,
+        seoTitle,
+        seoDescription,
+        seoKeywords,
       },
     });
 

@@ -234,7 +234,7 @@ export function CategoryProducts({
   const motivation = categoryMotivation[category.slug] || defaultMotivation;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-blue-50 to-cyan-50 dark:bg-[#000000] dark:from-[#000000] dark:via-[#000000] dark:to-[#000000] pb-24 lg:pb-0 lg:bg-white lg:from-white lg:via-white lg:to-white">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-blue-50 to-cyan-50 dark:bg-[#000000] dark:from-[#000000] dark:via-[#000000] dark:to-[#000000] lg:bg-white lg:from-white lg:via-white lg:to-white">
       {/* Navbar */}
       <Navbar settings={settings} categories={categories} />
 

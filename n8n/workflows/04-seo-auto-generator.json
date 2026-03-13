@@ -1,0 +1,723 @@
+{
+  "name": "04 - Generador SEO via WhatsApp + Cron",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seo-generator",
+        "options": {
+          "rawBody": true
+        },
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-seo",
+      "name": "Webhook SEO (WhatsApp)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400],
+      "webhookId": "seo-generator-trigger"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cron Diario 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 900]
+    },
+    {
+      "parameters": {
+        "content": "## 04 - Generador SEO via WhatsApp + Cron\n\n**Modo 1: WhatsApp (arriba)**\nEl admin envia mensajes como \"ponle seo a creatina\" o \"edita el seo de whey gold\".\nUn agente IA con memoria busca el producto, genera sugerencia SEO, y espera aprobacion del admin.\n\n**Modo 2: Cron (abajo)**\nDiariamente a las 8am revisa productos sin SEO y notifica al admin.\n\n**Variables de entorno:**\n- ADMIN_PHONE, EVOLUTION_API_URL, EVOLUTION_API_KEY, EVOLUTION_INSTANCE\n- CATALOG_API_URL, CATALOG_ADMIN_EMAIL, CATALOG_ADMIN_PASSWORD\n- OpenAI credentials configuradas en n8n",
+        "width": 550,
+        "height": 280
+      },
+      "id": "sticky-info",
+      "name": "Info del Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, 50]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "set-message",
+              "name": "messageText",
+              "value": "={{ $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-instance",
+              "name": "instanceName",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-whatsapp-data",
+      "name": "Extraer datos WhatsApp",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [490, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-admin",
+              "leftValue": "={{ $json.senderPhone }}",
+              "rightValue": "={{ $env.ADMIN_PHONE }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-admin",
+      "name": "Es admin?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 400]
+    },
+    {
+      "parameters": {
+        "content": "## Verificacion de admin\n\nSolo el ADMIN_PHONE puede interactuar con el generador SEO.\nSi no es admin, se ignora.",
+        "width": 280,
+        "height": 100
+      },
+      "id": "sticky-admin",
+      "name": "Nota Admin",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [680, 260]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ignored', reason: 'not admin' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-not-admin",
+      "name": "Responder (no admin)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [960, 560]
+    },
+    {
+      "parameters": {
+        "content": "## Agente SEO con herramientas\n\nEl agente tiene acceso a:\n1. Buscar productos en el catalogo\n2. Ver detalle de un producto\n3. Aplicar SEO (login + PATCH)\n\nTiene memoria de conversacion (50 mensajes) para ida y vuelta con el admin.\n\nEl admin puede decir:\n- \"ponle seo a creatina monohidrate\"\n- \"edita el seo de whey gold\"\n- \"ok\" / \"dale\" para aprobar\n- \"cambia el titulo por X\" para editar\n- \"seo todos\" para procesar multiples",
+        "width": 400,
+        "height": 260
+      },
+      "id": "sticky-agent",
+      "name": "Nota Agente SEO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [920, 120]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messageText }}",
+        "options": {
+          "systemMessage": "Eres un experto en SEO para e-commerce en Peru y Latinoamerica. Tu trabajo es generar y editar campos SEO para productos de una tienda de suplementos deportivos.\n\nREGLAS:\n1. seoTitle: maximo 70 caracteres. Formato: \"{Producto} - {Marca} | {Keyword local}\"\n2. seoDescription: maximo 160 caracteres. Incluir: nombre, marca, precio si existe, \"envio a domicilio\", \"Lima y provincias\"\n3. seoKeywords: maximo 200 caracteres. Incluir: nombre producto, marca, categoria, \"suplementos\", \"delivery lima\", keywords locales\n4. Usa keywords locales: \"lima\", \"peru\", \"delivery\", \"envio a domicilio\", \"contraentrega\"\n5. No inventes datos. Usa solo la info del producto del catalogo.\n6. Muestra la sugerencia al admin y espera su aprobacion antes de aplicar.\n7. Si el admin pide cambios, ajusta y muestra de nuevo.\n8. Solo aplica el SEO cuando el admin diga \"ok\", \"dale\", \"aprueba\", \"si\", \"listo\" o similar.\n\nFLUJO:\n1. Admin pide SEO para un producto -> Usa la herramienta 'search_products' para buscarlo\n2. Si encuentras el producto -> Usa 'get_product_detail' para ver su info completa\n3. Genera sugerencia SEO y presentala asi:\n\n\"Para {nombre producto} te sugiero:\n📌 Titulo: {seoTitle}\n📝 Descripcion: {seoDescription}\n🔑 Keywords: {seoKeywords}\n\n¿Lo apruebas o quieres cambiar algo?\"\n\n4. Si admin dice \"ok\"/\"dale\"/\"aprueba\" -> Usa la herramienta 'apply_seo' con los datos\n5. Si admin dice \"cambia el titulo por X\" -> Ajusta y muestra de nuevo\n6. Si admin dice \"ponle seo a todos\" o \"seo todos\" -> Busca productos sin SEO y procesa uno por uno\n\nSiempre responde en espanol. Se conciso y claro."
+        }
+      },
+      "id": "seo-agent",
+      "name": "Agente SEO",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [960, 400]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.4,
+          "maxTokens": 1000
+        }
+      },
+      "id": "openai-model-seo",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [860, 640],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $('Extraer datos WhatsApp').item.json.senderPhone }}",
+        "contextWindowLength": 50
+      },
+      "id": "memory-buffer",
+      "name": "Memoria Conversacion",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [960, 640]
+    },
+    {
+      "parameters": {
+        "name": "search_products",
+        "description": "Busca productos en el catalogo por nombre. Usa esto para encontrar el producto que el admin quiere editar. Parametro: query (string) - texto de busqueda.",
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/catalog/products?search={query}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "Texto de busqueda del producto",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "tool-search-products",
+      "name": "Tool: Buscar Productos",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1060, 640]
+    },
+    {
+      "parameters": {
+        "name": "get_product_detail",
+        "description": "Obtiene el detalle completo de un producto incluyendo su SEO actual. Parametro: productId (string) - ID del producto.",
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/catalog/products/{productId}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "productId",
+              "description": "ID del producto",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "tool-get-product",
+      "name": "Tool: Detalle Producto",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1160, 640]
+    },
+    {
+      "parameters": {
+        "name": "apply_seo",
+        "description": "Aplica los campos SEO a un producto. Primero hace login y luego PATCH al producto. Parametros: productId (string), seoTitle (string max 70 chars), seoDescription (string max 160 chars), seoKeywords (string max 200 chars). SOLO usar cuando el admin haya aprobado explicitamente.",
+        "jsCode": "// Tool: Apply SEO - Login + PATCH product\nconst catalogApiUrl = $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1';\nconst email = $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com';\nconst password = $env.CATALOG_ADMIN_PASSWORD || 'password';\n\ntry {\n  // Step 1: Login\n  const loginResponse = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${catalogApiUrl}/auth/login`,\n    body: { email, password },\n    headers: { 'Content-Type': 'application/json' },\n    timeout: 10000\n  });\n  \n  const token = loginResponse.accessToken || loginResponse.tokens?.accessToken;\n  \n  if (!token) {\n    return JSON.stringify({ error: 'No se pudo obtener token de autenticacion' });\n  }\n  \n  // Step 2: PATCH product with SEO data\n  const productId = $input.productId;\n  const patchResponse = await this.helpers.httpRequest({\n    method: 'PATCH',\n    url: `${catalogApiUrl}/products/${productId}`,\n    body: {\n      seoTitle: $input.seoTitle || '',\n      seoDescription: $input.seoDescription || '',\n      seoKeywords: $input.seoKeywords || ''\n    },\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${token}`\n    },\n    timeout: 10000\n  });\n  \n  return JSON.stringify({\n    success: true,\n    message: `SEO aplicado correctamente al producto ${patchResponse.name || productId}`,\n    seoTitle: patchResponse.seoTitle,\n    seoDescription: patchResponse.seoDescription,\n    seoKeywords: patchResponse.seoKeywords\n  });\n} catch (error) {\n  return JSON.stringify({ error: 'Error aplicando SEO: ' + error.message });\n}"
+      },
+      "id": "tool-apply-seo",
+      "name": "Tool: Aplicar SEO",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [1260, 640]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "agent-response",
+              "name": "responseText",
+              "value": "={{ $json.output || $json.text || 'No pude procesar tu solicitud. Intenta de nuevo.' }}",
+              "type": "string"
+            },
+            {
+              "id": "agent-phone",
+              "name": "senderPhone",
+              "value": "={{ $('Extraer datos WhatsApp').item.json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "agent-instance",
+              "name": "instanceName",
+              "value": "={{ $('Extraer datos WhatsApp').item.json.instanceName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-agent-response",
+      "name": "Preparar respuesta agente",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1220, 400]
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 121) + 180 }}",
+        "unit": "seconds"
+      },
+      "id": "wait-natural-delay",
+      "name": "Espera 3-5 min (natural)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1450, 400]
+    },
+    {
+      "parameters": {
+        "content": "## Delay natural\n\nEspera entre 3 y 5 minutos para que la respuesta se sienta humana y no automatizada.",
+        "width": 280,
+        "height": 90
+      },
+      "id": "sticky-delay",
+      "name": "Nota Delay",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $json.instanceName || $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}@s.whatsapp.net\",\n  \"text\": {{ JSON.stringify($json.responseText) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-agent-response",
+      "name": "Enviar respuesta al admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1680, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-ok",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1900, 400]
+    },
+    {
+      "parameters": {
+        "content": "## MODO 2: Cron Auto-detect\n\nDiariamente a las 8am:\n1. Login al API\n2. Obtener todos los productos\n3. Filtrar los que no tienen seoTitle\n4. Si hay productos sin SEO -> notificar al admin por WhatsApp\n5. El admin puede responder \"seo todos\" para procesarlos (se maneja en Modo 1)",
+        "width": 450,
+        "height": 180
+      },
+      "id": "sticky-cron",
+      "name": "Nota Cron",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 750]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com' }}\",\n  \"password\": \"{{ $env.CATALOG_ADMIN_PASSWORD || 'password' }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "cron-login",
+      "name": "Login API (cron)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [490, 900]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/products?limit=200",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.accessToken || $json.tokens?.accessToken }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "cron-get-products",
+      "name": "GET Todos los Productos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 900]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst products = response.data || response.items || response || [];\nconst productList = Array.isArray(products) ? products : [];\n\n// Filtrar productos sin seoTitle\nconst needsSeo = productList.filter(p => !p.seoTitle || p.seoTitle === '' || p.seoTitle === null);\n\nreturn [{\n  json: {\n    totalProducts: productList.length,\n    productsWithoutSeo: needsSeo.length,\n    hasProductsWithoutSeo: needsSeo.length > 0,\n    productNames: needsSeo.slice(0, 10).map(p => p.name).join(', ')\n  }\n}];"
+      },
+      "id": "cron-filter-no-seo",
+      "name": "Filtrar productos sin SEO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [950, 900]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-products-without-seo",
+              "leftValue": "={{ $json.hasProductsWithoutSeo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cron-check-has-products",
+      "name": "Hay productos sin SEO?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1180, 900]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $env.ADMIN_PHONE }}@s.whatsapp.net\",\n  \"text\": \"\\ud83d\\udd0d *Reporte SEO diario*\\n\\nHay {{ $json.productsWithoutSeo }} producto(s) sin SEO configurado.\\n\\nAlgunos de ellos:\\n{{ $json.productNames }}\\n\\n\\u00bfQuieres que les genere sugerencias? Responde *'seo todos'* para procesarlos.\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "cron-notify-admin",
+      "name": "Notificar admin por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1420, 840]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "all-ok-msg",
+              "name": "message",
+              "value": "Todos los productos ya tienen SEO configurado. No hay pendientes.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cron-all-ok",
+      "name": "Todo tiene SEO (nada que hacer)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1420, 1000]
+    }
+  ],
+  "connections": {
+    "Webhook SEO (WhatsApp)": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Es admin?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es admin?": {
+      "main": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder (no admin)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente SEO": {
+      "main": [
+        [
+          {
+            "node": "Preparar respuesta agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria Conversacion": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Buscar Productos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Detalle Producto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Aplicar SEO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente SEO",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar respuesta agente": {
+      "main": [
+        [
+          {
+            "node": "Espera 3-5 min (natural)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 3-5 min (natural)": {
+      "main": [
+        [
+          {
+            "node": "Enviar respuesta al admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar respuesta al admin": {
+      "main": [
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron Diario 8am": {
+      "main": [
+        [
+          {
+            "node": "Login API (cron)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login API (cron)": {
+      "main": [
+        [
+          {
+            "node": "GET Todos los Productos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Todos los Productos": {
+      "main": [
+        [
+          {
+            "node": "Filtrar productos sin SEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar productos sin SEO": {
+      "main": [
+        [
+          {
+            "node": "Hay productos sin SEO?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hay productos sin SEO?": {
+      "main": [
+        [
+          {
+            "node": "Notificar admin por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Todo tiene SEO (nada que hacer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "seo"
+    },
+    {
+      "name": "whatsapp"
+    },
+    {
+      "name": "ia"
+    },
+    {
+      "name": "automatizacion"
+    }
+  ],
+  "triggerCount": 2,
+  "updatedAt": "2026-03-11T00:00:00.000Z",
+  "versionId": "2"
+}

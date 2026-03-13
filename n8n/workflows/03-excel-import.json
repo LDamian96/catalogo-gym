@@ -1,0 +1,751 @@
+{
+  "name": "03 - Sync Bidireccional Catálogo ↔ Google Sheets (WhatsApp + Auto-Sync)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "catalog-sync",
+        "options": {
+          "responseMode": "responseNode"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 460],
+      "webhookId": "catalog-sync-trigger"
+    },
+    {
+      "parameters": {
+        "content": "## 03 - Sync Bidireccional Catálogo ↔ Google Sheets\n\n**2 Triggers:**\n\n**A) WhatsApp (admin)** — Webhook POST\n- Admin dice \"exporta\" / \"importa\" por WhatsApp\n- Agente IA interpreta y ejecuta\n- Consume tokens de IA\n\n**B) Auto-Sync (trabajadores)** — Google Sheets Trigger\n- Detecta filas nuevas/editadas en el Sheet\n- Sincroniza automáticamente al catálogo\n- SIN IA, SIN tokens — solo HTTP requests\n- Si hay error, notifica al admin por WhatsApp\n\n**Env vars requeridas:**\n- ADMIN_PHONE\n- GOOGLE_SHEETS_SPREADSHEET_ID, GOOGLE_SHEETS_API_KEY\n- CATALOG_API_URL, CATALOG_ADMIN_EMAIL, CATALOG_ADMIN_PASSWORD\n- EVOLUTION_API_URL, EVOLUTION_API_KEY, EVOLUTION_INSTANCE\n- Google Sheets OAuth2 (credencial en n8n)",
+        "width": 520,
+        "height": 420
+      },
+      "id": "sticky-info",
+      "name": "Info del Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, -40]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.body?.data?.key?.remoteJid?.replace('@s.whatsapp.net','') || $json.body?.data?.remoteJid?.replace('@s.whatsapp.net','') || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-message",
+              "name": "messageText",
+              "value": "={{ $json.body?.data?.message?.conversation || $json.body?.data?.message?.extendedTextMessage?.text || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-instance",
+              "name": "instanceName",
+              "value": "={{ $env.EVOLUTION_INSTANCE || 'catalogo' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-data",
+      "name": "Extraer datos mensaje",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [480, 460]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-admin",
+              "leftValue": "={{ $json.senderPhone }}",
+              "rightValue": "={{ $env.ADMIN_PHONE }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-admin",
+      "name": "Es admin?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 460]
+    },
+    {
+      "parameters": {
+        "content": "## Verificación de admin\n\nSolo el número configurado en ADMIN_PHONE\npuede interactuar con el bot de sync.\nSi no es admin, se ignora el mensaje.",
+        "width": 280,
+        "height": 130
+      },
+      "id": "sticky-admin",
+      "name": "Nota Admin",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={\"status\":\"ignored\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-ignored",
+      "name": "Ignorar no-admin",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, 600]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "text": "={{ $json.messageText }}",
+        "hasOutputParser": false,
+        "options": {
+          "systemMessage": "Eres el asistente de sincronización de catálogo. Manejas la importación y exportación de productos entre el catálogo digital y Google Sheets.\n\nCOMANDOS QUE ENTIENDES:\n- \"exporta\", \"exportar\", \"pasa al sheet\", \"sube al sheet\" → Exportar productos del catálogo al Sheet\n- \"importa\", \"importar\", \"trae del sheet\", \"sube del excel\" → Importar productos del Sheet al catálogo\n- \"cuántos hay\", \"cuenta\", \"cuántos productos\" → Contar productos en el Sheet\n- Puedes filtrar: \"exporta solo proteínas\", \"importa las creatinas\", \"exporta la categoría X\"\n\nFLUJO DE CONVERSACIÓN:\n1. Admin pide exportar/importar\n2. Tú respondes cuántos productos procesarás y pides confirmación: \"Son 45 productos, comienzo a exportar. Te aviso cuando esté listo\"\n3. Admin dice \"dale\" o \"sí\"\n4. Ejecutas la operación\n5. Cuando terminas avisas: \"Listo! 45 productos exportados al Sheet ✅\" o \"Listo! 30 importados, 2 errores (Creatina XL: precio vacío, BCAA 500: sin categoría)\"\n\nREGLAS:\n1. Siempre informa cuántos productos vas a procesar antes de ejecutar\n2. Espera confirmación del admin (\"dale\", \"sí\", \"ok\", \"procede\")\n3. Una vez confirmado, dile: \"Comienzo a exportar/importar, te aviso cuando esté listo\" y ejecuta\n4. Al terminar, avisa con el resultado completo\n5. Si hay errores, lista cuáles fallaron y por qué de forma breve\n6. Responde siempre en español\n7. Sé conciso y natural, son mensajes de WhatsApp\n8. No uses frases robóticas\n\nESTRUCTURA DEL SHEET:\nColumnas: Nombre | Precio | Precio Oferta | Categoría | Marca | Descripción | Stock | Estado (activo/inactivo) | SEO Título | SEO Descripción | SEO Keywords | URL Imagen\n\nGOOGLE SHEET ID: Se usa la variable de entorno GOOGLE_SHEETS_SPREADSHEET_ID\nHoja: \"Productos\"",
+          "maxIterations": 5
+        }
+      },
+      "id": "ai-agent",
+      "name": "Agente Sync Catálogo",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [960, 360]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "chat-model",
+      "name": "Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [900, 620],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $('Extraer datos mensaje').item.json.senderPhone }}",
+        "contextWindowLength": 50
+      },
+      "id": "memory",
+      "name": "Memoria Conversación",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [1040, 620]
+    },
+    {
+      "parameters": {
+        "name": "exportar_productos_a_sheet",
+        "description": "Exporta productos del catálogo al Google Sheet. Opcionalmente filtra por categoría. Parámetro: filtroCategoria (opcional, nombre de categoría a filtrar)",
+        "language": "javaScript",
+        "jsCode": "// Tool: Exportar productos del catálogo al Google Sheet\nconst apiUrl = $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1';\nconst sheetId = $env.GOOGLE_SHEETS_SPREADSHEET_ID;\nconst apiKey = $env.GOOGLE_SHEETS_API_KEY;\nconst filtro = $input?.item?.json?.filtroCategoria || '';\n\ntry {\n  // 1. Login al catálogo\n  const loginRes = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${apiUrl}/auth/login`,\n    body: {\n      email: $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com',\n      password: $env.CATALOG_ADMIN_PASSWORD || 'password'\n    },\n    json: true\n  });\n  const token = loginRes.accessToken || loginRes.tokens?.accessToken;\n\n  // 2. Obtener todos los productos\n  const productsRes = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${apiUrl}/products?limit=1000&include=category,brand`,\n    headers: { 'Authorization': `Bearer ${token}` },\n    json: true\n  });\n  let products = productsRes.data || productsRes;\n  if (!Array.isArray(products)) products = [];\n\n  // 3. Filtrar por categoría si se pidió\n  if (filtro) {\n    products = products.filter(p => {\n      const catName = p.category?.name || '';\n      return catName.toLowerCase().includes(filtro.toLowerCase());\n    });\n  }\n\n  if (products.length === 0) {\n    return { result: filtro ? `No se encontraron productos en la categoría \"${filtro}\"` : 'No hay productos en el catálogo para exportar' };\n  }\n\n  // 4. Formatear filas para el Sheet\n  const header = ['Nombre', 'Precio', 'Precio Oferta', 'Categoría', 'Marca', 'Descripción', 'Stock', 'Estado', 'SEO Título', 'SEO Descripción', 'SEO Keywords', 'URL Imagen'];\n  const rows = products.map(p => [\n    p.name || '',\n    p.price || 0,\n    p.salePrice || '',\n    p.category?.name || '',\n    p.brand?.name || '',\n    p.description || '',\n    p.stock != null ? p.stock : '',\n    p.isActive ? 'activo' : 'inactivo',\n    p.seoTitle || '',\n    p.seoDescription || '',\n    p.seoKeywords || '',\n    (p.images && p.images[0]?.url) || p.imageUrl || ''\n  ]);\n\n  // 5. Limpiar hoja \"Productos\" primero\n  await this.helpers.httpRequest({\n    method: 'POST',\n    url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Productos:clear?key=${apiKey}`,\n    body: {},\n    json: true\n  });\n\n  // 6. Escribir header + filas\n  const allRows = [header, ...rows];\n  await this.helpers.httpRequest({\n    method: 'PUT',\n    url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Productos!A1?valueInputOption=USER_ENTERED&key=${apiKey}`,\n    body: {\n      range: 'Productos!A1',\n      majorDimension: 'ROWS',\n      values: allRows\n    },\n    json: true\n  });\n\n  return { result: `✅ ${products.length} productos exportados al Sheet${filtro ? ` (filtro: ${filtro})` : ''}. Columnas: ${header.join(', ')}` };\n\n} catch (error) {\n  return { result: `❌ Error al exportar: ${error.message}` };\n}"
+      },
+      "id": "tool-export",
+      "name": "Tool Exportar al Sheet",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [1180, 620]
+    },
+    {
+      "parameters": {
+        "name": "importar_productos_desde_sheet",
+        "description": "Importa productos desde el Google Sheet al catálogo. Lee la hoja Productos y crea los productos en la API. Parámetro: filtroCategoria (opcional, nombre de categoría a importar)",
+        "language": "javaScript",
+        "jsCode": "// Tool: Importar productos del Google Sheet al catálogo\nconst apiUrl = $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1';\nconst sheetId = $env.GOOGLE_SHEETS_SPREADSHEET_ID;\nconst apiKey = $env.GOOGLE_SHEETS_API_KEY;\nconst filtro = $input?.item?.json?.filtroCategoria || '';\n\ntry {\n  // 1. Leer filas del Sheet\n  const sheetRes = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Productos!A1:L1000?key=${apiKey}`,\n    json: true\n  });\n  const allRows = sheetRes.values || [];\n  if (allRows.length < 2) {\n    return { result: 'El Sheet está vacío o solo tiene encabezados. No hay nada que importar.' };\n  }\n\n  const headers = allRows[0];\n  let dataRows = allRows.slice(1);\n\n  // Filtrar por categoría si se pidió\n  const catIdx = headers.findIndex(h => h.toLowerCase().includes('categor'));\n  if (filtro && catIdx >= 0) {\n    dataRows = dataRows.filter(row => {\n      const cat = (row[catIdx] || '').toLowerCase();\n      return cat.includes(filtro.toLowerCase());\n    });\n  }\n\n  if (dataRows.length === 0) {\n    return { result: filtro ? `No se encontraron filas con categoría \"${filtro}\" en el Sheet.` : 'No hay filas de datos en el Sheet.' };\n  }\n\n  // 2. Login al catálogo\n  const loginRes = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${apiUrl}/auth/login`,\n    body: {\n      email: $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com',\n      password: $env.CATALOG_ADMIN_PASSWORD || 'password'\n    },\n    json: true\n  });\n  const token = loginRes.accessToken || loginRes.tokens?.accessToken;\n\n  // 3. Obtener categorías y marcas para mapear nombres a IDs\n  const [catsRes, brandsRes] = await Promise.all([\n    this.helpers.httpRequest({\n      method: 'GET',\n      url: `${apiUrl}/categories`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      json: true\n    }),\n    this.helpers.httpRequest({\n      method: 'GET',\n      url: `${apiUrl}/brands`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      json: true\n    })\n  ]);\n  const categories = catsRes.data || catsRes || [];\n  const brands = brandsRes.data || brandsRes || [];\n\n  // Mapear columnas por índice\n  const colMap = {};\n  headers.forEach((h, i) => {\n    const hl = h.toLowerCase().trim();\n    if (hl.includes('nombre') || hl === 'name') colMap.name = i;\n    else if (hl.includes('precio oferta') || hl.includes('sale')) colMap.salePrice = i;\n    else if (hl.includes('precio') || hl === 'price') colMap.price = i;\n    else if (hl.includes('categor')) colMap.category = i;\n    else if (hl.includes('marca') || hl.includes('brand')) colMap.brand = i;\n    else if (hl.includes('descrip')) colMap.description = i;\n    else if (hl.includes('stock') || hl.includes('inventar')) colMap.stock = i;\n    else if (hl.includes('estado') || hl.includes('status')) colMap.status = i;\n    else if (hl.includes('seo tít') || hl.includes('seo titulo')) colMap.seoTitle = i;\n    else if (hl.includes('seo desc')) colMap.seoDescription = i;\n    else if (hl.includes('seo key') || hl.includes('keyword')) colMap.seoKeywords = i;\n    else if (hl.includes('imagen') || hl.includes('image') || hl.includes('url')) colMap.imageUrl = i;\n  });\n\n  let success = 0;\n  let errors = 0;\n  const errorDetails = [];\n\n  // 4. Crear cada producto\n  for (const row of dataRows) {\n    try {\n      const name = (row[colMap.name] || '').trim();\n      const price = parseFloat(row[colMap.price]) || 0;\n      if (!name || price <= 0) {\n        errors++;\n        errorDetails.push(`\"${name || '(vacío)'}\" - sin nombre o precio`);\n        continue;\n      }\n\n      const catName = (row[colMap.category] || '').trim();\n      const brandName = (row[colMap.brand] || '').trim();\n      const cat = categories.find(c => c.name.toLowerCase() === catName.toLowerCase());\n      const brand = brands.find(b => b.name.toLowerCase() === brandName.toLowerCase());\n\n      const statusVal = (row[colMap.status] || 'activo').toLowerCase();\n\n      const productBody = {\n        name: name,\n        price: price,\n        salePrice: row[colMap.salePrice] ? parseFloat(row[colMap.salePrice]) : null,\n        categoryId: cat?.id || null,\n        brandId: brand?.id || null,\n        description: (row[colMap.description] || '').trim(),\n        stock: row[colMap.stock] ? parseInt(row[colMap.stock]) : null,\n        isActive: statusVal !== 'inactivo',\n        seoTitle: (row[colMap.seoTitle] || '').trim() || null,\n        seoDescription: (row[colMap.seoDescription] || '').trim() || null,\n        seoKeywords: (row[colMap.seoKeywords] || '').trim() || null,\n        imageUrl: (row[colMap.imageUrl] || '').trim() || null,\n        showPrice: true\n      };\n\n      await this.helpers.httpRequest({\n        method: 'POST',\n        url: `${apiUrl}/products`,\n        headers: {\n          'Authorization': `Bearer ${token}`,\n          'Content-Type': 'application/json'\n        },\n        body: productBody,\n        json: true\n      });\n      success++;\n    } catch (err) {\n      errors++;\n      const name = (row[colMap.name] || '(vacío)').trim();\n      errorDetails.push(`\"${name}\" - ${err.message}`);\n    }\n  }\n\n  let result = `✅ ${success} productos importados, ${errors} errores`;\n  if (errorDetails.length > 0) {\n    result += `\\n\\nErrores:\\n${errorDetails.slice(0, 10).join('\\n')}`;\n    if (errorDetails.length > 10) result += `\\n...y ${errorDetails.length - 10} más`;\n  }\n  return { result };\n\n} catch (error) {\n  return { result: `❌ Error al importar: ${error.message}` };\n}"
+      },
+      "id": "tool-import",
+      "name": "Tool Importar desde Sheet",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [1320, 620]
+    },
+    {
+      "parameters": {
+        "name": "contar_productos_en_sheet",
+        "description": "Cuenta cuántos productos hay en el Google Sheet, en la hoja Productos. No requiere parámetros.",
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_SPREADSHEET_ID }}/values/Productos!A:A?key={{ $env.GOOGLE_SHEETS_API_KEY }}",
+        "placeholderDefinitions": "pre",
+        "options": {}
+      },
+      "id": "tool-count",
+      "name": "Tool Contar en Sheet",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1460, 620]
+    },
+    {
+      "parameters": {
+        "content": "## Agente IA con Langchain\n\n**Chat Model:** OpenAI GPT (temp 0.3)\n**Memoria:** Buffer 50 msgs por teléfono\n**Tools:**\n- 🟢 Exportar al Sheet (toolCode)\n- 🔵 Importar desde Sheet (toolCode)\n- 🟡 Contar productos (toolHttpRequest)\n\nEl agente interpreta lenguaje natural\ny ejecuta la herramienta correcta.",
+        "width": 340,
+        "height": 220
+      },
+      "id": "sticky-agent",
+      "name": "Nota Agente IA",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [920, 120]
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 3) + 3 }}",
+        "unit": "minutes"
+      },
+      "id": "wait-delay",
+      "name": "Espera 3-5 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1400, 360]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://evolution:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE || 'catalogo' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Extraer datos mensaje').item.json.senderPhone }}@s.whatsapp.net\",\n  \"text\": {{ JSON.stringify($('Agente Sync Catálogo').item.json.output || 'No pude procesar tu solicitud. Intenta de nuevo.') }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-whatsapp",
+      "name": "Enviar respuesta WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 360]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={\"status\":\"ok\",\"message\":\"processed\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-ok",
+      "name": "Responder Webhook OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1880, 360]
+    },
+    {
+      "parameters": {
+        "content": "## Respuesta WhatsApp\n\n1. Espera 3-5 min aleatoriamente (anti-spam)\n2. Envía respuesta del agente via Evolution API\n3. Cierra el webhook con 200 OK",
+        "width": 300,
+        "height": 120
+      },
+      "id": "sticky-response",
+      "name": "Nota Respuesta",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1560, 180]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-error",
+              "name": "errorMessage",
+              "value": "={{ $json.message || 'Error desconocido en el procesamiento' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "handle-error",
+      "name": "Capturar Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1400, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://evolution:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE || 'catalogo' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Extraer datos mensaje').item.json.senderPhone }}@s.whatsapp.net\",\n  \"text\": \"⚠️ Hubo un error procesando tu solicitud: {{ $json.errorMessage }}. Intenta de nuevo.\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-error-whatsapp",
+      "name": "Enviar error WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 560]
+    },
+    {
+      "parameters": {
+        "content": "## Manejo de errores\n\nSi el agente falla, se captura el error\ny se notifica al admin por WhatsApp\ncon el detalle del problema.",
+        "width": 280,
+        "height": 110
+      },
+      "id": "sticky-errors",
+      "name": "Nota Errores",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1360, 700]
+    },
+    {
+      "parameters": {
+        "content": "## Auto-Sync: Google Sheets → Catálogo\n\n**Trigger:** Google Sheets Trigger (detecta cambios)\n**Sin IA, sin tokens** — solo HTTP requests\n\n**Flujo:**\n1. Detecta fila nueva/editada en el Sheet\n2. Login al API del catálogo\n3. Busca si el producto ya existe (por nombre)\n4. Si existe → actualiza (PATCH)\n5. Si no existe → crea (POST)\n6. Log del resultado\n\n**Columnas esperadas en el Sheet:**\nNombre | Precio | Precio Oferta | Categoría | Marca | Descripción | Stock | Estado",
+        "width": 460,
+        "height": 320
+      },
+      "id": "sticky-autosync",
+      "name": "Info Auto-Sync",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, 900]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute",
+              "minute": 5
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.GOOGLE_SHEETS_SPREADSHEET_ID }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Productos"
+        },
+        "event": "rowAdded",
+        "options": {
+          "includeHeaders": true
+        }
+      },
+      "id": "sheets-trigger",
+      "name": "Sheet: Fila nueva/editada",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [240, 1100],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com' }}\",\n  \"password\": \"{{ $env.CATALOG_ADMIN_PASSWORD || 'password' }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "autosync-login",
+      "name": "Login API (Auto-Sync)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 1100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar fila del Sheet y sincronizar con el catálogo\nconst apiUrl = $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1';\nconst token = $('Login API (Auto-Sync)').first().json.accessToken || $('Login API (Auto-Sync)').first().json.tokens?.accessToken;\nconst row = $('Sheet: Fila nueva/editada').first().json;\n\n// Mapear campos del Sheet (flexible con nombres de columna)\nconst nombre = row['Nombre'] || row['nombre'] || row['Name'] || row['name'] || '';\nconst precio = parseFloat(row['Precio'] || row['precio'] || row['Price'] || 0);\nconst precioOferta = row['Precio Oferta'] || row['precio_oferta'] || row['Sale Price'] || null;\nconst categoria = row['Categoría'] || row['categoria'] || row['Category'] || '';\nconst marca = row['Marca'] || row['marca'] || row['Brand'] || '';\nconst descripcion = row['Descripción'] || row['descripcion'] || row['Description'] || '';\nconst stock = row['Stock'] || row['stock'] || null;\nconst estado = (row['Estado'] || row['estado'] || row['Status'] || 'activo').toLowerCase();\n\nif (!nombre || nombre.trim() === '') {\n  return [{ json: { status: 'skipped', reason: 'Fila sin nombre de producto' } }];\n}\n\nif (precio <= 0) {\n  return [{ json: { status: 'skipped', reason: `\"${nombre}\" sin precio válido` } }];\n}\n\ntry {\n  // Obtener categorías y marcas para mapear nombres → IDs\n  const [catsRes, brandsRes] = await Promise.all([\n    $fetch({\n      method: 'GET',\n      url: `${apiUrl}/categories`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      returnFullResponse: false\n    }),\n    $fetch({\n      method: 'GET',\n      url: `${apiUrl}/brands`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      returnFullResponse: false\n    })\n  ]).catch(() => [null, null]);\n\n  // Fallback: usar this.helpers.httpRequest\n  let categories = [];\n  let brands = [];\n  \n  try {\n    const catsData = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `${apiUrl}/categories`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      json: true\n    });\n    categories = catsData.data || catsData || [];\n  } catch(e) { categories = []; }\n\n  try {\n    const brandsData = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `${apiUrl}/brands`,\n      headers: { 'Authorization': `Bearer ${token}` },\n      json: true\n    });\n    brands = brandsData.data || brandsData || [];\n  } catch(e) { brands = []; }\n\n  const cat = categories.find(c => c.name.toLowerCase() === categoria.toLowerCase().trim());\n  const brand = brands.find(b => b.name.toLowerCase() === marca.toLowerCase().trim());\n\n  // Buscar si el producto ya existe por nombre\n  const searchRes = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${apiUrl}/products?search=${encodeURIComponent(nombre.trim())}&limit=5`,\n    headers: { 'Authorization': `Bearer ${token}` },\n    json: true\n  });\n  const existingProducts = searchRes.data || searchRes || [];\n  const existing = existingProducts.find(p => p.name.toLowerCase().trim() === nombre.toLowerCase().trim());\n\n  const productBody = {\n    name: nombre.trim(),\n    price: precio,\n    salePrice: precioOferta ? parseFloat(precioOferta) : null,\n    categoryId: cat?.id || null,\n    brandId: brand?.id || null,\n    description: descripcion.trim() || null,\n    stock: stock ? parseInt(stock) : null,\n    isActive: estado !== 'inactivo',\n    showPrice: true\n  };\n\n  if (existing) {\n    // Actualizar producto existente\n    await this.helpers.httpRequest({\n      method: 'PATCH',\n      url: `${apiUrl}/products/${existing.id}`,\n      headers: {\n        'Authorization': `Bearer ${token}`,\n        'Content-Type': 'application/json'\n      },\n      body: productBody,\n      json: true\n    });\n    return [{ json: { status: 'updated', product: nombre.trim(), id: existing.id } }];\n  } else {\n    // Crear producto nuevo\n    const created = await this.helpers.httpRequest({\n      method: 'POST',\n      url: `${apiUrl}/products`,\n      headers: {\n        'Authorization': `Bearer ${token}`,\n        'Content-Type': 'application/json'\n      },\n      body: productBody,\n      json: true\n    });\n    return [{ json: { status: 'created', product: nombre.trim(), id: created.id } }];\n  }\n\n} catch (error) {\n  return [{ json: { status: 'error', product: nombre.trim(), error: error.message } }];\n}"
+      },
+      "id": "autosync-process",
+      "name": "Sync Producto al Catálogo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [760, 1100]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-sync",
+              "name": "result",
+              "value": "=Auto-sync: {{ $json.status }} - {{ $json.product || 'desconocido' }}{{ $json.error ? ' | Error: ' + $json.error : '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "autosync-log",
+      "name": "Log Auto-Sync",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1000, 1100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-error",
+              "leftValue": "={{ $('Sync Producto al Catálogo').item.json.status }}",
+              "rightValue": "error",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "autosync-check-error",
+      "name": "Hubo error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1240, 1100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://evolution:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE || 'catalogo' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $env.ADMIN_PHONE }}@s.whatsapp.net\",\n  \"text\": \"⚠️ *Error en Auto-Sync*\\n\\nProducto: {{ $('Sync Producto al Catálogo').item.json.product }}\\nError: {{ $('Sync Producto al Catálogo').item.json.error }}\\n\\nRevisa el Google Sheet.\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "autosync-notify-error",
+      "name": "Notificar error al admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1500, 1020]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "log-ok-sync",
+              "name": "result",
+              "value": "=Auto-sync completado: {{ $('Sync Producto al Catálogo').item.json.product }} ({{ $('Sync Producto al Catálogo').item.json.status }})",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "autosync-done",
+      "name": "Sync OK",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1500, 1200]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos mensaje": {
+      "main": [
+        [
+          {
+            "node": "Es admin?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es admin?": {
+      "main": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignorar no-admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria Conversación": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Exportar al Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Importar desde Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Contar en Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Sync Catálogo",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Sync Catálogo": {
+      "main": [
+        [
+          {
+            "node": "Espera 3-5 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 3-5 min": {
+      "main": [
+        [
+          {
+            "node": "Enviar respuesta WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar respuesta WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturar Error": {
+      "main": [
+        [
+          {
+            "node": "Enviar error WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet: Fila nueva/editada": {
+      "main": [
+        [
+          {
+            "node": "Login API (Auto-Sync)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login API (Auto-Sync)": {
+      "main": [
+        [
+          {
+            "node": "Sync Producto al Catálogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Producto al Catálogo": {
+      "main": [
+        [
+          {
+            "node": "Log Auto-Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Auto-Sync": {
+      "main": [
+        [
+          {
+            "node": "Hubo error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hubo error?": {
+      "main": [
+        [
+          {
+            "node": "Notificar error al admin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sync OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "sync"
+    },
+    {
+      "name": "google-sheets"
+    },
+    {
+      "name": "whatsapp"
+    },
+    {
+      "name": "ai-agent"
+    },
+    {
+      "name": "productos"
+    }
+  ],
+  "triggerCount": 2,
+  "updatedAt": "2026-03-11T00:00:00.000Z",
+  "versionId": "2"
+}

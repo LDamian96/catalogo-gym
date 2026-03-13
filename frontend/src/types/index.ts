@@ -16,7 +16,12 @@ export interface Settings {
   cartEnabled: boolean;
   variantsEnabled: boolean;
   brandsFilterEnabled: boolean;
+  stockAlertsEnabled: boolean;
   welcomeMessage: string | null;
+  // Redes Sociales
+  facebook: string | null;
+  instagram: string | null;
+  tiktok: string | null;
   // SEO
   seoTitle: string | null;
   seoDescription: string | null;
@@ -41,7 +46,11 @@ export interface UpdateSettingsDto {
   cartEnabled?: boolean;
   variantsEnabled?: boolean;
   brandsFilterEnabled?: boolean;
+  stockAlertsEnabled?: boolean;
   welcomeMessage?: string | null;
+  facebook?: string | null;
+  instagram?: string | null;
+  tiktok?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   seoKeywords?: string | null;

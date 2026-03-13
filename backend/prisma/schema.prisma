@@ -63,6 +63,7 @@ model Settings {
   cartEnabled          Boolean  @default(true) @map("cart_enabled")
   variantsEnabled      Boolean  @default(true) @map("variants_enabled")
   brandsFilterEnabled  Boolean  @default(true) @map("brands_filter_enabled")
+  stockAlertsEnabled   Boolean  @default(false) @map("stock_alerts_enabled")
   welcomeMessage  String?  @map("welcome_message")
 
   // SEO Global
@@ -71,6 +72,11 @@ model Settings {
   seoKeywords     String?  @map("seo_keywords")
   ogImage         String?  @map("og_image")
   ogImagePublicId String?  @map("og_image_public_id")
+
+  // Redes Sociales
+  facebook        String?
+  instagram       String?
+  tiktok          String?
 
   // Tracking & Ads
   googleAnalyticsId  String? @map("google_analytics_id")

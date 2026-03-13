@@ -11,6 +11,7 @@ import { UpdateComboDto } from './dto/update-combo.dto';
 import { ReorderCombosDto } from './dto/reorder-combos.dto';
 import { Combo } from '@prisma/client';
 import { generateSlug } from '../../common/utils/slug.util';
+import { generateComboSeo } from '../../common/utils/auto-seo.util';
 
 const comboInclude = {
   comboProducts: {
@@ -82,6 +83,20 @@ export class CombosService {
       _max: { order: true },
     });
     const order = dto.order ?? (maxOrder._max.order ?? -1) + 1;
+
+    // Auto-generate SEO fields if not provided
+    if (!dto.seoTitle || !dto.seoDescription || !dto.seoKeywords) {
+      const settings = await this.prisma.settings.findUnique({ where: { id: 'main' }, select: { businessName: true, currency: true } });
+      const autoSeo = generateComboSeo({
+        name: dto.name,
+        price: dto.salePrice || dto.price,
+        currency: settings?.currency || 'S/',
+        businessName: settings?.businessName,
+      });
+      if (!dto.seoTitle) dto.seoTitle = autoSeo.seoTitle;
+      if (!dto.seoDescription) dto.seoDescription = autoSeo.seoDescription;
+      if (!dto.seoKeywords) dto.seoKeywords = autoSeo.seoKeywords;
+    }
 
     const combo = await this.prisma.combo.create({
       data: { ...dto, slug, order },

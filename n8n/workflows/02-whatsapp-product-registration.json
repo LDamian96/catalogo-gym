@@ -1,0 +1,995 @@
+{
+  "name": "02 - Registro de Productos via WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-product-register",
+        "options": {
+          "rawBody": true
+        },
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "whatsapp-product-register-trigger"
+    },
+    {
+      "parameters": {
+        "content": "## 02 - Registro de Productos via WhatsApp\n\nPermite al admin crear productos enviando una imagen + texto por WhatsApp.\n\n**Flujo:**\n1. Recibe mensaje de WhatsApp (Evolution API)\n2. Verifica si es el numero del admin (ADMIN_PHONE)\n3. Si tiene imagen: descarga imagen, extrae datos con IA, sube a Cloudinary, crea producto en API\n4. Si no tiene imagen: pide que envie foto del producto\n5. Espera 3-5 min (delay natural) y envia confirmacion\n\n**Variables de entorno necesarias:**\n- ADMIN_PHONE\n- EVOLUTION_API_URL, EVOLUTION_API_KEY, EVOLUTION_INSTANCE\n- CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET\n- CATALOG_API_URL, CATALOG_ADMIN_EMAIL, CATALOG_ADMIN_PASSWORD",
+        "width": 520,
+        "height": 350
+      },
+      "id": "sticky-info",
+      "name": "Info del Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, -80]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "set-message",
+              "name": "messageText",
+              "value": "={{ $json.body.data.message.conversation || $json.body.data.message.imageMessage?.caption || $json.body.data.message.extendedTextMessage?.text || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-has-image",
+              "name": "hasImage",
+              "value": "={{ !!$json.body.data.message.imageMessage }}",
+              "type": "boolean"
+            },
+            {
+              "id": "set-image-mimetype",
+              "name": "imageMimetype",
+              "value": "={{ $json.body.data.message.imageMessage?.mimetype || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-message-key",
+              "name": "messageKey",
+              "value": "={{ JSON.stringify($json.body.data.key) }}",
+              "type": "string"
+            },
+            {
+              "id": "set-instance",
+              "name": "instanceName",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-data",
+      "name": "Extraer datos del mensaje",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-admin",
+              "leftValue": "={{ $json.senderPhone }}",
+              "rightValue": "={{ $env.ADMIN_PHONE }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-admin",
+      "name": "Es admin?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "content": "## Verificacion de admin\n\nSolo el numero configurado en la variable de entorno ADMIN_PHONE puede registrar productos.\nSi no es admin, se ignora el mensaje y se responde 200 OK al webhook.",
+        "width": 320,
+        "height": 130
+      },
+      "id": "sticky-admin",
+      "name": "Nota Admin",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [650, 130]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-image-check",
+              "leftValue": "={{ $json.hasImage }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-image",
+      "name": "Tiene imagen?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "content": "## Sin imagen\n\nSi el admin envia un mensaje sin imagen, se le responde pidiendole que envie una foto del producto junto con nombre, precio y categoria.",
+        "width": 300,
+        "height": 120
+      },
+      "id": "sticky-no-image",
+      "name": "Nota Sin Imagen",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1100, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "no-image-msg",
+              "name": "responseText",
+              "value": "Envia una foto del producto con su nombre, precio y categoria.\n\nEjemplo: envia una imagen y escribe:\nCreatina Monohidrate 300g Optimum 89.90 Proteinas",
+              "type": "string"
+            },
+            {
+              "id": "no-image-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "no-image-instance",
+              "name": "instanceName",
+              "value": "={{ $json.instanceName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "no-image-message",
+      "name": "Pedir imagen",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1160, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $json.instanceName || $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}@s.whatsapp.net\",\n  \"text\": {{ JSON.stringify($json.responseText) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-no-image-whatsapp",
+      "name": "Enviar pedido imagen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1390, 480]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-no-image",
+      "name": "Responder OK (no image)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1610, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/chat/getBase64FromMediaMessage/{{ $json.instanceName || $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": {\n    \"key\": {{ $json.messageKey }}\n  }\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "download-image",
+      "name": "Descargar imagen de Evolution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 200]
+    },
+    {
+      "parameters": {
+        "content": "## Descarga de imagen\n\nSe usa el endpoint POST /chat/getBase64FromMediaMessage de Evolution API.\nRetorna la imagen en base64 que luego se sube a Cloudinary.",
+        "width": 320,
+        "height": 120
+      },
+      "id": "sticky-download",
+      "name": "Nota Descarga",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1100, 50]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analiza el siguiente texto enviado por un administrador para crear un producto en el catalogo. Extrae la informacion en formato JSON.\n\nTexto del admin:\n\"{{ $('Extraer datos del mensaje').item.json.messageText }}\"\n\nEl admin puede escribir de forma casual, como:\n- \"creatina monohidrate 300g optimum 89.90 proteinas\"\n- \"whey protein gold 2lb ON 189.90 proteinas\"\n- \"BCAA 400g Universal 59.90\"\n- \"guantes nike talla M 45.90 accesorios\"\n\nResponde UNICAMENTE con un JSON valido (sin markdown, sin explicacion) con estos campos:\n{\n  \"name\": \"nombre completo del producto con gramos/unidad si aplica\",\n  \"price\": numero (precio en soles, sin simbolo S/),\n  \"salePrice\": numero o null (precio de oferta si lo menciona),\n  \"description\": \"descripcion breve del producto (maximo 200 caracteres, generala tu basandote en el nombre)\",\n  \"categoryName\": \"nombre de la categoria (ej: Proteinas, Creatinas, Pre-entreno, Aminoacidos, Accesorios, Vitaminas)\",\n  \"stock\": numero o null\n}\n\nSi el texto no tiene precio, usa 0.\nSi no menciona categoria, infiere una razonable basada en el tipo de producto.\nSi no tiene descripcion detallada, genera una breve y atractiva basada en el nombre del producto.",
+        "options": {
+          "systemMessage": "Eres un asistente experto en suplementos deportivos que extrae datos de productos para un catalogo online. Siempre respondes SOLO con JSON valido, sin texto adicional ni formato markdown. Eres muy bueno interpretando mensajes casuales y abreviados."
+        }
+      },
+      "id": "ai-extract-product",
+      "name": "IA - Extraer datos producto",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1400, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 500
+        }
+      },
+      "id": "openai-model-extract",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [1400, 420],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiOutput = $input.first().json.output || $input.first().json.text || '{}';\n\ntry {\n  // Limpiar posible markdown del output\n  let cleaned = aiOutput.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  const productData = JSON.parse(cleaned);\n  \n  // Obtener base64 de la imagen descargada\n  const imageResponse = $('Descargar imagen de Evolution').first().json;\n  const imageBase64 = imageResponse.base64 || imageResponse.data || '';\n  const imageMimetype = $('Extraer datos del mensaje').first().json.imageMimetype || 'image/jpeg';\n  \n  return [{\n    json: {\n      name: productData.name || 'Producto sin nombre',\n      price: parseFloat(productData.price) || 0,\n      salePrice: productData.salePrice ? parseFloat(productData.salePrice) : null,\n      description: productData.description || '',\n      categoryName: productData.categoryName || 'General',\n      stock: productData.stock ? parseInt(productData.stock) : null,\n      imageBase64: imageBase64,\n      imageMimetype: imageMimetype,\n      senderPhone: $('Extraer datos del mensaje').first().json.senderPhone,\n      instanceName: $('Extraer datos del mensaje').first().json.instanceName\n    }\n  }];\n} catch (e) {\n  return [{\n    json: {\n      error: true,\n      errorMessage: 'No pude interpretar los datos del producto: ' + e.message,\n      senderPhone: $('Extraer datos del mensaje').first().json.senderPhone,\n      instanceName: $('Extraer datos del mensaje').first().json.instanceName\n    }\n  }];\n}"
+      },
+      "id": "parse-product-data",
+      "name": "Parsear datos del producto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1630, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-error",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notTrue"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-parse-error",
+      "name": "Parse exitoso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1860, 200]
+    },
+    {
+      "parameters": {
+        "content": "## Upload a Cloudinary\n\nSube la imagen en base64 a Cloudinary usando la REST API.\nSe usa upload_preset o api_key + api_secret.\nRetorna la URL segura de la imagen subida.",
+        "width": 320,
+        "height": 130
+      },
+      "id": "sticky-cloudinary",
+      "name": "Nota Cloudinary",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2040, -30]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudinary.com/v1_1/{{ $env.CLOUDINARY_CLOUD_NAME }}/image/upload",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"file\": \"data:{{ $json.imageMimetype }};base64,{{ $json.imageBase64 }}\",\n  \"api_key\": \"{{ $env.CLOUDINARY_API_KEY }}\",\n  \"api_secret\": \"{{ $env.CLOUDINARY_API_SECRET }}\",\n  \"folder\": \"catalogo/productos\",\n  \"upload_preset\": \"{{ $env.CLOUDINARY_UPLOAD_PRESET || 'ml_default' }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "upload-cloudinary",
+      "name": "Subir imagen a Cloudinary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2090, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cloudinaryResponse = $input.first().json;\nconst productData = $('Parsear datos del producto').first().json;\n\nreturn [{\n  json: {\n    ...productData,\n    cloudinaryUrl: cloudinaryResponse.secure_url || cloudinaryResponse.url || '',\n    cloudinaryPublicId: cloudinaryResponse.public_id || ''\n  }\n}];"
+      },
+      "id": "merge-cloudinary-data",
+      "name": "Combinar datos + Cloudinary URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2310, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $env.CATALOG_ADMIN_EMAIL || 'admin@catalogo.com' }}\",\n  \"password\": \"{{ $env.CATALOG_ADMIN_PASSWORD || 'password' }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "auth-login",
+      "name": "Login API Catalogo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2530, 100]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/categories",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.accessToken || $json.tokens?.accessToken }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "get-categories",
+      "name": "GET Categorias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2750, 100]
+    },
+    {
+      "parameters": {
+        "content": "## Autenticacion y creacion\n\n1. Login con credenciales de admin al API del catalogo\n2. Obtiene lista de categorias para mapear nombre -> ID\n3. Crea el producto con POST /products incluyendo la URL de Cloudinary\n4. Responde al admin con confirmacion",
+        "width": 380,
+        "height": 140
+      },
+      "id": "sticky-create",
+      "name": "Nota Creacion",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2490, -60]
+    },
+    {
+      "parameters": {
+        "jsCode": "const categories = $input.first().json.data || $input.first().json || [];\nconst productData = $('Combinar datos + Cloudinary URL').first().json;\nconst authData = $('Login API Catalogo').first().json;\n\n// Buscar categoria por nombre (case insensitive, parcial)\nlet categoryId = null;\nconst catList = Array.isArray(categories) ? categories : (categories.data || []);\n\nfor (const cat of catList) {\n  if (cat.name && productData.categoryName) {\n    const catNameLower = cat.name.toLowerCase();\n    const searchNameLower = productData.categoryName.toLowerCase();\n    if (catNameLower.includes(searchNameLower) || searchNameLower.includes(catNameLower)) {\n      categoryId = cat.id;\n      break;\n    }\n  }\n}\n\n// Si no encontro match, usar la primera categoria disponible\nif (!categoryId && catList.length > 0) {\n  categoryId = catList[0].id;\n}\n\nreturn [{\n  json: {\n    ...productData,\n    categoryId: categoryId,\n    accessToken: authData.accessToken || authData.tokens?.accessToken\n  }\n}];"
+      },
+      "id": "map-category",
+      "name": "Mapear categoria",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2970, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CATALOG_API_URL || 'http://cat_backend:3000/api/v1' }}/products",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.accessToken }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": {{ JSON.stringify($json.name) }},\n  \"categoryId\": \"{{ $json.categoryId }}\",\n  \"price\": {{ $json.price }},\n  \"salePrice\": {{ $json.salePrice || 'null' }},\n  \"description\": {{ JSON.stringify($json.description || '') }},\n  \"stock\": {{ $json.stock || 'null' }},\n  \"isActive\": true,\n  \"showPrice\": true,\n  \"images\": [\"{{ $json.cloudinaryUrl }}\"]\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "create-product",
+      "name": "Crear producto en API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3190, 100]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "success-data",
+              "name": "productName",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "success-price",
+              "name": "productPrice",
+              "value": "={{ $json.price }}",
+              "type": "number"
+            },
+            {
+              "id": "success-id",
+              "name": "productId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "success-phone",
+              "name": "senderPhone",
+              "value": "={{ $('Extraer datos del mensaje').item.json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "success-instance",
+              "name": "instanceName",
+              "value": "={{ $('Extraer datos del mensaje').item.json.instanceName }}",
+              "type": "string"
+            },
+            {
+              "id": "success-cloudinary",
+              "name": "cloudinaryUrl",
+              "value": "={{ $('Combinar datos + Cloudinary URL').item.json.cloudinaryUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "success-data",
+      "name": "Datos de exito",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [3410, 100]
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 121) + 180 }}",
+        "unit": "seconds"
+      },
+      "id": "wait-natural-delay",
+      "name": "Espera 3-5 min (natural)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [3630, 100]
+    },
+    {
+      "parameters": {
+        "content": "## Delay natural\n\nEspera entre 3 y 5 minutos antes de enviar la confirmacion.\nEsto hace que las respuestas se sientan mas naturales y no como un bot automatizado.",
+        "width": 310,
+        "height": 120
+      },
+      "id": "sticky-delay",
+      "name": "Nota Delay",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [3590, -40]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $json.instanceName || $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}@s.whatsapp.net\",\n  \"text\": \"Producto creado: {{ $json.productName }} - S/{{ $json.productPrice }} \\u2705\\n\\n{{ $json.cloudinaryUrl }}\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-success-whatsapp",
+      "name": "Enviar confirmacion al admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3850, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-ok",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [4070, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ignored', reason: 'not admin' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-not-admin",
+      "name": "Responder (no admin)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [920, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "parse-error-msg",
+              "name": "responseText",
+              "value": "=No pude interpretar los datos del producto.\n\n{{ $json.errorMessage || 'Error desconocido' }}\n\nIntenta de nuevo enviando una foto con el formato:\nNombre del producto Precio Categoria",
+              "type": "string"
+            },
+            {
+              "id": "parse-error-phone",
+              "name": "senderPhone",
+              "value": "={{ $json.senderPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "parse-error-instance",
+              "name": "instanceName",
+              "value": "={{ $json.instanceName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "parse-error-message",
+      "name": "Mensaje error parse",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2090, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $json.instanceName || $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.senderPhone }}@s.whatsapp.net\",\n  \"text\": {{ JSON.stringify($json.responseText) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-parse-error-whatsapp",
+      "name": "Enviar error al admin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2310, 380]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'ok' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-response-parse-error",
+      "name": "Responder OK (parse error)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2530, 380]
+    },
+    {
+      "parameters": {
+        "content": "## Manejo de errores\n\nSi la IA no puede interpretar el texto del admin, o hay un error en el parse del JSON,\nse envia un mensaje de error al admin explicando que intente de nuevo con el formato correcto.",
+        "width": 340,
+        "height": 120
+      },
+      "id": "sticky-error",
+      "name": "Nota Error",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2050, 530]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos del mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos del mensaje": {
+      "main": [
+        [
+          {
+            "node": "Es admin?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es admin?": {
+      "main": [
+        [
+          {
+            "node": "Tiene imagen?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder (no admin)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiene imagen?": {
+      "main": [
+        [
+          {
+            "node": "Descargar imagen de Evolution",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pedir imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedir imagen": {
+      "main": [
+        [
+          {
+            "node": "Enviar pedido imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar pedido imagen": {
+      "main": [
+        [
+          {
+            "node": "Responder OK (no image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar imagen de Evolution": {
+      "main": [
+        [
+          {
+            "node": "IA - Extraer datos producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA - Extraer datos producto": {
+      "main": [
+        [
+          {
+            "node": "Parsear datos del producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IA - Extraer datos producto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear datos del producto": {
+      "main": [
+        [
+          {
+            "node": "Parse exitoso?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse exitoso?": {
+      "main": [
+        [
+          {
+            "node": "Subir imagen a Cloudinary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje error parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir imagen a Cloudinary": {
+      "main": [
+        [
+          {
+            "node": "Combinar datos + Cloudinary URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar datos + Cloudinary URL": {
+      "main": [
+        [
+          {
+            "node": "Login API Catalogo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login API Catalogo": {
+      "main": [
+        [
+          {
+            "node": "GET Categorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Categorias": {
+      "main": [
+        [
+          {
+            "node": "Mapear categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear categoria": {
+      "main": [
+        [
+          {
+            "node": "Crear producto en API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear producto en API": {
+      "main": [
+        [
+          {
+            "node": "Datos de exito",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos de exito": {
+      "main": [
+        [
+          {
+            "node": "Espera 3-5 min (natural)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera 3-5 min (natural)": {
+      "main": [
+        [
+          {
+            "node": "Enviar confirmacion al admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar confirmacion al admin": {
+      "main": [
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje error parse": {
+      "main": [
+        [
+          {
+            "node": "Enviar error al admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar error al admin": {
+      "main": [
+        [
+          {
+            "node": "Responder OK (parse error)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "whatsapp"
+    },
+    {
+      "name": "productos"
+    },
+    {
+      "name": "admin"
+    },
+    {
+      "name": "cloudinary"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-11T00:00:00.000Z",
+  "versionId": "2"
+}

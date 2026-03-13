@@ -74,7 +74,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:bg-[#000000] overflow-hidden pb-24 lg:pb-0">
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:bg-[#000000] overflow-hidden">
       {/* Desktop Navbar + Hero - hidden on mobile */}
       <div className="hidden lg:block">
         <Navbar settings={settings} categories={categories} transparent />
@@ -403,48 +403,72 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
         </section>
       )}
 
-      {/* Mobile Combos - White cards with gradient header matching BETA.pen */}
-      <section className="lg:hidden pt-1">
-        <div className="flex items-center justify-between px-3.5 mb-2">
-          <h2 className="text-[18px] font-extrabold text-[#0F172A] dark:text-white" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>Combos</h2>
-          <Link href="/productos" className="text-[13px] font-semibold text-[#0891B2]">Ver todos</Link>
-        </div>
+      {/* Mobile Combos - Real data with links */}
+      {combos.length > 0 && (
+        <section className="lg:hidden pt-1">
+          <div className="flex items-center justify-between px-3.5 mb-2">
+            <h2 className="text-[18px] font-extrabold text-[#0F172A] dark:text-white" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>Combos</h2>
+            <Link href="/combos" className="text-[13px] font-semibold text-[#0891B2]">Ver todos</Link>
+          </div>
 
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-3.5 pb-2">
-          {[
-            { emoji: '💪', name: 'Combo Fuerza', desc: 'Whey 5lb + Creatina 300g', save: 15, price: 89990, original: 105900, gradient: 'from-[#0891B2] to-[#0284C7]' },
-            { emoji: '🔥', name: 'Combo Beast', desc: 'Pre-workout + BCAA + Shaker', save: 20, price: 119990, original: 149900, gradient: 'from-[#7C3AED] to-[#4F46E5]' },
-          ].map((combo, index) => (
-            <motion.div
-              key={`mobile-combo-${index}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.05, ease: [0.32, 0.72, 0, 1] }}
-              className="snap-start flex-shrink-0 w-[200px]"
-            >
-              <div className="bg-white dark:bg-neutral-900 rounded-[18px] overflow-hidden shadow-[0_4px_12px_#0000000F]">
-                {/* Gradient header with emoji */}
-                <div className={`relative h-[110px] bg-gradient-to-br ${combo.gradient}`}>
-                  <span className="absolute top-2 left-2 inline-flex px-2 py-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-[10px]">
-                    Ahorra {combo.save}%
-                  </span>
-                  <span className="absolute text-[50px] right-3 top-6">{combo.emoji}</span>
-                </div>
-                {/* White body */}
-                <div className="p-2.5 flex flex-col gap-1">
-                  <h3 className="text-[14px] font-extrabold text-[#0F172A] dark:text-white">{combo.name}</h3>
-                  <p className="text-[11px] text-[#64748B]">{combo.desc}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[15px] font-extrabold text-[#0F172A] dark:text-white">S/ {(combo.price / 100).toFixed(2)}</span>
-                    <span className="text-[11px] text-[#CBD5E1] line-through">S/ {(combo.original / 100).toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-3.5 pb-2">
+            {combos.slice(0, 6).map((combo, index) => {
+              const displayPrice = Number(combo.salePrice || combo.price);
+              const originalPrice = combo.salePrice ? Number(combo.price) : null;
+              const gradients = [
+                'from-[#0891B2] to-[#0284C7]',
+                'from-[#7C3AED] to-[#4F46E5]',
+                'from-[#059669] to-[#0D9488]',
+                'from-[#E11D48] to-[#BE123C]',
+                'from-[#D97706] to-[#EA580C]',
+                'from-[#2563EB] to-[#4F46E5]',
+              ];
+              return (
+                <motion.div
+                  key={combo.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.05, ease: [0.32, 0.72, 0, 1] }}
+                  className="snap-start flex-shrink-0 w-[200px]"
+                >
+                  <Link href={`/combos/${combo.slug}`}>
+                    <div className="bg-white dark:bg-neutral-900 rounded-[18px] overflow-hidden shadow-[0_4px_12px_#0000000F]">
+                      {/* Image or gradient header */}
+                      <div className={`relative h-[110px] bg-gradient-to-br ${gradients[index % gradients.length]} overflow-hidden`}>
+                        {combo.image && (
+                          <Image src={combo.image} alt={combo.name} fill className="object-cover" sizes="200px" />
+                        )}
+                        {combo.discountPercent && (
+                          <span className="absolute top-2 left-2 inline-flex px-2 py-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-[10px] z-10">
+                            -{combo.discountPercent}% OFF
+                          </span>
+                        )}
+                        <span className="absolute bottom-2 right-2 inline-flex px-2 py-0.5 bg-black/40 text-white text-[9px] font-semibold rounded-lg z-10 backdrop-blur-sm">
+                          {combo.comboProducts.length} productos
+                        </span>
+                      </div>
+                      {/* White body */}
+                      <div className="p-2.5 flex flex-col gap-1">
+                        <h3 className="text-[14px] font-extrabold text-[#0F172A] dark:text-white line-clamp-1">{combo.name}</h3>
+                        {combo.description && (
+                          <p className="text-[11px] text-[#64748B] line-clamp-1">{combo.description}</p>
+                        )}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-[15px] font-extrabold text-[#0F172A] dark:text-white">{settings.currency}{displayPrice.toFixed(2)}</span>
+                          {originalPrice && (
+                            <span className="text-[11px] text-[#CBD5E1] line-through">{settings.currency}{originalPrice.toFixed(2)}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Mobile Brands - Elegant Marquee Animation */}
       {brands.length > 0 && (

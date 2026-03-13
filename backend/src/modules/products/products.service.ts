@@ -20,6 +20,7 @@ import { ProductQueryDto, PaginatedProducts } from './dto/product-query.dto';
 import { ReorderImagesDto } from './dto/reorder-images.dto';
 import { Product, ProductImage, Prisma } from '@prisma/client';
 import { generateSlug } from '../../common/utils/slug.util';
+import { generateProductSeo } from '../../common/utils/auto-seo.util';
 
 type ProductWithRelations = Product & {
   category?: { id: string; name: string; slug: string };
@@ -239,6 +240,23 @@ export class ProductsService {
       _max: { order: true },
     });
     const order = dto.order ?? (maxOrder._max.order ?? -1) + 1;
+
+    // Auto-generate SEO fields if not provided
+    if (!dto.seoTitle || !dto.seoDescription || !dto.seoKeywords) {
+      const settings = await this.prisma.settings.findUnique({ where: { id: 'main' }, select: { businessName: true, currency: true } });
+      const brandName = dto.brandId ? (await this.prisma.brand.findUnique({ where: { id: dto.brandId }, select: { name: true } }))?.name : undefined;
+      const autoSeo = generateProductSeo({
+        name: dto.name,
+        categoryName: category.name,
+        brandName,
+        price: dto.salePrice || dto.price,
+        currency: settings?.currency || 'S/',
+        businessName: settings?.businessName,
+      });
+      if (!dto.seoTitle) dto.seoTitle = autoSeo.seoTitle;
+      if (!dto.seoDescription) dto.seoDescription = autoSeo.seoDescription;
+      if (!dto.seoKeywords) dto.seoKeywords = autoSeo.seoKeywords;
+    }
 
     // Extract variantValues from DTO
     const { variantValues, ...productData } = dto;

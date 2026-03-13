@@ -9,18 +9,31 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const frontendUrl = configService.get<string>('app.frontendUrl');
+  const nodeEnv = configService.get<string>('app.nodeEnv');
 
   // Security middleware
   app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'blob:', 'res.cloudinary.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        connectSrc: ["'self'", frontendUrl || ''].filter(Boolean),
+        frameAncestors: ["'none'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
     hsts: { maxAge: 31536000, includeSubDomains: true },
   }));
   app.use(compression());
 
   // CORS configuration
-  const frontendUrl = configService.get<string>('app.frontendUrl');
-  const nodeEnv = configService.get<string>('app.nodeEnv');
   const corsOrigins: (string | RegExp)[] = [];
   if (frontendUrl) corsOrigins.push(frontendUrl);
   if (nodeEnv === 'development') {
