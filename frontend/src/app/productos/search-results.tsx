@@ -143,16 +143,19 @@ export function SearchResults({
   }, []);
 
 
-  const handleSearchInternal = async (searchQuery: string, page = 1, resetFilters = false) => {
+  const handleSearchInternal = async (searchQuery: string, page = 1, resetFilters = false, overrides?: { categoryId?: string; brandId?: string }) => {
     setIsSearching(true);
+
+    const catId = overrides?.categoryId !== undefined ? overrides.categoryId : selectedCategory;
+    const brdId = overrides?.brandId !== undefined ? overrides.brandId : selectedBrand;
 
     try {
       const params = new URLSearchParams();
       if (searchQuery) params.set('q', searchQuery);
       if (page > 1) params.set('page', String(page));
       if (!resetFilters) {
-        if (selectedCategory) params.set('categoryId', selectedCategory);
-        if (selectedBrand) params.set('brandId', selectedBrand);
+        if (catId) params.set('categoryId', catId);
+        if (brdId) params.set('brandId', brdId);
         if (sort && sort !== 'relevance') params.set('sort', sort);
         if (minPrice) params.set('minPrice', minPrice);
         if (maxPrice) params.set('maxPrice', maxPrice);
@@ -165,8 +168,8 @@ export function SearchResults({
         q: searchQuery,
         page,
         limit: 12,
-        categoryId: resetFilters ? undefined : selectedCategory || undefined,
-        brandId: resetFilters ? undefined : selectedBrand || undefined,
+        categoryId: resetFilters ? undefined : catId || undefined,
+        brandId: resetFilters ? undefined : brdId || undefined,
         sort: resetFilters ? undefined : (sort as 'relevance' | 'newest' | 'price_asc' | 'price_desc' | 'name') || undefined,
         minPrice: resetFilters ? undefined : (minPrice ? parseFloat(minPrice) : undefined),
         maxPrice: resetFilters ? undefined : (maxPrice ? parseFloat(maxPrice) : undefined),
@@ -180,15 +183,48 @@ export function SearchResults({
     }
   };
 
-  const handleSearch = async (searchQuery: string, page = 1, resetFilters = false) => {
+  const handleSearch = async (searchQuery: string, page = 1, resetFilters = false, overrides?: { categoryId?: string; brandId?: string }) => {
     setInputValue(searchQuery);
     setQuery(searchQuery);
-    await handleSearchInternal(searchQuery, page, resetFilters);
+    await handleSearchInternal(searchQuery, page, resetFilters, overrides);
   };
 
   const handlePageChange = (page: number) => {
     handleSearch(query, page);
   };
+
+  const selectFilter = (newCategoryId?: string, newBrandId?: string) => {
+    const catId = newCategoryId !== undefined ? newCategoryId : selectedCategory;
+    const brdId = newBrandId !== undefined ? newBrandId : selectedBrand;
+    if (newCategoryId !== undefined) setSelectedCategory(newCategoryId);
+    if (newBrandId !== undefined) setSelectedBrand(newBrandId);
+    setIsSearching(true);
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (catId) params.set('categoryId', catId);
+    if (brdId) params.set('brandId', brdId);
+    if (sort && sort !== 'relevance') params.set('sort', sort);
+    window.history.replaceState(null, '', `/productos?${params.toString()}`);
+    searchCatalog({
+      q: query,
+      page: 1,
+      limit: 12,
+      categoryId: catId || undefined,
+      brandId: brdId || undefined,
+      sort: (sort as 'relevance' | 'newest' | 'price_asc' | 'price_desc' | 'name') || undefined,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+    }).then(data => {
+      setResults(data);
+    }).catch(err => {
+      console.error('Search error:', err);
+    }).finally(() => {
+      setIsSearching(false);
+    });
+  };
+
+  const selectCategory = (categoryId: string) => selectFilter(categoryId, undefined);
+  const selectBrand = (brandId: string) => selectFilter(undefined, brandId);
 
   const clearFilters = () => {
     setSelectedCategory('');
@@ -224,8 +260,12 @@ export function SearchResults({
   const suggestions = ['Nuevo', 'Oferta', 'Popular', 'Destacado'];
 
   return (
-    <div className={cn(
-      "min-h-screen dark:bg-[#000000] dark:lg:from-[#000000] dark:lg:via-[#000000] dark:lg:to-[#000000]",
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={cn(
+      "min-h-screen flex flex-col dark:from-[#000000] dark:via-[#000000] dark:to-[#000000]",
       "bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none lg:bg-gradient-to-b lg:from-sky-50 lg:via-cyan-50/20 lg:to-white"
     )}>
       {/* Navbar - desktop only (Navbar itself is hidden lg:block) */}
@@ -338,8 +378,7 @@ export function SearchResults({
               {/* All categories option */}
               <button
                 onClick={() => {
-                  setSelectedCategory('');
-                  handleSearch(query, 1);
+                  selectCategory('');
                 }}
                 className="flex flex-col items-center gap-1.5 flex-shrink-0"
               >
@@ -363,12 +402,11 @@ export function SearchResults({
                   Todos
                 </span>
               </button>
-              {categories.map((category, index) => (
+              {categories.filter(c => (c._count?.products ?? 0) > 0).map((category, index) => (
                 <motion.button
                   key={category.id}
                   onClick={() => {
-                    setSelectedCategory(category.id);
-                    handleSearch(query, 1);
+                    selectCategory(category.id);
                   }}
                   className="flex flex-col items-center gap-1.5 flex-shrink-0"
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -428,8 +466,7 @@ export function SearchResults({
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-0.5">
               <motion.button
                 onClick={() => {
-                  setSelectedBrand('');
-                  handleSearch(query, 1);
+                  selectBrand('');
                 }}
                 className={cn(
                   'flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-300 border',
@@ -441,12 +478,11 @@ export function SearchResults({
               >
                 Todas
               </motion.button>
-              {brands.map((brand, index) => (
+              {brands.filter(b => (b._count?.products ?? 0) > 0).map((brand, index) => (
                 <motion.button
                   key={brand.id}
                   onClick={() => {
-                    setSelectedBrand(brand.id);
-                    handleSearch(query, 1);
+                    selectBrand(brand.id);
                   }}
                   className={cn(
                     'flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-300 border whitespace-nowrap',
@@ -467,8 +503,7 @@ export function SearchResults({
         </motion.div>
       )}
 
-      {/* Spacer for fixed navbar - Desktop only */}
-      <div className="hidden lg:block h-20" />
+      {/* Spacer is now handled by the Navbar component */}
 
       {/* Hero Header with gradient - Desktop only */}
       <motion.div
@@ -670,7 +705,7 @@ export function SearchResults({
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="px-0 lg:px-8 py-0 lg:py-6">
+      <div className="flex-1 px-0 lg:px-8 py-0 lg:py-6 pb-24 lg:pb-6">
         <div className="flex gap-7">
           {/* Desktop Sidebar - Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
@@ -717,10 +752,7 @@ export function SearchResults({
                     >
                       <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
                         <button
-                          onClick={() => {
-                            setSelectedCategory('');
-                            handleSearch(query, 1);
-                          }}
+                          onClick={() => selectCategory('')}
                           className={cn(
                             'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                             !selectedCategory
@@ -730,13 +762,10 @@ export function SearchResults({
                         >
                           Todas
                         </button>
-                        {categories.map((category) => (
+                        {categories.filter(c => (c._count?.products ?? 0) > 0).map((category) => (
                           <button
                             key={category.id}
-                            onClick={() => {
-                              setSelectedCategory(category.id);
-                              handleSearch(query, 1);
-                            }}
+                            onClick={() => selectCategory(category.id)}
                             className={cn(
                               'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                               selectedCategory === category.id
@@ -789,8 +818,7 @@ export function SearchResults({
                         <div className="px-3 pb-3 space-y-1 max-h-64 overflow-y-auto">
                           <button
                             onClick={() => {
-                              setSelectedBrand('');
-                              handleSearch(query, 1);
+                              selectBrand('');
                             }}
                             className={cn(
                               'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
@@ -801,13 +829,10 @@ export function SearchResults({
                           >
                             Todas
                           </button>
-                          {brands.map((brand) => (
+                          {brands.filter(b => (b._count?.products ?? 0) > 0).map((brand) => (
                             <button
                               key={brand.id}
-                              onClick={() => {
-                                setSelectedBrand(brand.id);
-                                handleSearch(query, 1);
-                              }}
+                              onClick={() => selectBrand(brand.id)}
                               className={cn(
                                 'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-all duration-200',
                                 selectedBrand === brand.id
@@ -1346,7 +1371,7 @@ export function SearchResults({
                   </h3>
                   <div className="space-y-2">
                     <button
-                      onClick={() => setSelectedCategory('')}
+                      onClick={() => selectCategory('')}
                       className={cn(
                         'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                         !selectedCategory
@@ -1356,10 +1381,10 @@ export function SearchResults({
                     >
                       Todas las categorías
                     </button>
-                    {categories.map((category) => (
+                    {categories.filter(c => (c._count?.products ?? 0) > 0).map((category) => (
                       <button
                         key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
+                        onClick={() => selectCategory(category.id)}
                         className={cn(
                           'w-full px-4 py-2 rounded-lg text-left text-sm transition-colors',
                           selectedCategory === category.id
@@ -1441,6 +1466,6 @@ export function SearchResults({
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-    </div>
+    </motion.div>
   );
 }

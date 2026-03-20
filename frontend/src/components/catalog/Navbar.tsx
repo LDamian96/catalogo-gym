@@ -128,9 +128,10 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
   const isTransparent = transparent && !isScrolled;
 
   return (
+    <>
     <motion.header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden lg:block',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isTransparent
           ? 'bg-transparent'
           : isScrolled
@@ -512,5 +513,10 @@ export function Navbar({ settings, categories, transparent = false }: NavbarProp
         )}
       </AnimatePresence>
     </motion.header>
+    {/* Spacer to compensate for fixed navbar height */}
+    {!transparent && (
+      <div className="h-[56px] lg:h-20" />
+    )}
+    </>
   );
 }

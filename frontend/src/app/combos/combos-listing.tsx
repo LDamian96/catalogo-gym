@@ -26,11 +26,13 @@ interface CombosListingProps {
 
 export function CombosListing({ combos, settings, categories }: CombosListingProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:bg-[#000000]">
-      {/* Desktop Navbar */}
-      <div className="hidden lg:block">
-        <Navbar settings={settings} categories={categories} />
-      </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:from-[#000000] dark:via-[#000000] dark:to-[#000000]">
+      {/* Navbar */}
+      <Navbar settings={settings} categories={categories} />
 
       {/* Desktop Breadcrumb */}
       <div className="hidden lg:block border-b border-black/[0.06] dark:border-white/[0.06]">
@@ -395,6 +397,6 @@ export function CombosListing({ combos, settings, categories }: CombosListingPro
         <WhatsAppButton phoneNumber={settings.whatsapp} businessName={settings.businessName || 'el catálogo'} />
       )}
       <MobileBottomNav />
-    </div>
+    </motion.div>
   );
 }

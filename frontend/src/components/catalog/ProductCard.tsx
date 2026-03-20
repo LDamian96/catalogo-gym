@@ -1,11 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShoppingBag, Eye, Zap, Heart, Sparkles, Tag, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, Eye, Zap, Heart, Sparkles, Tag, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { v0Ease } from '@/lib/animations';
 import { usePageTransition } from './PageTransition';
+import { useCart } from '@/hooks/useCart';
 import type { CatalogProduct } from '@/lib/api/catalog';
 
 interface ProductCardProps {
@@ -15,6 +16,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { navigateWithTransition } = usePageTransition();
+  const { addItem } = useCart();
   const price = Number(product.price);
   const salePrice = product.salePrice ? Number(product.salePrice) : null;
   const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
@@ -351,6 +353,35 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </div>
           )}
         </div>
+
+        {/* Add to Cart Button */}
+        {product.showPrice && (
+          <div className="px-4 pb-4">
+            <motion.button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addItem({
+                  id: product.id,
+                  productId: product.id,
+                  name: product.name,
+                  price: salePrice || price,
+                  image: mainImage || null,
+                });
+              }}
+              className={cn(
+                'w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all duration-300',
+                'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25',
+                'hover:from-cyan-600 hover:to-blue-600 hover:shadow-cyan-500/40',
+                'dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-500 dark:hover:to-blue-500'
+              )}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Agregar al carrito
+            </motion.button>
+          </div>
+        )}
 
         {/* Bottom Gradient Bar */}
         <div className={cn(

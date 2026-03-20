@@ -113,7 +113,7 @@ export function BrandProducts({
       {/* Mobile Hero - Mini Brand Header */}
       <div className="lg:hidden">
         <div className="relative overflow-hidden rounded-b-[26px] bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-700 shadow-[0_8px_24px_rgba(14,165,233,0.15)]">
-          <div className="relative px-3.5 pt-20 pb-4 flex flex-col gap-3">
+          <div className="relative px-3.5 pt-4 pb-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <Link
                 href="/productos"

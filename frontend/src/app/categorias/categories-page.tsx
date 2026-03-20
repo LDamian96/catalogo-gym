@@ -55,7 +55,11 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
   }, [categoriesWithImages.length]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#000000]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="min-h-screen bg-white dark:bg-[#000000]">
       {/* Navbar */}
       <Navbar settings={settings} categories={categories} />
 
@@ -110,8 +114,7 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
         </div>
       </div>
 
-      {/* Spacer for fixed navbar (desktop only) */}
-      <div className="hidden lg:block h-20" />
+      {/* Spacer is now handled by the Navbar component */}
 
       {/* Hero with Category Images Carousel (desktop only) */}
       <div className="hidden lg:block relative bg-gradient-to-br from-[#000000] via-cyan-900/50 to-[#000000] overflow-hidden">
@@ -422,6 +425,6 @@ export function CategoriesPage({ categories, settings }: CategoriesPageProps) {
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
-    </div>
+    </motion.div>
   );
 }

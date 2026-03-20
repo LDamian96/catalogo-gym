@@ -1,0 +1,464 @@
+{
+  "name": "06 - Web → Google Sheets Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sheet-sync",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Evento Individual",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "sheet-sync"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sheet-sync/full-sync",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "webhook-full-sync",
+      "name": "Webhook - Full Sync",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 620],
+      "webhookId": "sheet-sync-full"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cron - Full Sync cada 30 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 920]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.action }}",
+              "operation": "equals",
+              "value2": "created"
+            }
+          ]
+        }
+      },
+      "id": "switch-created",
+      "name": "¿Es Created?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [480, 180]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.action }}",
+              "operation": "equals",
+              "value2": "updated"
+            }
+          ]
+        }
+      },
+      "id": "switch-updated",
+      "name": "¿Es Updated?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.product.id }}",
+            "Nombre": "={{ $json.product.name }}",
+            "Precio": "={{ $json.product.price }}",
+            "Precio Oferta": "={{ $json.product.salePrice }}",
+            "Categoría": "={{ $json.product.categoryName }}",
+            "Marca": "={{ $json.product.brandName }}",
+            "Descripción": "={{ $json.product.description }}",
+            "Stock": "={{ $json.product.stock }}",
+            "Estado": "={{ $json.product.isActive ? 'Activo' : 'Inactivo' }}",
+            "SEO Título": "={{ $json.product.seoTitle }}",
+            "SEO Descripción": "={{ $json.product.seoDescription }}",
+            "SEO Keywords": "={{ $json.product.seoKeywords }}",
+            "URL Imagen": "={{ $json.product.imageUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "sheet-append",
+      "name": "Sheet - Agregar Fila",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [720, 180],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.product.id }}",
+            "Nombre": "={{ $json.product.name }}",
+            "Precio": "={{ $json.product.price }}",
+            "Precio Oferta": "={{ $json.product.salePrice }}",
+            "Categoría": "={{ $json.product.categoryName }}",
+            "Marca": "={{ $json.product.brandName }}",
+            "Descripción": "={{ $json.product.description }}",
+            "Stock": "={{ $json.product.stock }}",
+            "Estado": "={{ $json.product.isActive ? 'Activo' : 'Inactivo' }}",
+            "SEO Título": "={{ $json.product.seoTitle }}",
+            "SEO Descripción": "={{ $json.product.seoDescription }}",
+            "SEO Keywords": "={{ $json.product.seoKeywords }}",
+            "URL Imagen": "={{ $json.product.imageUrl }}"
+          }
+        },
+        "options": {
+          "cellUpdate": "update"
+        },
+        "dataMode": "autoMapInputData",
+        "matchingColumns": ["ID"]
+      },
+      "id": "sheet-update",
+      "name": "Sheet - Actualizar Fila por ID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [720, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $json.product.id }}"
+            }
+          ]
+        }
+      },
+      "id": "sheet-delete",
+      "name": "Sheet - Eliminar Fila por ID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [720, 560],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "clear": "exceptFirstRow",
+        "options": {}
+      },
+      "id": "sheet-clear",
+      "name": "Sheet - Limpiar (mantener cabecera)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [480, 720],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.id }}",
+            "Nombre": "={{ $json.nombre }}",
+            "Precio": "={{ $json.precio }}",
+            "Precio Oferta": "={{ $json.precioOferta }}",
+            "Categoría": "={{ $json.categoria }}",
+            "Marca": "={{ $json.marca }}",
+            "Descripción": "={{ $json.descripcion }}",
+            "Stock": "={{ $json.stock }}",
+            "Estado": "={{ $json.estado }}",
+            "SEO Título": "={{ $json.seoTitulo }}",
+            "SEO Descripción": "={{ $json.seoDescripcion }}",
+            "SEO Keywords": "={{ $json.seoKeywords }}",
+            "URL Imagen": "={{ $json.urlImagen }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "sheet-full-write",
+      "name": "Sheet - Escribir Todos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [720, 720],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.BACKEND_URL || 'http://localhost:4000' }}/api/v1/catalog/products",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "http-get-products",
+      "name": "HTTP - Obtener Todos los Productos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 920]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transformar productos del API al formato del Sheet\nconst response = $input.all();\nconst items = [];\n\nfor (const entry of response) {\n  const data = entry.json.data || entry.json;\n  const products = Array.isArray(data) ? data : (data.data || []);\n  \n  for (const p of products) {\n    items.push({\n      json: {\n        id: p.id,\n        nombre: p.name,\n        precio: Number(p.price),\n        precioOferta: p.salePrice ? Number(p.salePrice) : '',\n        categoria: p.category?.name || '',\n        marca: p.brand?.name || '',\n        descripcion: p.description || '',\n        stock: p.stock ?? '',\n        estado: p.isActive ? 'Activo' : 'Inactivo',\n        seoTitulo: p.seoTitle || '',\n        seoDescripcion: p.seoDescription || '',\n        seoKeywords: p.seoKeywords || '',\n        urlImagen: p.images?.[0]?.url || ''\n      }\n    });\n  }\n}\n\nreturn items;"
+      },
+      "id": "transform-products",
+      "name": "Transformar Productos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 920]
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "clear": "exceptFirstRow",
+        "options": {}
+      },
+      "id": "sheet-clear-cron",
+      "name": "Sheet - Limpiar para Cron",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [960, 840],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Productos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.id }}",
+            "Nombre": "={{ $json.nombre }}",
+            "Precio": "={{ $json.precio }}",
+            "Precio Oferta": "={{ $json.precioOferta }}",
+            "Categoría": "={{ $json.categoria }}",
+            "Marca": "={{ $json.marca }}",
+            "Descripción": "={{ $json.descripcion }}",
+            "Stock": "={{ $json.stock }}",
+            "Estado": "={{ $json.estado }}",
+            "SEO Título": "={{ $json.seoTitulo }}",
+            "SEO Descripción": "={{ $json.seoDescripcion }}",
+            "SEO Keywords": "={{ $json.seoKeywords }}",
+            "URL Imagen": "={{ $json.urlImagen }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "sheet-cron-write",
+      "name": "Sheet - Escribir Cron",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1200, 920],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets - Configurar credenciales"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer productos del payload de full sync\nconst data = $input.first().json;\nconst products = data.products || [];\n\nreturn products.map(p => ({ json: p }));"
+      },
+      "id": "extract-full-sync",
+      "name": "Extraer Productos Full Sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 620]
+    }
+  ],
+  "connections": {
+    "Webhook - Evento Individual": {
+      "main": [
+        [
+          { "node": "¿Es Created?", "type": "main", "index": 0 },
+          { "node": "¿Es Updated?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "¿Es Created?": {
+      "main": [
+        [{ "node": "Sheet - Agregar Fila", "type": "main", "index": 0 }],
+        [{ "node": "Sheet - Eliminar Fila por ID", "type": "main", "index": 0 }]
+      ]
+    },
+    "¿Es Updated?": {
+      "main": [
+        [{ "node": "Sheet - Actualizar Fila por ID", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Webhook - Full Sync": {
+      "main": [
+        [{ "node": "Extraer Productos Full Sync", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extraer Productos Full Sync": {
+      "main": [
+        [{ "node": "Sheet - Limpiar (mantener cabecera)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sheet - Limpiar (mantener cabecera)": {
+      "main": [
+        [{ "node": "Sheet - Escribir Todos", "type": "main", "index": 0 }]
+      ]
+    },
+    "Cron - Full Sync cada 30 min": {
+      "main": [
+        [{ "node": "HTTP - Obtener Todos los Productos", "type": "main", "index": 0 }]
+      ]
+    },
+    "HTTP - Obtener Todos los Productos": {
+      "main": [
+        [{ "node": "Transformar Productos", "type": "main", "index": 0 }]
+      ]
+    },
+    "Transformar Productos": {
+      "main": [
+        [{ "node": "Sheet - Limpiar para Cron", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sheet - Limpiar para Cron": {
+      "main": [
+        [{ "node": "Sheet - Escribir Cron", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "",
+    "templateId": "06-web-to-sheet-sync"
+  },
+  "tags": [
+    { "name": "sync" },
+    { "name": "google-sheets" },
+    { "name": "productos" }
+  ]
+}

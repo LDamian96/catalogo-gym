@@ -48,7 +48,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 
 import {
   getProductVariants,
@@ -71,6 +70,7 @@ import type { ProductVariantValue as ParentVariantValue } from '@/types';
 interface ProductVariantsManagerProps {
   productId: string;
   productName: string;
+  onVariantsChange?: () => void;
 }
 
 interface ParentProductInfo {
@@ -217,211 +217,168 @@ function DraggableVariantItem({
       dragControls={dragControls}
       className="list-none"
     >
-      <Card className="border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
-        <CardContent className="p-3">
-          <div className="flex flex-col gap-3">
-            {/* Top Row: Drag, Image, Badges, Status, Delete */}
-            <div className="flex items-center gap-3">
-              {/* Drag Handle */}
-              <div
-                onPointerDown={(e) => dragControls.start(e)}
-                className="cursor-grab active:cursor-grabbing touch-none p-1 -ml-1 text-slate-400 hover:text-slate-600 self-start mt-2"
-              >
-                <GripVertical className="w-4 h-4" />
-              </div>
+      <div className="rounded-xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] hover:border-neutral-300 dark:hover:border-white/[0.12] transition-all overflow-hidden">
+        <div className="p-3">
+          <div className="flex items-center gap-3">
+            {/* Drag Handle */}
+            <div
+              onPointerDown={(e) => dragControls.start(e)}
+              className="cursor-grab active:cursor-grabbing touch-none p-1 -ml-1 text-neutral-300 hover:text-neutral-500 dark:text-neutral-600 dark:hover:text-neutral-400"
+            >
+              <GripVertical className="w-4 h-4" />
+            </div>
 
-              {/* Image with upload */}
-              <div className="relative flex-shrink-0">
-                {displayImage ? (
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden group">
-                    <img
-                      src={displayImage}
-                      alt={variant.name || 'Variante'}
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Indicator for fallback image (from variant value) */}
-                    {!variant.image && fallbackImage && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-cyan-500/80 text-white text-[8px] text-center py-0.5 font-medium">
-                        Auto
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="bg-white/90 text-slate-700 p-1 rounded"
-                        title={variant.image ? "Cambiar imagen" : "Subir imagen propia"}
-                      >
-                        <Upload className="w-3 h-3" />
-                      </button>
-                      {variant.image && (
-                        <button
-                          onClick={() => onDeleteImage(variant.id)}
-                          className="bg-red-500 text-white p-1 rounded"
-                          title="Eliminar imagen"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
+            {/* Image */}
+            <div className="relative flex-shrink-0">
+              {displayImage ? (
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden group">
+                  <img
+                    src={displayImage}
+                    alt={variant.name || 'Variante'}
+                    className="w-full h-full object-cover"
+                  />
+                  {!variant.image && fallbackImage && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-cyan-500/80 text-white text-[7px] text-center py-px font-medium">
+                      Auto
                     </div>
-                    {uploadingImage && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 text-white animate-spin" />
-                      </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="bg-white/90 text-neutral-700 p-1 rounded"
+                    >
+                      <Upload className="w-3 h-3" />
+                    </button>
+                    {variant.image && (
+                      <button
+                        onClick={() => onDeleteImage(variant.id)}
+                        className="bg-red-500 text-white p-1 rounded"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     )}
                   </div>
-                ) : (
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-700 flex flex-col items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors border-2 border-dashed border-slate-300 dark:border-slate-500"
-                    disabled={uploadingImage}
-                  >
-                    {uploadingImage ? (
-                      <Loader2 className="w-5 h-5 text-slate-400 animate-spin" />
-                    ) : (
-                      <>
-                        <ImageIcon className="w-4 h-4 text-slate-400" />
-                        <span className="text-[10px] text-slate-400 mt-0.5">Subir</span>
-                      </>
-                    )}
-                  </button>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </div>
-
-              {/* Variant Badges + Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  {variant.variantValues.map((vv) => (
-                    <Badge key={vv.id} variant="secondary" className="text-xs font-medium">
-                      {vv.variantType.name}: {vv.value}
-                    </Badge>
-                  ))}
+                  {uploadingImage && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <Loader2 className="w-4 h-4 text-white animate-spin" />
+                    </div>
+                  )}
                 </div>
-                {variant.name && (
-                  <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
-                    {variant.name}
-                  </p>
-                )}
-              </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-12 h-12 rounded-lg bg-neutral-50 dark:bg-white/[0.04] flex flex-col items-center justify-center hover:bg-neutral-100 dark:hover:bg-white/[0.08] transition-colors border border-dashed border-neutral-300 dark:border-white/[0.15]"
+                  disabled={uploadingImage}
+                >
+                  {uploadingImage ? (
+                    <Loader2 className="w-4 h-4 text-neutral-400 animate-spin" />
+                  ) : (
+                    <ImageIcon className="w-4 h-4 text-neutral-400" />
+                  )}
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </div>
 
-              {/* Save Status Indicator */}
-              <div className="flex items-center gap-2">
-                {saving && (
-                  <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
-                )}
-                {saveStatus === 'saved' && (
-                  <div className="flex items-center gap-1 text-green-600">
-                    <Check className="w-4 h-4" />
-                    <span className="text-xs">Guardado</span>
-                  </div>
-                )}
-                {saveStatus === 'error' && (
-                  <div className="flex items-center gap-1 text-red-500">
-                    <AlertCircle className="w-4 h-4" />
-                    <span className="text-xs">Error</span>
-                  </div>
-                )}
+            {/* Badges + Name */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {variant.variantValues.map((vv) => (
+                  <Badge key={vv.id} className="text-[10px] font-medium bg-neutral-100 text-neutral-700 dark:bg-white/[0.08] dark:text-neutral-300 border-0 px-2 py-0.5">
+                    {vv.variantType.name}: {vv.value}
+                  </Badge>
+                ))}
               </div>
+              {variant.name && (
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+                  {variant.name}
+                </p>
+              )}
+            </div>
 
-              {/* Active Toggle */}
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={localData.isActive}
-                  onCheckedChange={(checked) => handleChange('isActive', checked)}
-                  className="scale-75"
-                />
-                <span className="text-xs text-slate-500 w-14">
-                  {localData.isActive ? 'Activo' : 'Inactivo'}
+            {/* Inline editable fields */}
+            <div className="hidden lg:grid grid-cols-4 gap-2 w-[360px] flex-shrink-0">
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder={parentProduct.price ? formatParentPrice(parentProduct.price) : 'Precio'}
+                value={localData.price}
+                onChange={(e) => handleChange('price', e.target.value)}
+                className="h-8 text-xs bg-neutral-50 dark:bg-white/[0.04] border-neutral-200 dark:border-white/[0.08]"
+              />
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder={parentProduct.salePrice ? formatParentPrice(parentProduct.salePrice) : 'Oferta'}
+                value={localData.salePrice}
+                onChange={(e) => handleChange('salePrice', e.target.value)}
+                className="h-8 text-xs bg-neutral-50 dark:bg-white/[0.04] border-neutral-200 dark:border-white/[0.08]"
+              />
+              <Input
+                type="number"
+                min="0"
+                placeholder={parentProduct.stock !== null ? `Stock: ${parentProduct.stock}` : 'Stock'}
+                value={localData.stock}
+                onChange={(e) => handleChange('stock', e.target.value)}
+                className="h-8 text-xs bg-neutral-50 dark:bg-white/[0.04] border-neutral-200 dark:border-white/[0.08]"
+              />
+              <Input
+                placeholder="SKU"
+                value={localData.sku}
+                onChange={(e) => handleChange('sku', e.target.value)}
+                className="h-8 text-xs bg-neutral-50 dark:bg-white/[0.04] border-neutral-200 dark:border-white/[0.08]"
+              />
+            </div>
+
+            {/* Save Status */}
+            <div className="w-16 flex items-center justify-center flex-shrink-0">
+              {saving && (
+                <Loader2 className="w-3.5 h-3.5 text-cyan-500 animate-spin" />
+              )}
+              {saveStatus === 'saved' && (
+                <span className="flex items-center gap-1 text-green-600 text-[10px]">
+                  <Check className="w-3 h-3" />
+                  OK
                 </span>
-              </div>
-
-              {/* Delete Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                onClick={() => onDelete(variant.id)}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              )}
+              {saveStatus === 'error' && (
+                <span className="flex items-center gap-1 text-red-500 text-[10px]">
+                  <AlertCircle className="w-3 h-3" />
+                  Error
+                </span>
+              )}
             </div>
 
-            {/* Bottom Row: Editable Fields */}
-            <div className="grid grid-cols-4 gap-2 ml-7">
-              {/* Price */}
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                  Precio
-                </label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder={parentProduct.price ? formatParentPrice(parentProduct.price) : '-'}
-                  value={localData.price}
-                  onChange={(e) => handleChange('price', e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-
-              {/* Sale Price */}
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                  Oferta
-                </label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder={parentProduct.salePrice ? formatParentPrice(parentProduct.salePrice) : 'Sin oferta'}
-                  value={localData.salePrice}
-                  onChange={(e) => handleChange('salePrice', e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-
-              {/* Stock */}
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                  Stock
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  placeholder={parentProduct.stock !== null ? `${parentProduct.stock}` : '-'}
-                  value={localData.stock}
-                  onChange={(e) => handleChange('stock', e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-
-              {/* SKU */}
-              <div className="space-y-1">
-                <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                  SKU
-                </label>
-                <Input
-                  placeholder="Código"
-                  value={localData.sku}
-                  onChange={(e) => handleChange('sku', e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-            </div>
+            {/* Active + Delete */}
+            <Switch
+              checked={localData.isActive}
+              onCheckedChange={(checked) => handleChange('isActive', checked)}
+              className="scale-75"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+              onClick={() => onDelete(variant.id)}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Reorder.Item>
   );
 }
 
-export function ProductVariantsManager({ productId, productName }: ProductVariantsManagerProps) {
+export function ProductVariantsManager({ productId, onVariantsChange }: ProductVariantsManagerProps) {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [variantTypes, setVariantTypes] = useState<VariantType[]>([]);
   const [parentVariantValues, setParentVariantValues] = useState<ParentVariantValue[]>([]);
@@ -632,6 +589,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       await deleteAllProductVariants(productId);
       toast.success('Todas las variantes eliminadas');
       setVariants([]);
+      onVariantsChange?.();
     } catch (error) {
       console.error('Error deleting all variants:', error);
       toast.error('Error al eliminar variantes');
@@ -685,6 +643,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
 
       setShowModal(false);
       await loadData();
+      onVariantsChange?.();
     } catch (error: unknown) {
       console.error('Error saving variant:', error);
       const axiosError = error as { response?: { data?: { message?: string | string[] } } };
@@ -704,6 +663,7 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
       toast.success('Sub-producto eliminado');
       setDeleteId(null);
       await loadData();
+      onVariantsChange?.();
     } catch (error) {
       console.error('Error deleting variant:', error);
       toast.error('Error al eliminar');
@@ -729,51 +689,51 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
     : 0;
 
   return (
-    <div className="p-4 space-y-4 bg-slate-50 dark:bg-slate-800/30">
+    <div className="p-5 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
-          <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Sub-productos de {productName}
+          <h4 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+            Sub-productos
           </h4>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
             {variants.length} variante{variants.length !== 1 ? 's' : ''}
-            {expectedCombinations > 0 && ` de ${expectedCombinations} combinaciones posibles`}
+            {expectedCombinations > 0 && (
+              <span className="text-neutral-400 dark:text-neutral-500"> · {expectedCombinations} combinaciones posibles</span>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Delete All Button */}
           {variants.length > 0 && (
             <Button
               size="sm"
-              variant="outline"
+              variant="ghost"
               onClick={() => setShowDeleteAllConfirm(true)}
-              className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="gap-1.5 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 h-8"
             >
-              <Trash className="w-4 h-4" />
-              Eliminar Todas
+              <Trash className="w-3.5 h-3.5" />
+              Eliminar todas
             </Button>
           )}
-          {/* Add Manual Button */}
           <Button
             size="sm"
             onClick={() => handleOpenModal()}
-            className="gap-2"
+            className="gap-1.5 text-xs h-8 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0"
             disabled={parentVariantValues.length === 0}
           >
-            <Plus className="w-4 h-4" />
-            Agregar Manual
+            <Plus className="w-3.5 h-3.5" />
+            Agregar
           </Button>
         </div>
       </div>
 
       {/* No variant values warning */}
       {!loading && parentVariantValues.length === 0 && (
-        <div className="text-center py-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-          <p className="text-sm text-amber-700 dark:text-amber-300">
-            Este producto no tiene atributos configurados
+        <div className="text-center py-6 bg-amber-50/50 dark:bg-amber-500/5 rounded-xl border border-amber-200/60 dark:border-amber-500/20">
+          <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+            Sin atributos configurados
           </p>
-          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+          <p className="text-xs text-amber-600/80 dark:text-amber-400/60 mt-1">
             Edita el producto y selecciona atributos (Talla, Color, Sabor, etc.)
           </p>
         </div>
@@ -781,31 +741,58 @@ export function ProductVariantsManager({ productId, productName }: ProductVarian
 
       {/* Loading State */}
       {loading && (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] p-3 flex items-center gap-3 animate-pulse">
+              <div className="w-4 h-4 bg-neutral-200 dark:bg-white/[0.08] rounded" />
+              <div className="w-12 h-12 bg-neutral-200 dark:bg-white/[0.08] rounded-lg" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-neutral-200 dark:bg-white/[0.08] rounded w-1/3" />
+                <div className="h-3 bg-neutral-100 dark:bg-white/[0.04] rounded w-1/5" />
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Empty State with Generate hint */}
+      {/* Empty State */}
       {!loading && variants.length === 0 && parentVariantValues.length > 0 && (
-        <div className="text-center py-8 bg-white dark:bg-slate-900 rounded-lg border border-dashed">
-          <Sparkles className="w-8 h-8 mx-auto text-cyan-500 mb-2" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            No hay sub-productos configurados
+        <div className="text-center py-8 rounded-xl border border-dashed border-neutral-200 dark:border-white/[0.1] bg-neutral-50/50 dark:bg-white/[0.01]">
+          <Sparkles className="w-7 h-7 mx-auto text-cyan-500/60 mb-2" />
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            Sin sub-productos
           </p>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-            Guarda el producto con atributos seleccionados y las combinaciones se crearán automáticamente
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+            Guarda el producto con atributos y las combinaciones se crearán automáticamente
           </p>
         </div>
       )}
 
-      {/* Variants List with Drag & Drop */}
+      {/* Column labels */}
+      {!loading && variants.length > 0 && (
+        <div className="hidden lg:flex items-center gap-3 px-3 text-[10px] font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+          <div className="w-4" />
+          <div className="w-12" />
+          <div className="flex-1">Variante</div>
+          <div className="w-[360px] grid grid-cols-4 gap-2 flex-shrink-0">
+            <span>Precio</span>
+            <span>Oferta</span>
+            <span>Stock</span>
+            <span>SKU</span>
+          </div>
+          <div className="w-16 text-center">Estado</div>
+          <div className="w-7" />
+          <div className="w-7" />
+        </div>
+      )}
+
+      {/* Variants List */}
       {!loading && variants.length > 0 && (
         <Reorder.Group
           axis="y"
           values={variants}
           onReorder={handleReorder}
-          className="space-y-2"
+          className="space-y-1.5"
         >
           {variants.map((variant) => (
             <DraggableVariantItem

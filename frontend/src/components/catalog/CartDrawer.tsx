@@ -62,7 +62,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md z-50 flex flex-col bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none"
+            className="fixed right-0 top-0 h-full w-full max-w-md z-50 flex flex-col bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] dark:from-[#0A0A0A] dark:via-[#0A0A0A] dark:to-[#111111] lg:bg-white lg:dark:bg-neutral-950 lg:bg-none"
           >
             {/* Hero Header - Gradient cyan-to-blue */}
             <div className="bg-gradient-to-br from-[#06B6D4] via-[#0284C7] to-[#1D4ED8] rounded-b-[26px] shadow-[0_8px_24px_#0EA5E926] px-4 pt-5 pb-4 flex flex-col gap-2.5 lg:rounded-none lg:shadow-none">
@@ -99,13 +99,13 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                   animate={{ opacity: 1, y: 0 }}
                   className="flex flex-col items-center justify-center h-full text-center"
                 >
-                  <div className="w-24 h-24 rounded-full bg-white/60 flex items-center justify-center mb-4">
-                    <ShoppingBag className="w-12 h-12 text-[#94A3B8]" />
+                  <div className="w-24 h-24 rounded-full bg-white/60 dark:bg-white/10 flex items-center justify-center mb-4">
+                    <ShoppingBag className="w-12 h-12 text-[#94A3B8] dark:text-neutral-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#0F172A] mb-2" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                  <h3 className="text-lg font-bold text-[#0F172A] dark:text-white mb-2" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
                     Tu carrito está vacío
                   </h3>
-                  <p className="text-[#64748B] text-sm">
+                  <p className="text-[#64748B] dark:text-neutral-400 text-sm">
                     Agrega productos para comenzar tu pedido
                   </p>
                 </motion.div>
@@ -119,10 +119,10 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20, height: 0 }}
-                        className="flex items-center gap-3 p-2.5 bg-white rounded-[16px] shadow-[0_2px_8px_#0000000A]"
+                        className="flex items-center gap-3 p-2.5 bg-white dark:bg-neutral-900 rounded-[16px] shadow-[0_2px_8px_#0000000A] dark:shadow-none dark:border dark:border-white/[0.06]"
                       >
                         {/* Product Image - rounded square */}
-                        <div className="relative w-[76px] h-[76px] rounded-[12px] overflow-hidden bg-neutral-100 flex-shrink-0">
+                        <div className="relative w-[76px] h-[76px] rounded-[12px] overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
                           {item.image ? (
                             <Image
                               src={item.image}
@@ -140,11 +140,11 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-[14px] font-bold text-[#0F172A] truncate" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
+                          <h4 className="text-[14px] font-bold text-[#0F172A] dark:text-white truncate" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
                             {item.name}
                           </h4>
                           {item.variant && (
-                            <p className="text-[11px] text-[#94A3B8] font-medium mt-0.5">
+                            <p className="text-[11px] text-[#94A3B8] dark:text-neutral-400 font-medium mt-0.5">
                               {item.variant.values}
                             </p>
                           )}
@@ -156,11 +156,11 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                           <div className="flex items-center gap-2 mt-1.5">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-7 h-7 rounded-full border border-[#E2E8F0] flex items-center justify-center hover:bg-[#F0F9FF] transition-colors"
+                              className="w-7 h-7 rounded-full border border-[#E2E8F0] dark:border-neutral-700 flex items-center justify-center hover:bg-[#F0F9FF] dark:hover:bg-neutral-800 transition-colors"
                             >
-                              <Minus className="w-3 h-3 text-[#64748B]" />
+                              <Minus className="w-3 h-3 text-[#64748B] dark:text-neutral-400" />
                             </button>
-                            <span className="w-6 text-center text-[13px] font-bold text-[#0F172A]">
+                            <span className="w-6 text-center text-[13px] font-bold text-[#0F172A] dark:text-white">
                               {item.quantity}
                             </span>
                             <button
@@ -171,19 +171,19 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                                 item.quantity >= item.maxStock
                               }
                               className={cn(
-                                'w-7 h-7 rounded-full border border-[#E2E8F0] flex items-center justify-center transition-colors',
+                                'w-7 h-7 rounded-full border border-[#E2E8F0] dark:border-neutral-700 flex items-center justify-center transition-colors',
                                 item.maxStock !== null &&
                                   item.maxStock !== undefined &&
                                   item.quantity >= item.maxStock
                                   ? 'opacity-50 cursor-not-allowed'
-                                  : 'hover:bg-[#F0F9FF]'
+                                  : 'hover:bg-[#F0F9FF] dark:hover:bg-neutral-800'
                               )}
                             >
-                              <Plus className="w-3 h-3 text-[#64748B]" />
+                              <Plus className="w-3 h-3 text-[#64748B] dark:text-neutral-400" />
                             </button>
                             <button
                               onClick={() => removeItem(item.id)}
-                              className="ml-auto w-7 h-7 rounded-full text-rose-500 hover:bg-rose-50 flex items-center justify-center transition-colors"
+                              className="ml-auto w-7 h-7 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center justify-center transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -199,7 +199,7 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       onClick={clearCart}
-                      className="w-full py-2 text-sm text-[#94A3B8] hover:text-rose-500 transition-colors"
+                      className="w-full py-2 text-sm text-[#94A3B8] dark:text-neutral-500 hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
                     >
                       Vaciar carrito
                     </motion.button>
@@ -216,23 +216,23 @@ export function CartDrawer({ whatsapp, businessName, currency = 'S/' }: CartDraw
                 className="px-3.5 pb-4 pt-0 space-y-3"
               >
                 {/* Summary Card */}
-                <div className="bg-white rounded-[20px] shadow-[0_4px_12px_#0000000A] p-[18px] space-y-3">
+                <div className="bg-white dark:bg-neutral-900 rounded-[20px] shadow-[0_4px_12px_#0000000A] dark:shadow-none dark:border dark:border-white/[0.06] p-[18px] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-[#64748B]">Subtotal ({totalItems} items)</span>
-                    <span className="text-[14px] font-semibold text-[#0F172A]">
+                    <span className="text-[13px] text-[#64748B] dark:text-neutral-400">Subtotal ({totalItems} items)</span>
+                    <span className="text-[14px] font-semibold text-[#0F172A] dark:text-white">
                       {currency} {subtotal.toFixed(2)}
                     </span>
                   </div>
                   {discount > 0 && (
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] text-[#64748B]">Descuento</span>
+                      <span className="text-[13px] text-[#64748B] dark:text-neutral-400">Descuento</span>
                       <span className="text-[14px] font-semibold text-red-500">
                         -{currency} {discount.toFixed(2)}
                       </span>
                     </div>
                   )}
-                  <div className="border-t border-[#E2E8F0] pt-3 flex items-center justify-between">
-                    <span className="text-[14px] font-bold text-[#0F172A]">Total</span>
+                  <div className="border-t border-[#E2E8F0] dark:border-neutral-700 pt-3 flex items-center justify-between">
+                    <span className="text-[14px] font-bold text-[#0F172A] dark:text-white">Total</span>
                     <span className="text-[22px] font-extrabold text-[#0891B2]" style={{ fontFamily: 'var(--font-heading, Plus Jakarta Sans, sans-serif)' }}>
                       {currency} {totalPrice.toFixed(2)}
                     </span>

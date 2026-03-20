@@ -1,0 +1,120 @@
+{
+  "id": "botnew",
+  "name": "Bot Nuevo",
+  "active": true,
+  "nodes": [
+    {
+      "id": "webhook_1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "bot-nuevo",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bot-nuevo",
+        "options": {}
+      }
+    },
+    {
+      "id": "set_1",
+      "name": "Get Phone",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [500, 300],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "phone",
+              "name": "phone",
+              "type": "string",
+              "value": "={{ $json[\"body\"][\"sender\"].replace(\"@s.whatsapp.net\",\"\").trim() }}"
+            },
+            {
+              "id": "text",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json[\"body\"][\"data\"][\"message\"][\"conversation\"] || \"hola\" }}"
+            },
+            {
+              "id": "name",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json[\"body\"][\"data\"][\"pushName\"] || \"Cliente\" }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "groq_1",
+      "name": "Groq AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "none",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer GROQ_KEY_HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "{\"model\":\"llama-3.1-8b-instant\",\"messages\":[{\"role\":\"system\",\"content\":\"Eres asistente de ProVitamins Peru, tienda de suplementos en Lima. Responde breve en espanol max 2 lineas. Productos: whey protein S/89, creatina S/49, mass gainer, pre-entreno. Envio a todo Peru contraentrega. Web: https://calogojh.duckdns.org\"},{\"role\":\"user\",\"content\":\"Hola\"}],\"max_tokens\":200}"
+      }
+    },
+    {
+      "id": "send_1",
+      "name": "Send WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://172.18.0.8:8085/message/sendText/catalogo",
+        "authentication": "none",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "EVO_KEY_HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "{\"number\":\"51957089009\",\"textMessage\":{\"text\":\"test\"}}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Get Phone", "type": "main", "index": 0}]]
+    },
+    "Get Phone": {
+      "main": [[{"node": "Groq AI", "type": "main", "index": 0}]]
+    },
+    "Groq AI": {
+      "main": [[{"node": "Send WhatsApp", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

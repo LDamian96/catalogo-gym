@@ -59,6 +59,7 @@ import {
   uploadBrandLogo,
   deleteBrandLogo,
 } from '@/lib/api/brands';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 import type { Brand, CreateBrandDto, UpdateBrandDto } from '@/types';
 
 const brandSchema = z.object({
@@ -77,12 +78,6 @@ const brandSchema = z.object({
 });
 
 type BrandFormData = z.infer<typeof brandSchema>;
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-};
 
 function generateSlug(text: string): string {
   return text
@@ -254,28 +249,15 @@ export default function MarcasPage() {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
   }
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-[200px] w-full rounded-2xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <motion.div
+      variants={staggerContainer}
       initial="initial"
       animate="animate"
-      variants={{ animate: { transition: { staggerChildren: 0.1 } } }}
       className="space-y-8"
     >
       {/* Header elegante estilo BETA.pen */}
-      <motion.div variants={fadeInUp} className="flex items-center justify-between">
+      <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Marcas</h1>
           <p className="text-neutral-500 dark:text-neutral-400 mt-1">
@@ -292,8 +274,31 @@ export default function MarcasPage() {
       </motion.div>
 
       {/* Grid de Cards estilo BETA.pen */}
-      <motion.div variants={fadeInUp}>
-        {brands.length === 0 ? (
+      <motion.div variants={staggerItem}>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05, duration: 0.4 }}
+              >
+                <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-neutral-200 dark:border-white/[0.08] overflow-hidden">
+                  <Skeleton className="h-28 w-full rounded-none" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-5 w-2/3" />
+                    <Skeleton className="h-3 w-1/3" />
+                    <div className="flex gap-2 pt-1">
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : brands.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-white/[0.02] rounded-2xl border border-neutral-200 dark:border-white/[0.08]">
             <div className="w-20 h-20 rounded-full bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center mb-4">
               <Tag className="h-10 w-10 text-cyan-500" />

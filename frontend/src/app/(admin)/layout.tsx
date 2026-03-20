@@ -454,20 +454,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <DesktopSidebar pathname={pathname} navigation={navigation} />
 
         {/* Main content - sin navbar, ocupa todo */}
-        <motion.div
-          className="min-h-screen"
-          initial={false}
-          animate={{ marginLeft: isDesktop ? (isCollapsed ? 80 : 260) : 0 }}
-          transition={{ duration: 0.5, ease: v0Ease }}
+        <div
+          className="min-h-screen transition-[margin-left] duration-300 ease-out"
+          style={{ marginLeft: isDesktop ? (isCollapsed ? 80 : 260) : 0 }}
         >
-          {/* Mobile: hamburger button floating */}
-          <div className="lg:hidden sticky top-0 z-40 flex items-center p-3">
+          {/* Mobile: top bar with title + hamburger for extra items */}
+          <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-neutral-200/60 dark:border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">C</span>
+              </div>
+              <h1 className="font-semibold text-neutral-900 dark:text-white text-sm">
+                {navigation.find(n => n.href === pathname)?.name || 'Panel'}
+              </h1>
+            </div>
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  className="bg-white dark:bg-[#0a0a0a] shadow-md border-neutral-200 dark:border-white/[0.08]"
+                  className="h-8 w-8 text-neutral-500"
                 >
                   <Menu className="w-5 h-5" />
                 </Button>
@@ -482,21 +488,57 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Sheet>
           </div>
 
-          {/* Content area - full space */}
-          <main className="p-4 lg:p-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: v0Ease }}
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
+          {/* Content area */}
+          <main className="p-4 lg:p-8 pb-24 lg:pb-8">
+            {children}
           </main>
-        </motion.div>
+
+          {/* Mobile: Bottom Navigation Bar */}
+          <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-neutral-200/60 dark:border-white/[0.06] pb-[env(safe-area-inset-bottom)]">
+            <div className="flex items-center justify-around h-14">
+              {[
+                { name: 'Inicio', href: '/admin', icon: LayoutDashboard },
+                { name: 'Marcas', href: '/admin/marcas', icon: Tag },
+                { name: 'Productos', href: '/admin/productos', icon: Package, center: true },
+                { name: 'Categorías', href: '/admin/categorias', icon: FolderOpen },
+                { name: 'Combos', href: '/admin/combos', icon: Gift },
+              ].map((item) => {
+                const isActive = pathname === item.href;
+                const isCenter = 'center' in item && item.center;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    prefetch={true}
+                    className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 h-full active:scale-90 transition-transform duration-100 ${
+                      isCenter
+                        ? 'text-white'
+                        : isActive
+                          ? 'text-cyan-600 dark:text-cyan-400'
+                          : 'text-neutral-400 dark:text-neutral-500 active:text-cyan-500'
+                    }`}
+                  >
+                    {isCenter ? (
+                      <div className={`flex flex-col items-center justify-center gap-0.5 -mt-5 w-14 h-14 rounded-2xl shadow-lg ${
+                        isActive
+                          ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-cyan-500/30'
+                          : 'bg-gradient-to-br from-cyan-500 to-blue-500 shadow-cyan-500/20'
+                      }`}>
+                        <item.icon className="w-5 h-5" />
+                        <span className="text-[8px] font-semibold">{item.name}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <item.icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : ''}`} />
+                        <span className="text-[9px] font-medium truncate">{item.name}</span>
+                      </>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
       </div>
     </SidebarContext.Provider>
   );

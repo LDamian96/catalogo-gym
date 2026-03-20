@@ -10,7 +10,6 @@ import {
   GripVertical,
   Layers,
   ChevronDown,
-  ChevronRight,
   X,
   Filter,
   Home,
@@ -18,6 +17,7 @@ import {
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,8 +40,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 import api from '@/lib/api/client';
@@ -311,192 +309,217 @@ export default function TiposVariantePage() {
       variants={staggerContainer}
       initial="initial"
       animate="animate"
-      className="space-y-6"
+      className="space-y-8"
     >
       {/* Header */}
-      <motion.div variants={staggerItem} className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+      <motion.div variants={staggerItem} className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
             Atributos
           </h1>
-          <p className="text-slate-500 dark:text-slate-400">
-            Gestiona los atributos y sus valores (Talla: S, M, L, XL)
+          <p className="text-neutral-500 dark:text-neutral-400 mt-1 text-sm">
+            Gestiona los atributos y sus valores
           </p>
         </div>
-        <Button onClick={() => handleOpenTypeModal()} className="gap-2">
+        <Button
+          onClick={() => handleOpenTypeModal()}
+          className="gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-md shadow-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/30 transition-shadow flex-shrink-0"
+        >
           <Plus className="w-4 h-4" />
-          Nuevo Atributo
+          <span className="hidden sm:inline">Nuevo Atributo</span>
+          <span className="sm:hidden">Nuevo</span>
         </Button>
       </motion.div>
 
       {/* Content */}
       <motion.div variants={staggerItem}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Layers className="w-5 h-5" />
-              Atributos
-            </CardTitle>
-            <CardDescription>
-              Haz clic en un atributo para ver y gestionar sus valores
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.03] p-4 sm:p-5 animate-pulse"
+              >
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <Skeleton className="h-5 w-24 sm:w-32" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <div className="flex-1" />
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                </div>
+                <div className="mt-3 flex gap-2">
+                  {[1, 2, 3, 4].map((j) => (
+                    <Skeleton key={j} className="h-7 w-14 rounded-full" />
+                  ))}
+                </div>
               </div>
-            ) : variantTypes.length === 0 ? (
-              <div className="text-center py-12">
-                <Layers className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-500 dark:text-slate-400">
-                  No hay atributos configurados
-                </p>
-                <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                  Crea atributos como Talla, Color, Material, etc.
-                </p>
-                <Button onClick={() => handleOpenTypeModal()} className="mt-4 gap-2">
-                  <Plus className="w-4 h-4" />
-                  Crear Primer Atributo
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {variantTypes.map((type) => (
-                  <div
-                    key={type.id}
-                    className="border rounded-lg overflow-hidden"
-                  >
-                    {/* Type Row */}
-                    <div
-                      className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800"
-                      onClick={() => toggleExpand(type.id)}
-                    >
-                      <GripVertical className="w-4 h-4 text-slate-400 cursor-grab" />
+            ))}
+          </div>
+        ) : variantTypes.length === 0 ? (
+          <div className="text-center py-16 sm:py-20">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-white/[0.06] mb-5">
+              <Layers className="w-8 h-8 text-neutral-400 dark:text-neutral-500" />
+            </div>
+            <p className="text-neutral-600 dark:text-neutral-400 font-medium">
+              No hay atributos configurados
+            </p>
+            <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-1.5 max-w-sm mx-auto">
+              Crea atributos como Talla, Color, Material, etc.
+            </p>
+            <Button
+              onClick={() => handleOpenTypeModal()}
+              className="mt-6 gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 shadow-md shadow-cyan-500/20"
+            >
+              <Plus className="w-4 h-4" />
+              Crear Primer Atributo
+            </Button>
+          </div>
+        ) : (
+          /* Attribute Cards */
+          <div className="space-y-3">
+            {variantTypes.map((type) => (
+              <div
+                key={type.id}
+                className="rounded-2xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.03] overflow-hidden transition-all duration-200 hover:border-neutral-300 dark:hover:border-white/[0.12] hover:shadow-sm"
+              >
+                {/* Type Row */}
+                <div
+                  className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 cursor-pointer"
+                  onClick={() => toggleExpand(type.id)}
+                >
+                  <div className="hidden sm:block">
+                    <GripVertical className="w-4 h-4 text-neutral-300 dark:text-neutral-600 cursor-grab" />
+                  </div>
 
-                      {expandedTypes.has(type.id) ? (
-                        <ChevronDown className="w-4 h-4 text-slate-500" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <div className="transition-transform duration-200 flex-shrink-0" style={{ transform: expandedTypes.has(type.id) ? 'rotate(0deg)' : 'rotate(-90deg)' }}>
+                    <ChevronDown className="w-4 h-4 text-neutral-400" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
+                      <span className="font-bold text-neutral-900 dark:text-white text-sm sm:text-base">{type.name}</span>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full ${
+                          type.isActive
+                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                            : 'bg-neutral-100 text-neutral-500 dark:bg-white/[0.06] dark:text-neutral-400'
+                        }`}
+                      >
+                        {type.isActive ? 'Activo' : 'Inactivo'}
+                      </span>
+                      <span className="inline-flex items-center px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 dark:bg-white/[0.06] dark:text-neutral-400">
+                        {type.values.length} val.
+                      </span>
+                      {type.showAsFilter && (
+                        <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400">
+                          <Filter className="w-3 h-3" />
+                          Filtro
+                        </span>
                       )}
+                      {type.showInLanding && (
+                        <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400">
+                          <Home className="w-3 h-3" />
+                          Landing
+                        </span>
+                      )}
+                    </div>
+                    {type.description && (
+                      <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 sm:mt-1 truncate">{type.description}</p>
+                    )}
+                  </div>
 
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium">{type.name}</span>
-                          <Badge variant={type.isActive ? 'default' : 'secondary'} className="text-xs">
-                            {type.isActive ? 'Activo' : 'Inactivo'}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            {type.values.length} valores
-                          </Badge>
-                          {type.showAsFilter && (
-                            <Badge variant="outline" className="text-xs bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800">
-                              <Filter className="w-3 h-3 mr-1" />
-                              Filtro
-                            </Badge>
-                          )}
-                          {type.showInLanding && (
-                            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800">
-                              <Home className="w-3 h-3 mr-1" />
-                              Landing
-                            </Badge>
+                  <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 h-8 w-8"
+                      onClick={() => handleOpenTypeModal(type)}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-neutral-400 hover:text-red-500 h-8 w-8"
+                      onClick={() => setDeleteTypeId(type.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Values Panel */}
+                <AnimatePresence>
+                  {expandedTypes.has(type.id) && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-3 pb-3 sm:px-5 sm:pb-5 pt-0">
+                        <div className="bg-neutral-50 dark:bg-white/[0.02] rounded-xl p-3 sm:p-4 border border-neutral-100 dark:border-white/[0.05]">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-xs sm:text-sm font-medium text-neutral-600 dark:text-neutral-300">
+                              Valores de {type.name}
+                            </h4>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleOpenValueModal(type.id)}
+                              className="gap-1 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 dark:text-cyan-400 dark:hover:bg-cyan-500/10 h-8 text-xs"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Agregar
+                            </Button>
+                          </div>
+
+                          {type.values.length === 0 ? (
+                            <div className="text-center py-6 text-neutral-400">
+                              <p className="text-sm">No hay valores configurados</p>
+                              <p className="text-xs mt-1 text-neutral-400 dark:text-neutral-500">Agrega valores como S, M, L, XL, etc.</p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {type.values.map((value) => (
+                                <div
+                                  key={value.id}
+                                  className={`
+                                    inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                                    ${value.isActive
+                                      ? 'bg-neutral-100 text-neutral-700 dark:bg-white/[0.08] dark:text-neutral-300'
+                                      : 'bg-neutral-50 text-neutral-400 dark:bg-white/[0.03] dark:text-neutral-500 line-through'
+                                    }
+                                  `}
+                                >
+                                  <span>{value.value}</span>
+                                  <button
+                                    onClick={() => handleOpenValueModal(type.id, value)}
+                                    className="p-0.5 hover:bg-neutral-200 dark:hover:bg-white/[0.1] rounded-full transition-colors"
+                                  >
+                                    <Pencil className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    onClick={() => setDeleteValueId(value.id)}
+                                    className="p-0.5 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-full text-red-400 hover:text-red-500 transition-colors"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        {type.description && (
-                          <p className="text-sm text-slate-500 mt-0.5">{type.description}</p>
-                        )}
                       </div>
-
-                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleOpenTypeModal(type)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-500 hover:text-red-600"
-                          onClick={() => setDeleteTypeId(type.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Values Panel */}
-                    <AnimatePresence>
-                      {expandedTypes.has(type.id) && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-4 bg-white dark:bg-slate-900 border-t">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Valores de {type.name}
-                              </h4>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleOpenValueModal(type.id)}
-                                className="gap-1"
-                              >
-                                <Plus className="w-3 h-3" />
-                                Agregar Valor
-                              </Button>
-                            </div>
-
-                            {type.values.length === 0 ? (
-                              <div className="text-center py-6 text-slate-400">
-                                <p className="text-sm">No hay valores configurados</p>
-                                <p className="text-xs mt-1">Agrega valores como S, M, L, XL, etc.</p>
-                              </div>
-                            ) : (
-                              <div className="flex flex-wrap gap-2">
-                                {type.values.map((value) => (
-                                  <div
-                                    key={value.id}
-                                    className={`
-                                      inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm
-                                      ${value.isActive
-                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                        : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                                      }
-                                    `}
-                                  >
-                                    <span>{value.value}</span>
-                                    <button
-                                      onClick={() => handleOpenValueModal(type.id, value)}
-                                      className="p-0.5 hover:bg-black/10 rounded"
-                                    >
-                                      <Pencil className="w-3 h-3" />
-                                    </button>
-                                    <button
-                                      onClick={() => setDeleteValueId(value.id)}
-                                      className="p-0.5 hover:bg-black/10 rounded text-red-500"
-                                    >
-                                      <X className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+        )}
       </motion.div>
 
       {/* Create/Edit Type Modal */}
@@ -538,7 +561,7 @@ export default function TiposVariantePage() {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="typeIsActive">Estado</Label>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-neutral-500">
                   Los tipos inactivos no aparecen en los formularios
                 </p>
               </div>
@@ -549,8 +572,8 @@ export default function TiposVariantePage() {
               />
             </div>
 
-            <div className="border-t pt-4 mt-4">
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+            <div className="border-t border-neutral-200 dark:border-white/[0.08] pt-4 mt-4">
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
                 Opciones de Filtro
               </p>
 
@@ -558,7 +581,7 @@ export default function TiposVariantePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="showAsFilter">Mostrar en Filtros</Label>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-neutral-500">
                       Aparecerá como filtro en /productos y categorías
                     </p>
                   </div>
@@ -572,7 +595,7 @@ export default function TiposVariantePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="showInLanding">Mostrar en Landing</Label>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-neutral-500">
                       Aparecerá en la página principal del catálogo
                     </p>
                   </div>
@@ -628,7 +651,7 @@ export default function TiposVariantePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="valueIsActive">Estado</Label>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-neutral-500">
                       Los valores inactivos no aparecen en los selectores
                     </p>
                   </div>
@@ -651,19 +674,19 @@ export default function TiposVariantePage() {
                   rows={3}
                   className="mt-1"
                 />
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-neutral-500 mt-2">
                   Escribe varios valores separados por coma para agregarlos todos de una vez.
                   <br />
                   Ejemplo: <span className="font-medium">S, M, L, XL</span> o <span className="font-medium">Rojo, Azul, Verde, Negro</span>
                 </p>
                 {bulkValues.trim() && (
-                  <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                    <p className="text-xs text-slate-500 mb-2">Vista previa:</p>
-                    <div className="flex flex-wrap gap-1">
+                  <div className="mt-3 p-3 bg-neutral-50 dark:bg-white/[0.03] rounded-xl border border-neutral-100 dark:border-white/[0.05]">
+                    <p className="text-xs text-neutral-500 mb-2">Vista previa:</p>
+                    <div className="flex flex-wrap gap-1.5">
                       {bulkValues.split(',').map((v) => v.trim()).filter(v => v).map((v, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">
+                        <span key={i} className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-700 dark:bg-white/[0.08] dark:text-neutral-300">
                           {v}
-                        </Badge>
+                        </span>
                       ))}
                     </div>
                   </div>

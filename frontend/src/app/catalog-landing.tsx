@@ -74,7 +74,12 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:bg-[#000000] overflow-hidden">
+    <motion.div
+      ref={containerRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-b from-[#EFF9FF] via-[#DBEAFE] to-[#E0F2FE] lg:bg-white lg:bg-none dark:from-[#000000] dark:via-[#000000] dark:to-[#000000] overflow-hidden">
       {/* Desktop Navbar + Hero - hidden on mobile */}
       <div className="hidden lg:block">
         <Navbar settings={settings} categories={categories} transparent />
@@ -231,7 +236,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
           </div>
 
           <div className="flex gap-2.5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-3.5 pb-2">
-            {categories.map((category, index) => (
+            {categories.filter(c => (c._count?.products ?? 0) > 0).map((category, index) => (
               <motion.div
                 key={`mobile-cat-${category.id}`}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -298,7 +303,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                 >
                   <Link href={`/productos/${product.slug}`} className="block bg-white dark:bg-neutral-900 rounded-[20px] overflow-hidden shadow-sm">
                     {/* Image 150px */}
-                    <div className="relative w-full h-[150px] bg-[#F8FAFC]">
+                    <div className="relative w-full h-[150px] bg-[#F8FAFC] dark:bg-neutral-900">
                       {product.images?.[0]?.url ? (
                         <Image src={product.images[0].url} alt={product.name} fill className="object-cover" sizes="50vw" />
                       ) : (
@@ -368,7 +373,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
                 >
                   <Link href={`/productos/${product.slug}`} className="block bg-white dark:bg-neutral-900 rounded-[20px] overflow-hidden shadow-[0_4px_14px_#0000000D]">
                     {/* Image */}
-                    <div className="relative w-full h-[140px] bg-[#F8FAFC]">
+                    <div className="relative w-full h-[140px] bg-[#F8FAFC] dark:bg-neutral-900">
                       {product.images?.[0]?.url ? (
                         <Image src={product.images[0].url} alt={product.name} fill className="object-cover" sizes="165px" />
                       ) : (
@@ -710,7 +715,7 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
 
             {/* Category Cards - Colorful */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-              {categories.slice(0, 4).map((category, index) => (
+              {categories.filter(c => (c._count?.products ?? 0) > 0).slice(0, 4).map((category, index) => (
                 <motion.div
                   key={category.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -1114,6 +1119,6 @@ export function CatalogLanding({ data }: CatalogLandingProps) {
       )}
 
       <MobileBottomNav />
-    </div>
+    </motion.div>
   );
 }

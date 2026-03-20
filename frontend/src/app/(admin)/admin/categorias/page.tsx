@@ -15,13 +15,12 @@ import {
   Trash2,
   Image as ImageIcon,
   FolderOpen,
-  FolderTree,
+  Upload,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -68,6 +67,7 @@ import {
   deleteCategory,
   uploadCategoryImage,
 } from '@/lib/api/categories';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 import type { Category, CategoryTreeNode, CreateCategoryDto, UpdateCategoryDto } from '@/types';
 
 const categorySchema = z.object({
@@ -85,12 +85,6 @@ const categorySchema = z.object({
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-};
 
 // Componente recursivo para renderizar el árbol
 function CategoryTreeItem({
@@ -122,113 +116,125 @@ function CategoryTreeItem({
         animate={{ opacity: 1, x: 0 }}
         className="group"
       >
-        <Card className="overflow-hidden hover:shadow-md transition-shadow">
-          <CardContent className="p-0">
-            <div
-              className="flex items-center gap-3 p-3"
-              style={{ paddingLeft: `${level * 24 + 12}px` }}
+        <div
+          className="bg-white dark:bg-white/[0.03] rounded-2xl border border-neutral-200 dark:border-white/[0.08] overflow-hidden hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300 hover:border-cyan-200 dark:hover:border-cyan-500/20"
+        >
+          <div
+            className="flex items-center gap-2 sm:gap-3 p-3 sm:p-3.5"
+            style={{ paddingLeft: `${level * 16 + 12}px` }}
+          >
+            {/* Expand/Collapse */}
+            <button
+              onClick={() => hasChildren && toggleExpanded(node.id)}
+              className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.06] transition-colors ${
+                hasChildren ? 'cursor-pointer' : 'cursor-default opacity-0'
+              }`}
             >
-              {/* Expand/Collapse */}
-              <button
-                onClick={() => hasChildren && toggleExpanded(node.id)}
-                className={`flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors ${
-                  hasChildren ? 'cursor-pointer' : 'cursor-default opacity-0'
-                }`}
-              >
-                {hasChildren && (
-                  isExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )
-                )}
-              </button>
-
-              {/* Image */}
-              <div className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-muted">
-                {node.image ? (
-                  <img
-                    src={node.image}
-                    alt={node.name}
-                    className="w-full h-full object-cover"
-                  />
+              {hasChildren && (
+                isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
-                {uploadingImageId === node.id && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <Loader2 className="h-4 w-4 text-white animate-spin" />
-                  </div>
-                )}
-              </div>
+                  <ChevronRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                )
+              )}
+            </button>
 
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold truncate">{node.name}</h3>
-                  <Badge variant={node.isActive ? 'default' : 'secondary'} className="text-[10px]">
-                    {node.isActive ? 'Activa' : 'Inactiva'}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <Badge variant="outline" className="text-[10px] font-normal">
-                    {node._count?.products || 0} productos
-                  </Badge>
-                  {hasChildren && (
-                    <Badge variant="outline" className="text-[10px] font-normal">
-                      {node.children.length} sub
-                    </Badge>
-                  )}
-                  {level > 0 && (
-                    <Badge variant="outline" className="text-[10px] font-normal text-muted-foreground">
-                      Nivel {level}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              {/* Actions - always visible */}
-              <div className="flex items-center gap-1">
-                <input
-                  type="file"
-                  id={`image-${node.id}`}
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) onImageUpload(node.id, file);
-                  }}
+            {/* Image */}
+            <div className="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-500/5 dark:to-blue-500/5">
+              {node.image ? (
+                <img
+                  src={node.image}
+                  alt={node.name}
+                  className="w-full h-full object-cover"
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => document.getElementById(`image-${node.id}`)?.click()}
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ImageIcon className="h-5 w-5 text-cyan-500/50 dark:text-cyan-400/30" />
+                </div>
+              )}
+              {uploadingImageId === node.id && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <Loader2 className="h-4 w-4 text-white animate-spin" />
+                </div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-neutral-900 dark:text-white truncate">{node.name}</h3>
+                <Badge
+                  className={`text-[10px] ${
+                    node.isActive
+                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-0'
+                      : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-500/20 dark:text-neutral-400 border-0'
+                  }`}
                 >
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onEdit(node)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => onDelete(node)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                  {node.isActive ? 'Activa' : 'Inactiva'}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {node._count?.products || 0} productos
+                </span>
+                {hasChildren && (
+                  <>
+                    <span className="text-neutral-300 dark:text-neutral-600">·</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                      {node.children.length} sub
+                    </span>
+                  </>
+                )}
+                {level > 0 && (
+                  <>
+                    <span className="text-neutral-300 dark:text-neutral-600">·</span>
+                    <span className="text-xs text-neutral-400 dark:text-neutral-500">
+                      Nivel {level}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Actions */}
+            <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+              <input
+                type="file"
+                id={`image-${node.id}`}
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) onImageUpload(node.id, file);
+                }}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400"
+                onClick={() => document.getElementById(`image-${node.id}`)?.click()}
+              >
+                <ImageIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400"
+                onClick={() => onEdit(node)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                onClick={() => onDelete(node)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Children */}
@@ -238,7 +244,7 @@ function CategoryTreeItem({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-1 space-y-1"
+            className="mt-1.5 space-y-1.5"
           >
             {node.children.map((child) => (
               <CategoryTreeItem
@@ -281,6 +287,8 @@ export default function CategoriasPage() {
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
   const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [dialogImageFile, setDialogImageFile] = useState<File | null>(null);
+  const [dialogImagePreview, setDialogImagePreview] = useState<string | null>(null);
   const slugManuallyEdited = useRef(false);
 
   const form = useForm<CategoryFormData>({
@@ -333,6 +341,8 @@ export default function CategoriasPage() {
 
   function openCreateDialog(parentId?: string) {
     setEditingCategory(null);
+    setDialogImageFile(null);
+    setDialogImagePreview(null);
     slugManuallyEdited.current = false;
     form.reset({
       name: '',
@@ -348,6 +358,8 @@ export default function CategoriasPage() {
 
   function openEditDialog(category: Category) {
     setEditingCategory(category);
+    setDialogImageFile(null);
+    setDialogImagePreview(null);
     slugManuallyEdited.current = true; // Al editar, no sobreescribir el slug existente
     form.reset({
       name: category.name,
@@ -395,6 +407,18 @@ export default function CategoriasPage() {
     return categories.filter((c) => !excludeIds.includes(c.id));
   }
 
+  function handleDialogImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setDialogImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDialogImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   async function onSubmit(data: CategoryFormData) {
     try {
       setIsSaving(true);
@@ -410,6 +434,10 @@ export default function CategoriasPage() {
           seoKeywords: data.seoKeywords || null,
         };
         await updateCategory(editingCategory.id, dto);
+        // Si hay imagen seleccionada en el dialog, subirla
+        if (dialogImageFile) {
+          await uploadCategoryImage(editingCategory.id, dialogImageFile);
+        }
         toast.success('Categoría actualizada');
       } else {
         const dto: CreateCategoryDto = {
@@ -421,11 +449,17 @@ export default function CategoriasPage() {
           seoDescription: data.seoDescription || null,
           seoKeywords: data.seoKeywords || null,
         };
-        await createCategory(dto);
+        const created = await createCategory(dto);
+        // Si hay imagen seleccionada en el dialog, subirla después de crear
+        if (dialogImageFile && created?.id) {
+          await uploadCategoryImage(created.id, dialogImageFile);
+        }
         toast.success('Categoría creada');
       }
 
       setIsDialogOpen(false);
+      setDialogImageFile(null);
+      setDialogImagePreview(null);
       await loadCategories();
     } catch (error) {
       console.error(error);
@@ -464,59 +498,80 @@ export default function CategoriasPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20 w-full" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <motion.div
+      variants={staggerContainer}
       initial="initial"
       animate="animate"
-      variants={{ animate: { transition: { staggerChildren: 0.1 } } }}
-      className="container mx-auto py-6 space-y-6"
+      className="space-y-8"
     >
-      <motion.div variants={fadeInUp} className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <FolderTree className="h-8 w-8" />
+      {/* Header premium */}
+      <motion.div variants={staggerItem} className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight flex items-center gap-2">
             Categorías
           </h1>
-          <p className="text-muted-foreground">
-            Organiza tus productos en categorías jerárquicas (como WooCommerce)
+          <p className="text-neutral-500 dark:text-neutral-400 mt-1 text-sm">
+            Organiza tus productos en categorías jerárquicas
           </p>
         </div>
-        <Button onClick={() => openCreateDialog()}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nueva categoría
+        <Button
+          onClick={() => openCreateDialog()}
+          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-500/25 border-0 flex-shrink-0"
+        >
+          <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Nueva categoría</span>
+          <span className="sm:hidden">Nueva</span>
         </Button>
       </motion.div>
 
-      <motion.div variants={fadeInUp}>
-        {categoryTree.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <FolderOpen className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Sin categorías</h3>
-              <p className="text-muted-foreground mb-4">
-                Crea tu primera categoría para organizar productos
-              </p>
-              <Button onClick={() => openCreateDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
-                Crear categoría
-              </Button>
-            </CardContent>
-          </Card>
+      <motion.div variants={staggerItem}>
+        {isLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, duration: 0.4 }}
+              >
+                <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-neutral-200 dark:border-white/[0.08] overflow-hidden">
+                  <div className="flex items-center gap-4 p-4">
+                    <Skeleton className="w-7 h-7 rounded-lg" />
+                    <Skeleton className="w-12 h-12 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                    <Skeleton className="h-5 w-14 rounded-full" />
+                    <div className="flex gap-1.5">
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : categoryTree.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-white/[0.02] rounded-2xl border border-neutral-200 dark:border-white/[0.08]">
+            <div className="w-20 h-20 rounded-full bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center mb-4">
+              <FolderOpen className="h-10 w-10 text-cyan-500" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-white">Sin categorías</h3>
+            <p className="text-neutral-500 dark:text-neutral-400 mb-6 text-center max-w-sm">
+              Crea tu primera categoría para organizar productos
+            </p>
+            <Button
+              onClick={() => openCreateDialog()}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Crear categoría
+            </Button>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {categoryTree.map((node) => (
               <CategoryTreeItem
                 key={node.id}
@@ -535,7 +590,7 @@ export default function CategoriasPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-primary/40 [&::-webkit-scrollbar-thumb]:to-primary/20 [&::-webkit-scrollbar-thumb]:rounded-full">
           <DialogHeader>
             <DialogTitle>
               {editingCategory ? 'Editar categoría' : 'Nueva categoría'}
@@ -643,11 +698,59 @@ export default function CategoriasPage() {
                 )}
               />
 
+              {/* Imagen opcional */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none">
+                  Imagen (opcional)
+                </label>
+                <div
+                  onClick={() => document.getElementById('dialog-category-image')?.click()}
+                  className="relative cursor-pointer rounded-xl border-2 border-dashed border-neutral-200 dark:border-white/[0.08] hover:border-cyan-300 dark:hover:border-cyan-500/30 transition-colors bg-neutral-50 dark:bg-white/[0.02] p-4 flex flex-col items-center justify-center gap-2"
+                >
+                  <input
+                    type="file"
+                    id="dialog-category-image"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleDialogImageChange}
+                  />
+                  {dialogImagePreview ? (
+                    <div className="flex items-center gap-3 w-full">
+                      <img
+                        src={dialogImagePreview}
+                        alt="Preview"
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 truncate">
+                          {dialogImageFile?.name}
+                        </p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          Click para cambiar
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center">
+                        <Upload className="h-5 w-5 text-cyan-500" />
+                      </div>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        Click para subir imagen
+                      </p>
+                      <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                        PNG, JPG o WebP
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
               <FormField
                 control={form.control}
                 name="isActive"
                 render={({ field }) => (
-                  <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                  <FormItem className="flex items-center justify-between rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4">
                     <div className="space-y-0.5">
                       <FormLabel>Activa</FormLabel>
                       <FormDescription>
@@ -678,7 +781,7 @@ export default function CategoriasPage() {
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={isSaving}>
+                <Button type="submit" disabled={isSaving} className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border-0">
                   {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {editingCategory ? 'Guardar' : 'Crear'}
                 </Button>

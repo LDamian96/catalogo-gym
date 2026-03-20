@@ -34,7 +34,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -78,7 +77,7 @@ function DraggableImageItem({
       dragControls={dragControls}
       className="list-none"
     >
-      <div className="relative group w-20 h-20 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+      <div className="relative group w-20 h-20 rounded-xl overflow-hidden border border-neutral-200 dark:border-white/[0.08] bg-neutral-100 dark:bg-white/[0.04] shadow-sm hover:shadow-md transition-shadow">
         <img
           src={image.url}
           alt={`${image.value}`}
@@ -87,19 +86,19 @@ function DraggableImageItem({
         {/* Drag Handle */}
         <div
           onPointerDown={(e) => dragControls.start(e)}
-          className="absolute top-0.5 left-0.5 cursor-grab active:cursor-grabbing touch-none p-0.5 bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-1 left-1 cursor-grab active:cursor-grabbing touch-none p-0.5 bg-black/40 backdrop-blur-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <GripVertical className="w-3 h-3 text-white" />
         </div>
         {/* Delete Button */}
         <button
           onClick={() => onDelete(image.id)}
-          className="absolute top-0.5 right-0.5 bg-red-500 text-white p-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+          className="absolute top-1 right-1 bg-red-500/90 backdrop-blur-sm text-white p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
         >
           <X className="w-3 h-3" />
         </button>
         {/* Order Badge */}
-        <span className="absolute bottom-0.5 right-0.5 bg-black/60 text-white text-xs px-1 rounded">
+        <span className="absolute bottom-1 right-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium px-1.5 py-0.5 rounded-md">
           {image.order + 1}
         </span>
       </div>
@@ -142,7 +141,6 @@ function VariantValueImageGroup({
 
     setUploading(true);
     try {
-      // Upload all files sequentially
       for (const file of Array.from(files)) {
         await uploadVariantValueImage(productId, variantTypeId, value, file);
       }
@@ -154,7 +152,6 @@ function VariantValueImageGroup({
       toast.error(axiosError?.response?.data?.message || 'Error al subir imagen');
     } finally {
       setUploading(false);
-      // Reset input
       e.target.value = '';
     }
   };
@@ -171,10 +168,7 @@ function VariantValueImageGroup({
   };
 
   const handleReorder = async (newOrder: VariantValueImage[]) => {
-    // Update local state immediately
     setLocalImages(newOrder);
-
-    // Build items array with new order
     const items = newOrder.map((img, index) => ({
       id: img.id,
       order: index,
@@ -186,75 +180,73 @@ function VariantValueImageGroup({
     } catch (error) {
       console.error('Error reordering images:', error);
       toast.error('Error al reordenar');
-      // Restore original order
       setLocalImages(images);
     }
   };
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card className="border-slate-200 dark:border-slate-700">
-        <CardHeader className="py-2 px-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
-                  {isOpen ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
-                  )}
-                </Button>
-              </CollapsibleTrigger>
-              <CardTitle className="text-sm font-medium">{value}</CardTitle>
-              <Badge variant="secondary" className="text-xs">
-                {localImages.length} {localImages.length === 1 ? 'imagen' : 'imagenes'}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-1">
-              {/* Upload Button */}
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                  disabled={uploading}
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1 h-7"
-                  disabled={uploading}
-                  asChild
-                >
-                  <span>
-                    {uploading ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <Plus className="w-3 h-3" />
-                    )}
-                    Agregar
-                  </span>
-                </Button>
-              </label>
-              {/* Delete All Button */}
-              {localImages.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-red-500 hover:text-red-600"
-                  onClick={onDeleteAll}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              )}
-            </div>
+      <div className="rounded-xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <CollapsibleTrigger asChild>
+              <button className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">
+                {isOpen ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </button>
+            </CollapsibleTrigger>
+            <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{value}</span>
+            <Badge className="text-[10px] font-medium bg-neutral-100 text-neutral-500 dark:bg-white/[0.08] dark:text-neutral-400 border-0 px-2 py-0.5">
+              {localImages.length} {localImages.length === 1 ? 'imagen' : 'imágenes'}
+            </Badge>
           </div>
-        </CardHeader>
+          <div className="flex items-center gap-1">
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 h-7 text-xs text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400"
+                disabled={uploading}
+                asChild
+              >
+                <span>
+                  {uploading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Plus className="w-3 h-3" />
+                  )}
+                  Agregar
+                </span>
+              </Button>
+            </label>
+            {localImages.length > 0 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                onClick={onDeleteAll}
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
         <CollapsibleContent>
-          <CardContent className="py-2 px-3">
+          <div className="px-4 pb-3">
             {localImages.length === 0 ? (
               <label className="cursor-pointer block">
                 <input
@@ -265,14 +257,14 @@ function VariantValueImageGroup({
                   onChange={handleFileChange}
                   disabled={uploading}
                 />
-                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:border-cyan-400 transition-colors">
+                <div className="border border-dashed border-neutral-200 dark:border-white/[0.1] rounded-xl p-5 text-center hover:border-cyan-400 dark:hover:border-cyan-500/40 transition-colors bg-neutral-50/50 dark:bg-white/[0.01]">
                   {uploading ? (
-                    <Loader2 className="w-6 h-6 mx-auto animate-spin text-slate-400" />
+                    <Loader2 className="w-5 h-5 mx-auto animate-spin text-neutral-400" />
                   ) : (
                     <>
-                      <Camera className="w-6 h-6 mx-auto text-slate-400 mb-1" />
-                      <p className="text-xs text-slate-500">
-                        Click para agregar imagenes
+                      <Camera className="w-5 h-5 mx-auto text-neutral-300 dark:text-neutral-600 mb-1.5" />
+                      <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                        Arrastra o haz clic para agregar imágenes
                       </p>
                     </>
                   )}
@@ -292,7 +284,7 @@ function VariantValueImageGroup({
                     onDelete={handleDelete}
                   />
                 ))}
-                {/* Add More Button */}
+                {/* Add More */}
                 <label className="cursor-pointer">
                   <input
                     type="file"
@@ -302,19 +294,19 @@ function VariantValueImageGroup({
                     onChange={handleFileChange}
                     disabled={uploading}
                   />
-                  <div className="w-20 h-20 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:border-cyan-400 transition-colors">
+                  <div className="w-20 h-20 rounded-xl border border-dashed border-neutral-200 dark:border-white/[0.1] flex items-center justify-center hover:border-cyan-400 dark:hover:border-cyan-500/40 transition-colors bg-neutral-50/50 dark:bg-white/[0.01]">
                     {uploading ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+                      <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />
                     ) : (
-                      <Plus className="w-5 h-5 text-slate-400" />
+                      <Plus className="w-4 h-4 text-neutral-300 dark:text-neutral-600" />
                     )}
                   </div>
                 </label>
               </Reorder.Group>
             )}
-          </CardContent>
+          </div>
         </CollapsibleContent>
-      </Card>
+      </div>
     </Collapsible>
   );
 }
@@ -330,7 +322,6 @@ export function VariantValueImagesManager({
   const [loading, setLoading] = useState(true);
   const [changingType, setChangingType] = useState(false);
 
-  // Delete all confirmation
   const [deleteAllValue, setDeleteAllValue] = useState<{
     variantTypeId: string;
     value: string;
@@ -345,12 +336,10 @@ export function VariantValueImagesManager({
       ]);
       setConfig(configData);
       setVariantTypes(typesData);
-      // Extract variant values from both product-level and sub-product variants
       const directValues = (productData.variantValues || []).map((v: { variantTypeId: string; value: string }) => ({
         variantTypeId: v.variantTypeId,
         value: v.value,
       }));
-      // Also extract values from sub-products (variants)
       const subProductValues: { variantTypeId: string; value: string }[] = [];
       ((productData as unknown as { variants?: { variantValues?: { variantTypeId: string; value: string }[] }[] }).variants || []).forEach((variant) => {
         (variant.variantValues || []).forEach((v: { variantTypeId: string; value: string }) => {
@@ -360,7 +349,6 @@ export function VariantValueImagesManager({
           });
         });
       });
-      // Merge and deduplicate
       const allValues = [...directValues, ...subProductValues];
       const uniqueValues = allValues.filter(
         (v, i, arr) =>
@@ -371,7 +359,7 @@ export function VariantValueImagesManager({
       setProductVariantValues(uniqueValues);
     } catch (error) {
       console.error('Error loading data:', error);
-      toast.error('Error al cargar configuracion de imagenes');
+      toast.error('Error al cargar configuración de imágenes');
     } finally {
       setLoading(false);
     }
@@ -390,7 +378,7 @@ export function VariantValueImagesManager({
       );
       toast.success(
         variantTypeId === 'none'
-          ? 'Imagenes por variante desactivadas'
+          ? 'Imágenes por variante desactivadas'
           : 'Tipo de variante actualizado'
       );
       await loadData();
@@ -411,16 +399,15 @@ export function VariantValueImagesManager({
         config.imageVariantType.id,
         deleteAllValue.value
       );
-      toast.success(`Todas las imagenes de "${deleteAllValue.value}" eliminadas`);
+      toast.success(`Todas las imágenes de "${deleteAllValue.value}" eliminadas`);
       setDeleteAllValue(null);
       await loadData();
     } catch (error) {
       console.error('Error deleting all images:', error);
-      toast.error('Error al eliminar imagenes');
+      toast.error('Error al eliminar imágenes');
     }
   };
 
-  // Get the values for the selected variant type (from product's variant values)
   const getValuesForSelectedType = (): string[] => {
     if (!config?.imageVariantType) return [];
 
@@ -429,14 +416,12 @@ export function VariantValueImagesManager({
       .filter((v) => v.variantTypeId === typeId)
       .map((v) => v.value);
 
-    // Also include values that have images but might not be in product values
     const imageValues = Object.keys(config.imagesByValue || {});
     const allValues = Array.from(new Set([...values, ...imageValues]));
 
     return allValues.sort();
   };
 
-  // Get variant types that the product has values for
   const getAvailableVariantTypes = (): VariantType[] => {
     const usedTypeIds = new Set(productVariantValues.map((v) => v.variantTypeId));
     return variantTypes.filter((t) => usedTypeIds.has(t.id));
@@ -444,8 +429,21 @@ export function VariantValueImagesManager({
 
   if (loading) {
     return (
-      <div className="p-4 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+      <div className="p-5 space-y-3">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-neutral-200 dark:border-white/[0.08] p-4 animate-pulse">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-4 w-4 bg-neutral-200 dark:bg-white/[0.08] rounded" />
+              <div className="h-4 w-20 bg-neutral-200 dark:bg-white/[0.08] rounded" />
+              <div className="h-4 w-16 bg-neutral-100 dark:bg-white/[0.04] rounded-full" />
+            </div>
+            <div className="flex gap-2">
+              {Array.from({ length: 3 }).map((_, j) => (
+                <div key={j} className="w-20 h-20 bg-neutral-200 dark:bg-white/[0.08] rounded-xl" />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -454,13 +452,13 @@ export function VariantValueImagesManager({
 
   if (availableTypes.length === 0) {
     return (
-      <div className="p-4">
-        <div className="text-center py-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-          <ImageIcon className="w-8 h-8 mx-auto text-amber-500 mb-2" />
-          <p className="text-sm text-amber-700 dark:text-amber-300">
-            Este producto no tiene atributos configurados
+      <div className="p-5">
+        <div className="text-center py-6 bg-amber-50/50 dark:bg-amber-500/5 rounded-xl border border-amber-200/60 dark:border-amber-500/20">
+          <ImageIcon className="w-6 h-6 mx-auto text-amber-400 mb-2" />
+          <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+            Sin atributos configurados
           </p>
-          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+          <p className="text-xs text-amber-600/80 dark:text-amber-400/60 mt-1">
             Primero agrega atributos al producto (ej: Color, Talla, Sabor)
           </p>
         </div>
@@ -471,16 +469,15 @@ export function VariantValueImagesManager({
   const selectedTypeValues = getValuesForSelectedType();
 
   return (
-    <div className="p-4 space-y-4 bg-slate-50 dark:bg-slate-800/30">
-      {/* Header + Select in one row */}
+    <div className="p-5 space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <ImageIcon className="w-4 h-4 text-slate-500" />
-          <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        <div className="flex items-center gap-2.5">
+          <h4 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
             Imágenes por atributo
           </h4>
           {config?.totalImages ? (
-            <Badge variant="outline" className="text-xs">
+            <Badge className="text-[10px] font-medium bg-neutral-100 text-neutral-500 dark:bg-white/[0.08] dark:text-neutral-400 border-0 px-2 py-0.5">
               {config.totalImages} imagen{config.totalImages !== 1 ? 'es' : ''}
             </Badge>
           ) : null}
@@ -491,12 +488,12 @@ export function VariantValueImagesManager({
             onValueChange={handleChangeImageVariantType}
             disabled={changingType}
           >
-            <SelectTrigger className="w-44 h-8 text-xs">
+            <SelectTrigger className="w-44 h-8 text-xs bg-neutral-50 dark:bg-white/[0.04] border-neutral-200 dark:border-white/[0.08]">
               <SelectValue placeholder="Seleccionar atributo..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">
-                <span className="text-slate-500">Desactivado</span>
+                <span className="text-neutral-400">Desactivado</span>
               </SelectItem>
               {availableTypes.map((type) => (
                 <SelectItem key={type.id} value={type.id}>
@@ -505,9 +502,16 @@ export function VariantValueImagesManager({
               ))}
             </SelectContent>
           </Select>
-          {changingType && <Loader2 className="w-4 h-4 animate-spin" />}
+          {changingType && <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />}
         </div>
       </div>
+
+      {/* Hint */}
+      {config?.imageVariantType && (
+        <p className="text-[11px] text-neutral-400 dark:text-neutral-500 -mt-1">
+          Las imágenes se mostrarán al seleccionar cada valor en el catálogo
+        </p>
+      )}
 
       {/* Images by Value */}
       {config?.imageVariantType && selectedTypeValues.length > 0 && (
@@ -533,10 +537,10 @@ export function VariantValueImagesManager({
         </div>
       )}
 
-      {/* No values message */}
+      {/* No values */}
       {config?.imageVariantType && selectedTypeValues.length === 0 && (
-        <div className="text-center py-6 bg-slate-100 dark:bg-slate-800 rounded-lg">
-          <p className="text-sm text-slate-500">
+        <div className="text-center py-6 rounded-xl border border-dashed border-neutral-200 dark:border-white/[0.1] bg-neutral-50/50 dark:bg-white/[0.01]">
+          <p className="text-sm text-neutral-400 dark:text-neutral-500">
             No hay valores de &quot;{config.imageVariantType.name}&quot; en este producto
           </p>
         </div>
@@ -550,10 +554,10 @@ export function VariantValueImagesManager({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Eliminar todas las imagenes de &quot;{deleteAllValue?.value}&quot;?
+              ¿Eliminar todas las imágenes de &quot;{deleteAllValue?.value}&quot;?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Esta accion no se puede deshacer. Se eliminaran todas las imagenes
+              Esta acción no se puede deshacer. Se eliminarán todas las imágenes
               asociadas a este valor.
             </AlertDialogDescription>
           </AlertDialogHeader>

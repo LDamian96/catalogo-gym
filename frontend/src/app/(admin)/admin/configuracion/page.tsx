@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 import { toast } from 'sonner';
 import { Save, Loader2, Store, Search, BarChart3 } from 'lucide-react';
 
@@ -65,10 +66,6 @@ const settingsSchema = z.object({
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-};
 
 export default function ConfiguracionPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -221,23 +218,14 @@ export default function ConfiguracionPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-[500px] w-full" />
-      </div>
-    );
-  }
-
   return (
     <motion.div
+      variants={staggerContainer}
       initial="initial"
       animate="animate"
-      variants={{ animate: { transition: { staggerChildren: 0.1 } } }}
       className="container mx-auto py-6 space-y-6"
     >
-      <motion.div variants={fadeInUp} className="flex items-center justify-between">
+      <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Configuración</h1>
           <p className="text-neutral-500 dark:text-neutral-400 mt-1">Personaliza tu catálogo digital</p>
@@ -252,7 +240,37 @@ export default function ConfiguracionPage() {
         </Button>
       </motion.div>
 
-      <motion.div variants={fadeInUp}>
+      <motion.div variants={staggerItem}>
+        {isLoading ? (
+          <div className="space-y-6">
+            <div className="flex gap-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-28 rounded-lg" />
+              ))}
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                >
+                  <Card>
+                    <CardHeader>
+                      <Skeleton className="h-5 w-24" />
+                      <Skeleton className="h-3 w-40" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <Skeleton className="h-10 w-full rounded-md" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ) : (
         <Tabs defaultValue="negocio" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
             <TabsTrigger value="negocio" className="gap-2">
@@ -815,6 +833,7 @@ export default function ConfiguracionPage() {
             </form>
           </Form>
         </Tabs>
+        )}
       </motion.div>
     </motion.div>
   );

@@ -1,0 +1,36 @@
+{
+  "id": "botdebug",
+  "name": "Bot Debug",
+  "active": true,
+  "nodes": [
+    {
+      "id": "d1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "bot-debug",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bot-debug",
+        "options": {}
+      }
+    },
+    {
+      "id": "d2",
+      "name": "Log",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300],
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst keys = Object.keys(input);\nconst data = input.data || input.body?.data || {};\nconst key = data.key || {};\nconst msg = data.message || {};\nreturn [{json: {keys, remoteJid: key.remoteJid, fromMe: key.fromMe, text: msg.conversation || msg.extendedTextMessage?.text || 'no text', pushName: data.pushName, fullInput: JSON.stringify(input).substring(0,500)}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Log", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1"}
+}

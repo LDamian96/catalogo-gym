@@ -97,7 +97,17 @@
       "Bash(git reset:*)",
       "Bash(if exist .git rmdir /s /q .git)",
       "Bash(gh repo create:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git branch:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(echo:*)",
+      "Bash(unset:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "Bash(git checkout:*)",
+      "Bash(grep:*)"
     ]
   }
 }

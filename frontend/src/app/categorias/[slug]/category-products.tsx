@@ -242,8 +242,8 @@ export function CategoryProducts({
       <div className="lg:hidden">
         {/* Hero section - cyan/teal gradient matching BETA.pen */}
         <div className="relative overflow-hidden rounded-b-[26px] bg-gradient-to-br from-cyan-500 via-sky-600 to-blue-700 shadow-[0_8px_24px_rgba(14,165,233,0.15)]">
-          {/* pt-20 = navbar height (56px) + extra spacing so content sits below navbar */}
-          <div className="relative px-3.5 pt-20 pb-4 flex flex-col gap-3">
+          {/* Navbar spacer is now handled by the Navbar component */}
+          <div className="relative px-3.5 pt-4 pb-4 flex flex-col gap-3">
             {/* Top row: back button + cart */}
             <div className="flex items-center justify-between">
               <Link

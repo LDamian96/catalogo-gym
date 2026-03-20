@@ -1,0 +1,36 @@
+{
+  "id": "botnew",
+  "name": "Bot Nuevo",
+  "active": true,
+  "nodes": [
+    {
+      "id": "webhook_1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "bot-nuevo",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bot-nuevo",
+        "options": {}
+      }
+    },
+    {
+      "id": "noop_1",
+      "name": "OK",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "OK", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

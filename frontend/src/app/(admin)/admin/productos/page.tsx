@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, Reorder } from 'framer-motion';
+import { staggerContainer, staggerItem } from '@/lib/utils/animations';
 import { toast } from 'sonner';
 import {
   Plus,
@@ -126,12 +127,6 @@ const productSchema = z.object({
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-};
 
 function generateSlug(text: string): string {
   return text
@@ -531,33 +526,15 @@ export default function ProductosPage() {
     return `S/ ${Number(price).toFixed(2)}`;
   }
 
-  if (isLoading && products.length === 0) {
-    return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="flex gap-4">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-10 w-40" />
-          <Skeleton className="h-10 w-40" />
-        </div>
-        <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <motion.div
+      variants={staggerContainer}
       initial="initial"
       animate="animate"
-      variants={{ animate: { transition: { staggerChildren: 0.1 } } }}
       className="container mx-auto py-6 space-y-6"
     >
       {/* Header elegante estilo BETA.pen */}
-      <motion.div variants={fadeInUp} className="flex items-center justify-between">
+      <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Productos</h1>
           <p className="text-neutral-500 dark:text-neutral-400 mt-1">
@@ -574,7 +551,7 @@ export default function ProductosPage() {
       </motion.div>
 
       {/* Filters */}
-      <motion.div variants={fadeInUp} className="flex flex-wrap gap-4">
+      <motion.div variants={staggerItem} className="flex flex-wrap gap-4">
         <div className="relative flex-1 min-w-[200px] max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -632,8 +609,41 @@ export default function ProductosPage() {
       </motion.div>
 
       {/* Products Table */}
-      <motion.div variants={fadeInUp}>
-        {products.length === 0 ? (
+      <motion.div variants={staggerItem}>
+        {isLoading ? (
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Producto</TableHead>
+                  <TableHead className="text-right">Precio</TableHead>
+                  <TableHead className="text-center">Stock</TableHead>
+                  <TableHead className="text-center">Estado</TableHead>
+                  <TableHead className="text-right w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="w-10 h-10 rounded-lg" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    <TableCell className="text-center"><Skeleton className="h-5 w-10 mx-auto rounded-full" /></TableCell>
+                    <TableCell className="text-center"><Skeleton className="h-5 w-14 mx-auto rounded-full" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        ) : products.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Package className="h-12 w-12 text-muted-foreground mb-4" />
@@ -665,18 +675,10 @@ export default function ProductosPage() {
                   return (
                     <React.Fragment key={product.id}>
                       <TableRow
-                        className={`group ${variantsEnabled ? 'cursor-pointer' : ''} hover:bg-muted/50 ${isExpanded ? 'bg-muted/30' : ''}`}
-                        onClick={() => variantsEnabled && toggleProductVariants(product.id)}
+                        className={`group hover:bg-muted/50 ${isExpanded ? 'bg-muted/30' : ''}`}
                       >
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            {variantsEnabled && (
-                              isExpanded ? (
-                                <ChevronUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                              )
-                            )}
                             <div
                               className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0 cursor-pointer"
                               onClick={(e) => { e.stopPropagation(); openImagesDialog(product); }}
@@ -698,6 +700,12 @@ export default function ProductosPage() {
                               </div>
                               <p className="text-xs text-muted-foreground truncate">
                                 {product.category?.name || '-'}{product.brand ? ` · ${product.brand.name}` : ''}
+                                {variantsEnabled && (product._count?.variants ?? 0) > 0 && (
+                                  <span className="ml-1.5 inline-flex items-center gap-0.5 text-[10px] text-cyan-600 dark:text-cyan-400 font-medium">
+                                    <Layers className="h-2.5 w-2.5" />
+                                    {product._count?.variants}
+                                  </span>
+                                )}
                               </p>
                             </div>
                           </div>
@@ -729,6 +737,19 @@ export default function ProductosPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1">
+                            {variantsEnabled && (product._count?.variants ?? 0) > 0 && (
+                              <button
+                                onClick={() => toggleProductVariants(product.id)}
+                                className={`p-1.5 rounded-md transition-colors ${isExpanded ? 'bg-cyan-50 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </button>
+                            )}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -757,38 +778,45 @@ export default function ProductosPage() {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                          </div>
                         </TableCell>
                       </TableRow>
                       {/* Expanded Variants Row */}
                       {variantsEnabled && isExpanded && (
-                        <TableRow className="bg-muted/20">
-                          <TableCell colSpan={5} className="p-0">
-                            <Tabs defaultValue="variants" className="w-full">
-                              <div className="px-4 pt-3 border-b">
-                                <TabsList className="h-9">
-                                  <TabsTrigger value="variants" className="text-xs">
-                                    <Layers className="w-3 h-3 mr-1" />
-                                    Sub-productos
-                                  </TabsTrigger>
-                                  <TabsTrigger value="images" className="text-xs">
-                                    <ImageIcon className="w-3 h-3 mr-1" />
-                                    Imagenes por Variante
-                                  </TabsTrigger>
-                                </TabsList>
-                              </div>
-                              <TabsContent value="variants" className="m-0">
-                                <ProductVariantsManager
-                                  productId={product.id}
-                                  productName={product.name}
-                                />
-                              </TabsContent>
-                              <TabsContent value="images" className="m-0">
-                                <VariantValueImagesManager
-                                  productId={product.id}
-                                  productName={product.name}
-                                />
-                              </TabsContent>
-                            </Tabs>
+                        <TableRow className="!bg-transparent hover:!bg-transparent">
+                          <TableCell colSpan={5} className="p-0 border-0">
+                            <div className="mx-3 mb-3 rounded-xl border border-neutral-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm">
+                              <Tabs defaultValue="variants" className="w-full">
+                                <div className="px-5 pt-4 pb-0 flex items-center justify-between">
+                                  <TabsList className="h-9 bg-neutral-100 dark:bg-white/[0.06] rounded-lg p-0.5">
+                                    <TabsTrigger value="variants" className="text-xs rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.1] data-[state=active]:shadow-sm gap-1.5 px-3">
+                                      <Layers className="w-3.5 h-3.5" />
+                                      Sub-productos
+                                      <Badge variant="secondary" className="text-[10px] h-4 px-1 ml-0.5 bg-neutral-200 dark:bg-white/[0.1]">
+                                        {product._count?.variants ?? 0}
+                                      </Badge>
+                                    </TabsTrigger>
+                                    <TabsTrigger value="images" className="text-xs rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-white/[0.1] data-[state=active]:shadow-sm gap-1.5 px-3">
+                                      <ImageIcon className="w-3.5 h-3.5" />
+                                      Imágenes por Variante
+                                    </TabsTrigger>
+                                  </TabsList>
+                                </div>
+                                <TabsContent value="variants" className="m-0">
+                                  <ProductVariantsManager
+                                    productId={product.id}
+                                    productName={product.name}
+                                    onVariantsChange={loadProducts}
+                                  />
+                                </TabsContent>
+                                <TabsContent value="images" className="m-0">
+                                  <VariantValueImagesManager
+                                    productId={product.id}
+                                    productName={product.name}
+                                  />
+                                </TabsContent>
+                              </Tabs>
+                            </div>
                           </TableCell>
                         </TableRow>
                       )}
@@ -803,7 +831,7 @@ export default function ProductosPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <motion.div variants={fadeInUp} className="flex items-center justify-center gap-2">
+        <motion.div variants={staggerItem} className="flex items-center justify-center gap-2">
           <Button
             variant="outline"
             size="icon"

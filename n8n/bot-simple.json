@@ -1,0 +1,49 @@
+{
+  "id": "bot1",
+  "name": "Bot WhatsApp",
+  "active": true,
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "bot-wsp",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bot-wsp",
+        "options": {}
+      }
+    },
+    {
+      "id": "n2",
+      "name": "Responder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://72.60.251.43:8085/message/sendText/catalogo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "EVO_KEY_HERE"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"number\":\"{{$json.body.data.key.remoteJid}}\",\"textMessage\":{\"text\":\"Hola! Soy el bot de ProVitamins Peru. En que puedo ayudarte?\"}}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Responder", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

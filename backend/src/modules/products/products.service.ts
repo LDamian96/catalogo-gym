@@ -3,7 +3,9 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from '../../database/prisma.service';
 import {
   CloudinaryService,
@@ -21,6 +23,7 @@ import { ReorderImagesDto } from './dto/reorder-images.dto';
 import { Product, ProductImage, Prisma } from '@prisma/client';
 import { generateSlug } from '../../common/utils/slug.util';
 import { generateProductSeo } from '../../common/utils/auto-seo.util';
+import { ProductSyncEvent } from '../../common/services/sheet-sync.service';
 
 type ProductWithRelations = Product & {
   category?: { id: string; name: string; slug: string };
@@ -31,10 +34,13 @@ type ProductWithRelations = Product & {
 
 @Injectable()
 export class ProductsService {
+  private readonly logger = new Logger(ProductsService.name);
+
   constructor(
     private prisma: PrismaService,
     private cloudinary: CloudinaryService,
     private cache: CacheService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(
@@ -70,9 +76,13 @@ export class ProductsService {
       ];
     }
 
-    // Build orderBy
+    // Build orderBy with stable secondary sort
     const orderBy: Prisma.ProductOrderByWithRelationInput = {};
     orderBy[sortBy] = sortOrder;
+    const orderByArray: Prisma.ProductOrderByWithRelationInput[] = [
+      orderBy,
+      { createdAt: 'desc' },
+    ];
 
     // Get total count
     const total = await this.prisma.product.count({ where });
@@ -80,7 +90,7 @@ export class ProductsService {
     // Get products
     const products = await this.prisma.product.findMany({
       where,
-      orderBy,
+      orderBy: orderByArray,
       skip: (page - 1) * limit,
       take: limit,
       include: {
@@ -301,7 +311,12 @@ export class ProductsService {
     await this.cache.invalidateProducts();
 
     // Return product with relations
-    return this.findOne(product.id);
+    const createdProduct = await this.findOne(product.id);
+
+    // Emitir evento para sincronizar con Google Sheets (fire-and-forget)
+    this.emitProductEvent('created', createdProduct);
+
+    return createdProduct;
   }
 
   async update(id: string, dto: UpdateProductDto): Promise<ProductWithRelations> {
@@ -390,7 +405,12 @@ export class ProductsService {
     await this.cache.invalidateProduct(id);
 
     // Return product with relations
-    return this.findOne(id);
+    const updatedProduct = await this.findOne(id);
+
+    // Emitir evento para sincronizar con Google Sheets (fire-and-forget)
+    this.emitProductEvent('updated', updatedProduct);
+
+    return updatedProduct;
   }
 
   async delete(id: string): Promise<void> {
@@ -410,12 +430,21 @@ export class ProductsService {
       }
     }
 
+    // Guardar datos antes de eliminar para el evento
+    const deletedProductData = {
+      id: product.id,
+      name: product.name,
+    };
+
     await this.prisma.product.delete({
       where: { id },
     });
 
     // Invalidate cache
     await this.cache.invalidateProducts();
+
+    // Emitir evento para sincronizar con Google Sheets (fire-and-forget)
+    this.emitProductEvent('deleted', { id: deletedProductData.id, name: deletedProductData.name } as any);
   }
 
   async duplicate(id: string): Promise<ProductWithRelations> {
@@ -572,5 +601,40 @@ export class ProductsService {
     await this.cache.invalidateProduct(productId);
 
     return this.findOne(productId);
+  }
+
+  /**
+   * Emite evento de producto para sincronización con Google Sheets
+   * Fire-and-forget: nunca bloquea ni falla la operación principal
+   */
+  private emitProductEvent(
+    action: 'created' | 'updated' | 'deleted',
+    product: ProductWithRelations | { id: string; name: string },
+  ): void {
+    try {
+      const event: ProductSyncEvent = {
+        action,
+        product: {
+          id: product.id,
+          name: 'name' in product ? product.name : undefined,
+          price: 'price' in product ? Number(product.price) : undefined,
+          salePrice: 'salePrice' in product && product.salePrice ? Number(product.salePrice) : null,
+          categoryName: 'category' in product ? product.category?.name : undefined,
+          brandName: 'brand' in product ? product.brand?.name : undefined,
+          description: 'description' in product ? product.description : undefined,
+          stock: 'stock' in product ? product.stock : undefined,
+          isActive: 'isActive' in product ? product.isActive : undefined,
+          seoTitle: 'seoTitle' in product ? product.seoTitle : undefined,
+          seoDescription: 'seoDescription' in product ? product.seoDescription : undefined,
+          seoKeywords: 'seoKeywords' in product ? product.seoKeywords : undefined,
+          imageUrl: 'images' in product && product.images?.[0] ? product.images[0].url : undefined,
+        },
+      };
+
+      this.eventEmitter.emit(`product.${action}`, event);
+    } catch (error) {
+      // Nunca fallar la operación principal por un error de sync
+      this.logger.error(`Error al emitir evento product.${action}: ${error.message}`);
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // Config
 import {
@@ -47,6 +48,9 @@ import { CombosModule } from './modules/combos/combos.module';
       load: [appConfig, jwtConfig, redisConfig, cloudinaryConfig, throttleConfig],
       envFilePath: ['.env.local', '.env'],
     }),
+
+    // Event Emitter (para sincronización Web → Sheet)
+    EventEmitterModule.forRoot(),
 
     // Rate Limiting
     ThrottlerModule.forRootAsync({
